@@ -60,7 +60,6 @@ export function transformDynamicItemGenerator(entries: DynamicItemGenerator["ent
               pi.entries.MinDurability = Math.round(pi.entries.MinDurability * 1e5) / 1e5;
               pi.entries.MaxDurability = Math.round(pi.entries.MaxDurability * 1e5) / 1e5;
               pi.entries.Chance = Math.round(pi.entries.Chance * 1e5) / 1e5;
-              pi.entries.Chance = 1; // todo debug
             });
         } else {
           (e.entries as Entries) = {};
