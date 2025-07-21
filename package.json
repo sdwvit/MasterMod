@@ -1,0 +1,21 @@
+{
+  "name": "stalker2-master-mod",
+  "version": "1.0.0",
+  "description": "Stalker 2 Master Mod by sdwvit",
+  "scripts": {
+    "prepare": "node --loader ts-node/esm ./src/prepare-configs.mts",
+    "publish-steam": "node --loader ts-node/esm ./src/publish-steam.mts",
+    "_packmod": "node --loader ts-node/esm ./src/packmod.mts",
+    "_pull-staged": "node --loader ts-node/esm ./src/pull-staged.mts"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@node-steam/vdf": "^2.2.0",
+    "@types/node": "^20.11.17",
+    "dotenv": "^17.2.0",
+    "prettier": "^3.6.2",
+    "s2cfgtojson": "2.1.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  }
+}
