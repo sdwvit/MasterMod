@@ -1,4 +1,4 @@
-# Code generator for my mod config files
+# Code generator for my Stalker 2 mod config files
 
 ## Requirements:
 
