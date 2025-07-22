@@ -8,52 +8,23 @@ await import("./pull-staged.mjs");
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const MODS_PATH = path.join(import.meta.dirname, "..");
 const STALKER_STEAM_ID = "1643320";
-const vdfTemplate = (modPath: string, title: string, description: string, changenote = "Initial release") => `
-"workshopitem"
-{
-	"appid"		"${STALKER_STEAM_ID}"
-	"publishedfileid"		"0"
-	"contentfolder"		"${path.join(modPath, "steamworkshop")}"
-	"previewfile"			"${path.join(modPath, "512.png")}"
-	"title"		"${title}"
-	"description"		"${description}"
-	"changenote"		"${changenote}"
-}
-`;
+import { meta } from "./meta.mjs";
+
 const sanitize = (str: string) => str.replace(/\n/g, "\\n").replace(/"/g, '\\"');
 
 const cmd = (name: string) => {
-  let title = `${process.env.MOD_NAME.replace(/([A-Z])/g, " $1")} by sdwvit`;
-  let description = "";
-  let changenote = "Initial release";
-  const modFolder = path.join(MODS_PATH, name);
-  const vdfFilePath = path.join(modFolder, `${name}.vdf`);
-  const metaPath = path.join(modFolder, "meta.json");
+  const vdfFilePath = path.join(import.meta.dirname, `workshopitem.vdf`);
+  const vdfData = fs.existsSync(vdfFilePath) ? VDF.parse(fs.readFileSync(vdfFilePath, "utf8")) : { workshopitem: {} };
 
-  if (fs.existsSync(metaPath)) {
-    const metaContent = fs.readFileSync(metaPath, "utf8");
-    const metaData = JSON.parse(metaContent);
-    description = metaData.description;
-    changenote = metaData.changenote;
-  }
+  vdfData.workshopitem.appid = STALKER_STEAM_ID;
+  vdfData.workshopitem.publishedfileid ||= "0"; // This will be set by SteamCMD
+  vdfData.workshopitem.contentfolder = path.join(MODS_PATH, "steamworkshop");
+  vdfData.workshopitem.previewfile = path.join(MODS_PATH, "512.png");
+  vdfData.workshopitem.title = sanitize(`${process.env.MOD_NAME.replace(/([A-Z])/g, "$1")} by sdwvit`);
+  vdfData.workshopitem.description = sanitize(meta.description);
+  vdfData.workshopitem.changenote = sanitize(meta.changenote);
 
-  if (fs.existsSync(vdfFilePath)) {
-    const vdfContent = fs.readFileSync(vdfFilePath, "utf8");
-    const vdfData = VDF.parse(vdfContent);
-    vdfData.workshopitem.title ||= title;
-    vdfData.workshopitem.description ||= description;
-    vdfData.workshopitem.changenote = changenote;
-    vdfData.workshopitem.title = sanitize(vdfData.workshopitem.title);
-    vdfData.workshopitem.description = sanitize(vdfData.workshopitem.description);
-    vdfData.workshopitem.changenote = sanitize(vdfData.workshopitem.changenote);
-
-    fs.writeFileSync(vdfFilePath, VDF.stringify(vdfData), "utf8");
-  } else {
-    title = sanitize(title);
-    description = sanitize(description);
-    changenote = sanitize(changenote);
-    fs.writeFileSync(vdfFilePath, vdfTemplate(modFolder, title, description, changenote).trim(), "utf8");
-  }
+  fs.writeFileSync(vdfFilePath, VDF.stringify(vdfData), "utf8");
 
   return [
     process.env.STEAMCMD_PATH,

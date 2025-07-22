@@ -11,7 +11,7 @@ const STAGED_PATH = path.join(process.env.SDK_PATH, "Stalker2", "SavedMods", "St
 const cmd = (name: string) => {
   const folderStructure = path.join("Stalker2", "Mods", name, "Content", "Paks", "Windows");
   const sourcePath = path.join(STAGED_PATH, name, "Windows", folderStructure);
-  const destinationPath = path.join(MOD_PATH, name, "steamworkshop", folderStructure);
+  const destinationPath = path.join(MOD_PATH, "steamworkshop", folderStructure);
   console.log(`Pulling staged mod from ${sourcePath}...`);
   if (fs.readdirSync(sourcePath).length === 0) {
     console.error(`No files found in source path: ${sourcePath}`);

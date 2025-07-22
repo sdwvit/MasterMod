@@ -26,8 +26,9 @@ export const meta: Meta = {
   interestingContents: [],
   prohibitedIds: [],
   interestingIds: [],
-  description: "",
-  changenote: "",
+  description:
+    "A collection of various configs aimed to increase game difficulty and make it more interesting. Inspired by Stalker GAMMA, but slightly opinionated.",
+  changenote: "Initial release",
   entriesTransformer: (entries, c) => {
     let newEntries = entries as Entries;
     newEntries = transformDynamicItemGenerator(newEntries as DynamicItemGenerator["entries"], c);
