@@ -7,17 +7,21 @@ export function transformTradePrototypes(entries: TraderEntries, { file }: { fil
   if (!file.includes("TradePrototypes.cfg")) {
     return entries;
   }
-  if (entries.SID.includes("Trade") && entries.TradeGenerators?.entries) {
+  if (entries.TradeGenerators?.entries) {
     Object.values(entries.TradeGenerators.entries)
       .filter((tg) => tg.entries)
       .forEach((tg) => {
-        tg.entries = { BuyLimitations: tg.entries.BuyLimitations || new BuyLimitations() };
+        tg.entries.BuyLimitations ||= new BuyLimitations();
+        const existing = Object.values(tg.entries.BuyLimitations.entries);
+        if (existing.includes("EItemType::Weapon") && existing.includes("EItemType::Armor")) {
+          return;
+        }
         ["EItemType::Weapon", "EItemType::Armor"].forEach((itemType) => {
-          let i = 0;
-          while (tg.entries.BuyLimitations[i] && tg.entries.BuyLimitations[i] !== itemType) {
+          let i = parseInt(Object.keys(tg.entries.BuyLimitations.entries)[0]) || 0;
+          while (tg.entries.BuyLimitations.entries[i] && tg.entries.BuyLimitations.entries[i] !== itemType) {
             i++;
           }
-          tg.entries.BuyLimitations[i] = itemType;
+          tg.entries.BuyLimitations.entries[i] = itemType;
         });
       });
     return { TradeGenerators: entries.TradeGenerators };
