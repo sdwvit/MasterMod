@@ -5,7 +5,10 @@ export function transformRepeatingQuests(entries: { InGameHours: number }, { fil
   if (!repeatingQuests.some((q) => file.includes(q))) {
     return entries;
   }
-  return { InGameHours: 0 };
+  if (entries.InGameHours) {
+    return { ...entries, InGameHours: 0 };
+  }
+  return null;
 }
 
 export const repeatingQuests = [
