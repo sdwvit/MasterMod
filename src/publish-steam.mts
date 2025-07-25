@@ -12,7 +12,7 @@ import { meta } from "./meta.mjs";
 
 const sanitize = (str: string) => str.replace(/\n/g, "\\n").replace(/"/g, '\\"');
 
-const cmd = (name: string) => {
+const cmd = () => {
   const vdfFilePath = path.join(import.meta.dirname, `workshopitem.vdf`);
   const vdfData = fs.existsSync(vdfFilePath) ? VDF.parse(fs.readFileSync(vdfFilePath, "utf8")) : { workshopitem: {} };
 
@@ -20,7 +20,7 @@ const cmd = (name: string) => {
   vdfData.workshopitem.publishedfileid ||= "0"; // This will be set by SteamCMD
   vdfData.workshopitem.contentfolder = path.join(MODS_PATH, "steamworkshop");
   vdfData.workshopitem.previewfile = path.join(MODS_PATH, "512.png");
-  vdfData.workshopitem.title = sanitize(`${process.env.MOD_NAME.replace(/([A-Z])/g, "$1")} by sdwvit`);
+  vdfData.workshopitem.title = sanitize(`${process.env.MOD_NAME.replace(/([A-Z])/g, " $1").trim()} by sdwvit`);
   vdfData.workshopitem.description = sanitize(meta.description);
   vdfData.workshopitem.changenote = sanitize(meta.changenote);
 
@@ -37,7 +37,7 @@ const cmd = (name: string) => {
   ].join(" ");
 };
 
-childProcess.execSync(cmd(process.env.MOD_NAME), {
+childProcess.execSync(cmd(), {
   stdio: "inherit",
   cwd: MODS_PATH,
   shell: "/usr/bin/bash",

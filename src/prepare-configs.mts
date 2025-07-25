@@ -114,6 +114,7 @@ const writtenFiles = total.filter((s) => s?.length > 0);
 console.log(`Total: ${writtenFiles.flat().length} structs in ${writtenFiles.length} files written.`);
 console.log("Now packing the mod and injecting into the game...");
 await import("./packmod.mjs");
+await import("./push-to-sdk.mts");
 
 function idIsArrayIndex(id: string): boolean {
   return id && Struct.isNumber(Struct.extractKeyFromBrackets(id));
