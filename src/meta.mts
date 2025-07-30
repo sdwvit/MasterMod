@@ -74,9 +74,9 @@ export const meta: Meta = {
  [*] [Balance] Increases cost of Attachments by 10x
  [*] [Challenge / Balance] Increase given and taken damage on Hard difficulty
  [list]
-  [*] 🔪 Player Weapon Damage increased to 400
-  [*] 🗡️ NPC Weapon Damage increased to 400
-  [*] 🦟️ Mutant Damage increased to 400
+  [*] 🔪 Player Weapon Damage increased to 400%
+  [*] 🗡️ NPC Weapon Damage increased to 400%
+  [*] 🦟️ Mutant Damage increased to 400%
  [/list]
  [*] [Balance] Makes some consumables last longer, with the same value (antirad remove radiation slowly
  [list]
