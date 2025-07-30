@@ -129,52 +129,7 @@ export const meta: Meta = {
  [/list]
 [/list]
 [hr][/hr]
-[h3]Mod compatibility:[/h3]
-Here is a list of modified files:[h3][/h3]
-[list]
- [*] DifficultyPrototypes.cfg
- [*] EffectPrototypes.cfg
- [*] DynamicItemGenerator.cfg
- [*] AttachPrototypes.cfg
- [*] ObjPrototypes.cfg
- [*] ObjPrototypes
-  [list]
-   [*] GeneralNPCObjPrototypes.cfg
-   [*] BlindDog.cfg
-   [*] Bloodsucker.cfg
-   [*] Boar.cfg
-   [*] Burer.cfg
-   [*] Cat.cfg
-   [*] Chimera.cfg
-   [*] Controller.cfg
-   [*] Deer.cfg
-   [*] Flesh.cfg
-   [*] MutantBase.cfg
-   [*] Poltergeist.cfg
-   [*] PseudoDog.cfg
-   [*] Pseudogiant.cfg
-   [*] Snork.cfg
-   [*] Tushkan.cfg
-  [/list]
- [*] QuestNodePrototypes
-  [list]
-   [*] BodyParts_Malahit.cfg
-   [*] RSQ01.cfg
-   [*] RSQ04.cfg
-   [*] RSQ05.cfg
-   [*] RSQ06_C00___SIDOROVICH.cfg
-   [*] RSQ07_C00_TSEMZAVOD.cfg
-   [*] RSQ08_C00_ROSTOK.cfg
-   [*] RSQ09_C00_MALAHIT.cfg
-   [*] RSQ10_C00_HARPY.cfg
-  [/list]
- [*] SpawnActorPrototypes/WorldMap_WP/4222 various configs
- [*] TradePrototypes.cfg
-[/list]
-[h3][/h3]
-[hr][/hr]
 [h3]Source code:[/h3]
-[h3][/h3]
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 I aim to eventually make a collection with mods that are inspired by Stalker Anomaly/GAMMA.[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,

@@ -2,7 +2,7 @@
 
 ## Requirements:
 
-- Node.js [24 or later](https://nodejs.org/en/download/current) (with \*.mts typescript loader support).
+- Node.js [24 or later](https://nodejs.org/en/download/current) (with *.mts typescript loader support).
 - The official [STALKER2ZoneKit](https://store.epicgames.com/en-US/p/stalker-2-zone-kit).
 - https://github.com/trumank/repak
 - [Optional] if you fork it and want to publish with own modifications https://developer.valvesoftware.com/wiki/SteamCMD
@@ -18,6 +18,54 @@
    ```bash
     npm run prepare
     ```
+
+---
+### Mod compatibility:
+
+Here is a list of modified files:
+
+- `Modified assets`:
+  - `T_enemymarker`
+  - `T_quest_enemymarker`
+  - `T_compass_shadow_battle`
+  - `T_ThreatGlowing`
+  - `T_ThreatGray`
+- `GameData`:
+  - `DifficultyPrototypes`
+  - `EffectPrototypes`
+  - `ObjPrototypes`
+  - `TradePrototypes`
+- `ItemGeneratorPrototypes`:
+  - `DynamicItemGenerator`
+- `ItemPrototypes`:
+  - `AttachPrototypes`
+- `ObjPrototypes`:
+  - `BlindDog`
+  - `Bloodsucker`
+  - `Boar`
+  - `Burer`
+  - `Cat`
+  - `Chimera`
+  - `Controller`
+  - `Deer`
+  - `Flesh`
+  - `GeneralNPCObjPrototypes`
+  - `MutantBase`
+  - `Poltergeist`
+  - `PseudoDog`
+  - `Pseudogiant`
+  - `Snork`
+  - `Tushkan`
+- `QuestNodePrototypes`:
+  - `BodyParts_Malahit`
+  - `RSQ01`
+  - `RSQ04`
+  - `RSQ05`
+  - `RSQ06_C00___SIDOROVICH`
+  - `RSQ07_C00_TSEMZAVOD`
+  - `RSQ08_C00_ROSTOK`
+  - `RSQ09_C00_MALAHIT`
+  - `RSQ10_C00_HARPY`
 
 ## License
 
