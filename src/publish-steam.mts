@@ -10,7 +10,7 @@ const MODS_PATH = path.join(import.meta.dirname, "..");
 const STALKER_STEAM_ID = "1643320";
 import { meta } from "./meta.mjs";
 
-const sanitize = (str: string) => str.replace(/\n/g, "\\n").replace(/"/g, '\\"');
+const sanitize = (str: string) => str.replace(/\n/g, "").replace(/"/g, '\\"');
 
 const cmd = () => {
   const vdfFilePath = path.join(import.meta.dirname, `workshopitem.vdf`);

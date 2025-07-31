@@ -133,7 +133,7 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 I aim to eventually make a collection with mods that are inspired by Stalker Anomaly/GAMMA.[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Add NoThreatMarkers, add NoEnemyMarkers",
+  changenote: "Reupload because of SDK bug.",
   entriesTransformer: (entries, c) => {
     let newEntries = entries as Entries;
     newEntries = transformDynamicItemGenerator(newEntries as DynamicItemGenerator["entries"], c);
