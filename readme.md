@@ -34,6 +34,7 @@ Here is a list of modified files:
   - `DifficultyPrototypes`
   - `EffectPrototypes`
   - `ObjPrototypes`
+  - `StashPrototypes`
   - `TradePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
