@@ -16,7 +16,7 @@
    ```
 3. Run the generator:
    ```bash
-    npm run prepare
+    npm run prepare-configs
     ```
 
 ---
