@@ -9,6 +9,7 @@ import { transformDifficultyPrototypes } from "./transformDifficultyPrototypes.m
 import { DynamicItemGenerator, transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
 import { ObjPrototypes, transformObjPrototypes } from "./transformObjPrototypes.mjs";
 import { transformAttachPrototypes } from "./transformAttachPrototypes.mjs";
+import { StashPrototypesType, transformStashPrototypes } from "./transformStashPrototypes.mjs";
 
 export const meta: Meta = {
   interestingFiles: [
@@ -18,6 +19,7 @@ export const meta: Meta = {
     "DifficultyPrototypes.cfg",
     "AttachPrototypes.cfg",
     "EffectPrototypes.cfg",
+    "StashPrototypes.cfg",
     ...mobs,
     //"SpawnActorPrototypes/WorldMap_WP/", // very expensive
     ...repeatingQuests,
@@ -33,7 +35,7 @@ export const meta: Meta = {
  [*] [Challenge] Traders are not allowed to sell gear
  [*] [Challenge] No enemy markers. No threat indicators
  [*] [Challenge] Traders or Bartenders are not allowed to buy gear
- [*] [Challenge] Reduced drops from bodies
+ [*] [Challenge] Reduced drops from bodies and stashes
  [list]
   [*] 💊 Consumables drop chance is reduced to 1% or less
   [*] 🔫 Ammo drop chance is reduced to 1% or less, and number of bullets reduced to 5 or so
@@ -63,22 +65,17 @@ export const meta: Meta = {
  [/list]
  [*] [Challenge] Increases cost of everything
  [list]
-  [*] 💣 Ammo Cost increased to 400
-  [*] 🛠️ Repair Cost increased to 400
-  [*] ⚙️ Upgrade Cost increased to 400
-  [*] 🍺 Consumables Cost increased to 400
-  [*] 🛡️ Armor Value increased to 400
-  [*] 🔫 Weapon Value increased to 400
-  [*] 🔮 Artifact Cost increased to 400
+  [*] 💣 Ammo Cost increased to 400%
+  [*] 🛠️ Repair Cost increased to 400%
+  [*] ⚙️ Upgrade Cost increased to 400%
+  [*] 🍺 Consumables Cost increased to 400%
+  [*] 🛡️ Armor Value increased to 400%
+  [*] 🔫 Weapon Value increased to 400%
+  [*] 🔮 Artifact Cost increased to 400%
  [/list]
- [*] [Balance] Increases cost of Attachments by 10x
- [*] [Challenge / Balance] Increase given and taken damage on Hard difficulty
- [list]
-  [*] 🔪 Player Weapon Damage increased to 400%
-  [*] 🗡️ NPC Weapon Damage increased to 400%
-  [*] 🦟️ Mutant Damage increased to 400%
- [/list]
- [*] [Balance] Makes some consumables last longer, with the same value (antirad remove radiation slowly
+ [*] [Balance] Increases cost of Attachments 10x
+ [*] [Challenge / Balance] 🔪🗡🦟️ Increase given and taken damage on Hard difficulty to 400%
+ [*] [Balance] Makes some consumables last longer, with the same value (antirad removes radiation slowly)
  [list]
   [*] 🔋 Limited Edition Energy Drink: Stamina buff now lasts 5 minutes
   [*] 🔋 Energy Drink: Reduced Cost of Stamina Per Action now lasts 5 minutes
@@ -100,24 +97,8 @@ export const meta: Meta = {
   [*] 🧠 PSY Block: PSY Protection now lasts 10 minutes
   [*] 🏋️ Hercules: Weight buff now lasts 50 minutes
  [/list]
- [*] [Balance] All vanilla mutants don't have armor
- [list]
-  [*] 🐶 BlindDog's Strike Protection is set to 0.00001
-  [*] 🩸 Bloodsucker's Strike Protection is set to 0.00001
-  [*] 🐗 Boar's Strike Protection is set to 0.00001
-  [*] 🧙🏻‍♂️ Burer's Strike Protection is set to 0.00001
-  [*] 🐈 Cat's Strike Protection is set to 0.00001
-  [*] 🦁 Chimera's Strike Protection is set to 0.00001
-  [*] 🧠 Controller's Strike Protection is set to 0.00001
-  [*] 🦌 Deer's Strike Protection is set to 0.00001
-  [*] 🐷 Flesh's Strike Protection is set to 0.00001
-  [*] 👻 Poltergeist's Strike Protection is set to 0.00001
-  [*] 🐶 PseudoDog's Strike Protection is set to 0.00001
-  [*] 🧌 Pseudogiant's Strike Protection is set to 0.00001
-  [*] 🤿 Snork's Strike Protection is set to 0.00001
-  [*] 🐀 Tushkan's Strike Protection is set to 0.00001
- [/list]
- [*] [Challenge] Removes preplaced around the map items
+ [*] [Balance] Removes armor from vanilla mutants
+ [*] [Challenge] Removes preplaced gear / items around the map
  [list]
   [*] 🍔 Wooden Boxes don't drop food
   [*] 🩹 Metal Crates don't drop medkits or bandages
@@ -131,9 +112,9 @@ export const meta: Meta = {
 [hr][/hr]
 [h3]Source code:[/h3]
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
-I aim to eventually make a collection with mods that are inspired by Stalker Anomaly/GAMMA.[h3][/h3]
+I aim to eventually make a collection with mods that are inspired by Stalker GAMMA.[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Reupload because of SDK bug.",
+  changenote: "Reduce chance of consumables drop from stashes to 1% or less.",
   entriesTransformer: (entries, c) => {
     let newEntries = entries as Entries;
     newEntries = transformDynamicItemGenerator(newEntries as DynamicItemGenerator["entries"], c);
@@ -145,6 +126,7 @@ All changes have been tested against fresh save file. Some of these changes won'
     newEntries = transformSpawnActorPrototypes(newEntries as GearEntries, c);
     newEntries = transformRepeatingQuests(newEntries as { InGameHours: number }, c);
     newEntries = transformTradePrototypes(newEntries as TraderEntries, c);
+    newEntries = transformStashPrototypes(newEntries as StashPrototypesType["entries"], c);
     return newEntries;
   },
 };

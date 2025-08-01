@@ -1,4 +1,4 @@
-import { GetStructType } from "s2cfgtojson";
+import { ERank, ESpawnType, GetStructType } from "s2cfgtojson";
 
 /**
  * Removes preplaced items from the map. Like medkits, destructible items contents, and gear.
@@ -64,15 +64,15 @@ export function transformSpawnActorPrototypes(entries: GearEntries, { file }: { 
   return null;
 }
 export type GearEntries = {
-  SpawnType: string;
+  SpawnType: ESpawnType;
   ItemSID: string;
   SID: string;
   SpawnOnStart: boolean;
   SpawnedPrototypeSID: string;
   ItemGeneratorSettings: GetStructType<
     {
-      PlayerRank: "ERank::Newbie";
-      ItemGenerators: { PrototypeSID: "DestructibleStash_Med" }[];
+      PlayerRank: ERank;
+      ItemGenerators: { PrototypeSID: string }[];
     }[]
   >;
   PackOfItemsPrototypeSID: string;
