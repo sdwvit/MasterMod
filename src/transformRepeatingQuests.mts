@@ -1,15 +1,21 @@
+import { GetStructType } from "s2cfgtojson";
+import { Meta } from "./prepare-configs.mjs";
+
 /**
  * Removes timeout for repeating quests.
  */
-export function transformRepeatingQuests(entries: { InGameHours: number }, { file }: { file: string }) {
-  if (!repeatingQuests.some((q) => file.includes(q))) {
+export const transformRepeatingQuests: Meta["entriesTransformer"] = (
+  entries: QuestNodePrototype["entries"],
+  { filePath },
+) => {
+  if (!repeatingQuests.some((q) => filePath.includes(q))) {
     return entries;
   }
   if (entries.InGameHours) {
     return { ...entries, InGameHours: 0 };
   }
   return null;
-}
+};
 
 export const repeatingQuests = [
   "QuestNodePrototypes/BodyParts_Malahit.cfg",
@@ -22,3 +28,5 @@ export const repeatingQuests = [
   "QuestNodePrototypes/RSQ09_C00_MALAHIT.cfg",
   "QuestNodePrototypes/RSQ10_C00_HARPY.cfg",
 ];
+
+type QuestNodePrototype = GetStructType<{ InGameHours?: number; SID: string }>;

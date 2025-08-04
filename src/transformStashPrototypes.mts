@@ -1,7 +1,8 @@
 import { ERank, GetStructType } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
+import { semiRandom } from "./semi-random.mjs";
 
-export type StashPrototypesType = GetStructType<{
+type StashPrototypesType = GetStructType<{
   SID: string;
   ItemGenerators: {
     Rank: ERank;
@@ -21,17 +22,17 @@ export type StashPrototypesType = GetStructType<{
   }[];
 }>;
 
-export function transformStashPrototypes(
+export const transformStashPrototypes: Meta["entriesTransformer"] = (
   entries: StashPrototypesType["entries"],
-  c: Parameters<Meta["entriesTransformer"]>[1],
-) {
-  if (!c.file.includes("/StashPrototypes.cfg")) {
+  { filePath, index },
+) => {
+  if (!filePath.includes("/StashPrototypes.cfg")) {
     return entries;
   }
   if (entries.SID === "empty") {
     return null;
   }
-  let keep = false;
+  let newEntries: StashPrototypesType["entries"] | null = null;
   Object.values(entries.ItemGenerators.entries)
     .filter((e) => e.entries)
     .forEach((e) => {
@@ -39,11 +40,18 @@ export function transformStashPrototypes(
         .filter((e) => e.entries)
         .forEach((ie) => {
           ie.entries.MinSpawnChance = 0;
-          keep = true;
-          while (ie.entries.MaxSpawnChance > 0.1) ie.entries.MaxSpawnChance /= 10;
+          if (ie.entries.ItemSetCount) ie.entries.ItemSetCount = 1;
+          while (ie.entries.MaxSpawnChance > 0.2) ie.entries.MaxSpawnChance /= Math.floor(semiRandom(index) * 8) + 2;
           ie.entries.MaxSpawnChance = parseFloat(ie.entries.MaxSpawnChance.toFixed(3));
+          Object.values(ie.entries.Items.entries || {}).forEach((item) => {
+            if (item.entries) {
+              if (item.entries.MinCount) item.entries.MinCount = 1;
+              if (item.entries.MaxCount) item.entries.MaxCount = 1;
+            }
+          });
+          newEntries = entries;
         });
     });
 
-  return keep ? entries : null;
-}
+  return newEntries;
+};

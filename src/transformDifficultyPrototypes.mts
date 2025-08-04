@@ -1,8 +1,10 @@
+import { Meta } from "./prepare-configs.mjs";
+
 /**
  * Increases cost of everything and damage on Hard difficulty.
  */
-export function transformDifficultyPrototypes(_: { SID: string }, { file }: { file: string }) {
-  if (!file.includes("DifficultyPrototypes.cfg")) {
+export const transformDifficultyPrototypes: Meta["entriesTransformer"] = (_, { filePath }) => {
+  if (!filePath.includes("DifficultyPrototypes.cfg")) {
     return _;
   }
   if (_.SID !== "Hard") {
@@ -21,4 +23,4 @@ export function transformDifficultyPrototypes(_: { SID: string }, { file }: { fi
     NPC_Weapon_BaseDamage: 4,
     Mutant_BaseDamage: 4,
   };
-}
+};

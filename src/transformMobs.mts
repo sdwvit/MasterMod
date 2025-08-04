@@ -1,12 +1,11 @@
-import { Struct } from "s2cfgtojson";
+import { GetStructType } from "s2cfgtojson";
+import { Meta } from "./prepare-configs.mts";
 
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
- * @param entries
- * @param file
  */
-export function transformMobs(entries: { Protection: Struct<{ Strike: number }> }, { file }: { file: string }) {
-  if (!mobs.some((m) => file.includes(m))) {
+export const transformMobs: Meta["entriesTransformer"] = (entries: ObjectPrototype["entries"], { filePath }) => {
+  if (!mobs.some((m) => filePath.includes(m))) {
     return entries;
   }
   if (!entries.Protection || !entries.Protection.entries) {
@@ -14,7 +13,7 @@ export function transformMobs(entries: { Protection: Struct<{ Strike: number }> 
   }
   entries.Protection.entries = { Strike: 0.0001 }; // Set Strike protection to 0 for all mobs
   return { Protection: entries.Protection };
-}
+};
 export const mobs = [
   "BlindDog.cfg",
   "Bloodsucker.cfg",
@@ -32,3 +31,4 @@ export const mobs = [
   "Snork.cfg",
   "Tushkan.cfg",
 ];
+type ObjectPrototype = GetStructType<{ SID: string; Protection: { Strike: number } }>;

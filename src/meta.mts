@@ -1,29 +1,31 @@
-import { Entries, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
-import { TraderEntries, transformTradePrototypes } from "./transformTradePrototypes.mjs";
+import { transformTradePrototypes } from "./transformTradePrototypes.mjs";
 import { repeatingQuests, transformRepeatingQuests } from "./transformRepeatingQuests.mjs";
-import { GearEntries, transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
+import { transformSpawnActorPrototypes, totals as spawnTotals } from "./transformSpawnActorPrototypes.mjs";
 import { mobs, transformMobs } from "./transformMobs.mjs";
 import { transformEffectPrototypes } from "./transformEffectPrototypes.mjs";
 import { transformDifficultyPrototypes } from "./transformDifficultyPrototypes.mjs";
-import { DynamicItemGenerator, transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
-import { ObjPrototypes, transformObjPrototypes } from "./transformObjPrototypes.mjs";
+import { transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
+import { transformObjPrototypes } from "./transformObjPrototypes.mjs";
 import { transformAttachPrototypes } from "./transformAttachPrototypes.mjs";
-import { StashPrototypesType, transformStashPrototypes } from "./transformStashPrototypes.mjs";
+import { transformStashPrototypes } from "./transformStashPrototypes.mjs";
+import { transformItemGeneratorPrototypes } from "./transformItemGeneratorPrototypes.mjs";
 
 export const meta: Meta = {
   interestingFiles: [
+    "AttachPrototypes.cfg",
+    "DifficultyPrototypes.cfg",
+    "EffectPrototypes.cfg",
     "DynamicItemGenerator.cfg",
+    "ItemGeneratorPrototypes.cfg",
+    "Gamepass_ItemGenerators.cfg",
     "ObjPrototypes/GeneralNPCObjPrototypes.cfg",
     "GameData/ObjPrototypes.cfg",
-    "DifficultyPrototypes.cfg",
-    "AttachPrototypes.cfg",
-    "EffectPrototypes.cfg",
-    "StashPrototypes.cfg",
-    ...mobs,
-    //"SpawnActorPrototypes/WorldMap_WP/", // very expensive
     ...repeatingQuests,
+    "StashPrototypes.cfg",
     "TradePrototypes.cfg",
+    ...mobs,
+    "SpawnActorPrototypes/WorldMap_WP/", // very expensive
   ],
   interestingContents: [],
   prohibitedIds: [],
@@ -32,15 +34,7 @@ export const meta: Meta = {
 [hr][/hr]
 [h3]All changes to the base game:[/h3]
 [list]
- [*] [Challenge] Traders are not allowed to sell gear
  [*] [Challenge] No enemy markers. No threat indicators
- [*] [Challenge] Traders or Bartenders are not allowed to buy gear
- [*] [Challenge] Reduced drops from bodies and stashes
- [list]
-  [*] 💊 Consumables drop chance is reduced to 1% or less
-  [*] 🔫 Ammo drop chance is reduced to 1% or less, and number of bullets reduced to 5 or so
-  [*] 💣 Grenades drop chance is reduced to 1% or less
- [/list]
  [*] [Balance] NPCs drop armor with very low chance based on armor value
  [list]
   [*] Very long list of 312 different loadouts and probability of dropping armor adjustments
@@ -53,27 +47,10 @@ export const meta: Meta = {
  [*] [QoL] Prevents Player and NPCs from being knocked down
  [*] [QoL] Removes Fall damage for Player and NPCs
  [*] [QoL/Balance] There is now no cooldown between repeatable quests
- [list]
-  [*] Malachite trader's CD is reduced to 0
-  [*] Drabadan's (garbage barman) CD is reduced to 0
-  [*] Sich's (zaton trader) CD is reduced to 0
-  [*] Sid's (rookie village) CD is reduced to 0
-  [*] Chemistry Factory quest iver (todo: update name) CD is reduced to 0
-  [*] Rostok barman CD is reduced to 0
-  [*] Harpy (Yaniv technician) CD is reduced to 0
-  [*] Zalissya barman's CD is reduced to 0
- [/list]
- [*] [Challenge] Increases cost of everything
- [list]
-  [*] 💣 Ammo Cost increased to 400%
-  [*] 🛠️ Repair Cost increased to 400%
-  [*] ⚙️ Upgrade Cost increased to 400%
-  [*] 🍺 Consumables Cost increased to 400%
-  [*] 🛡️ Armor Value increased to 400%
-  [*] 🔫 Weapon Value increased to 400%
-  [*] 🔮 Artifact Cost increased to 400%
- [/list]
- [*] [Balance] Increases cost of Attachments 10x
+ [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact)
+ [*] [Balance] Increases cost of Attachments to 1000%
+ [*] [Challenge] Traders are not allowed to sell gear
+ [*] [Challenge] Traders or Bartenders are not allowed to buy gear
  [*] [Challenge / Balance] 🔪🗡🦟️ Increase given and taken damage on Hard difficulty to 400%
  [*] [Balance] Makes some consumables last longer, with the same value (antirad removes radiation slowly)
  [list]
@@ -83,30 +60,25 @@ export const meta: Meta = {
   [*] 😴 Energy Drink: Sleepiness reduction now lasts 30 seconds
   [*] 🔋 Water: Stamina buff now lasts 50 seconds
   [*] 🔋 Water: Reduced Cost of Stamina Per Action now lasts 5 minutes
-  [*] 🩸 Bandage: Bleeding control now lasts 20 seconds
   [*] 🩸 Barvinok: Bleeding control now lasts 30 minutes
-  [*] 🩸 Medkit: Bleeding control now lasts 20 seconds
-  [*] 🩸 Army Medkit: Bleeding control now lasts 20 seconds
-  [*] 🩸 Scientist Medkit: Bleeding control now lasts 20 seconds
-  [*] ☢️ Scientist Medkit: Radiation reduction now lasts 20 seconds
-  [*] ☢️ Antirad: Radiation reduction now lasts 20 seconds
-  [*] ☢️ Beer: Radiation reduction now lasts 20 seconds
-  [*] ☢️ Vodka: Radiation reduction now lasts 20 seconds
+  [*] 🩸 Bandage, Medkit, Army Medkit, Scientist Medkit: Bleeding control now lasts 20 seconds
+  [*] ☢️ Scientist Medkit, Antirad, Beer, Vodka: Radiation reduction now lasts 20 seconds
   [*] ☢️ Dvupalov Vodka: Radiation reduction now lasts 100 seconds
   [*] 🧠 Dvupalov Vodka: PSY Protection now lasts 15 minutes
   [*] 🧠 PSY Block: PSY Protection now lasts 10 minutes
   [*] 🏋️ Hercules: Weight buff now lasts 50 minutes
  [/list]
  [*] [Balance] Removes armor from vanilla mutants
+ [*] [Challenge] Reduced 💊 Consumables, 🔫 Ammo, and 💣 Grenades drops from bodies and stashes
  [*] [Challenge] Removes preplaced gear / items around the map
  [list]
-  [*] 🍔 Wooden Boxes don't drop food
+  [*] 🍔 Wooden Boxes, Plywood Crates don't drop food
   [*] 🩹 Metal Crates don't drop medkits or bandages
   [*] 🔫 Wooden Ammo Crates don't drop ammo
-  [*] 🍔 Wooden DSP Crates don't drop food
-  [*] 🥠 3067 instances of destructible objects now don't drop items
-  [*] 🪃 411 instances of preplaced weapons or armor were removed (no more falcon / exo rush
-  [*] 💊 759 instances of preplaced medkits were removed
+  [*] 🥠 7674 instances of destructible objects now don't drop items
+  [*] 🪃 431 instances of preplaced weapons or armor were removed (no more falcon / exo rush
+  [*] 💊 97 instances of preplaced medkits were removed
+  [*] 🧰 1166 instances of stashes were nerfed 
  [/list]
 [/list]
 [hr][/hr]
@@ -114,19 +86,23 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 I aim to eventually make a collection with mods that are inspired by Stalker GAMMA.[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Reduce chance of consumables drop from stashes to 1% or less.",
+  changenote: "Reduce chance of consumables, ammo, grenades drops from stashes.",
   entriesTransformer: (entries, c) => {
-    let newEntries = entries as Entries;
-    newEntries = transformDynamicItemGenerator(newEntries as DynamicItemGenerator["entries"], c);
-    newEntries = transformObjPrototypes(newEntries as ObjPrototypes["entries"], c);
-    newEntries = transformDifficultyPrototypes(newEntries as { SID: string }, c);
-    newEntries = transformAttachPrototypes(newEntries as { Cost: number }, c);
-    newEntries = transformEffectPrototypes(newEntries as { SID: string; Duration: number }, c);
-    newEntries = transformMobs(newEntries as { Protection: Struct<{ Strike: number }> }, c);
-    newEntries = transformSpawnActorPrototypes(newEntries as GearEntries, c);
-    newEntries = transformRepeatingQuests(newEntries as { InGameHours: number }, c);
-    newEntries = transformTradePrototypes(newEntries as TraderEntries, c);
-    newEntries = transformStashPrototypes(newEntries as StashPrototypesType["entries"], c);
-    return newEntries;
+    return [
+      transformDynamicItemGenerator,
+      transformObjPrototypes,
+      transformDifficultyPrototypes,
+      transformAttachPrototypes,
+      transformEffectPrototypes,
+      transformMobs,
+      transformSpawnActorPrototypes,
+      transformRepeatingQuests,
+      transformTradePrototypes,
+      transformStashPrototypes,
+      transformItemGeneratorPrototypes,
+    ].reduce((acc, f) => f(acc, c) as typeof entries, entries);
+  },
+  onFinish() {
+    console.log("Removed preplaced items:", spawnTotals);
   },
 };

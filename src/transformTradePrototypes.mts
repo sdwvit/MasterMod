@@ -1,10 +1,16 @@
 import { GetStructType, Struct } from "s2cfgtojson";
+import { Meta } from "./prepare-configs.mjs";
+
+type TradePrototype = GetStructType<{ TradeGenerators: { BuyLimitations: string[] }[]; SID: string }>;
 
 /**
  * Don't allow traders to buy weapons and armor.
  */
-export function transformTradePrototypes(entries: TraderEntries, { file }: { file: string }) {
-  if (!file.includes("TradePrototypes.cfg")) {
+export const transformTradePrototypes: Meta["entriesTransformer"] = (
+  entries: TradePrototype["entries"],
+  { filePath },
+) => {
+  if (!filePath.includes("TradePrototypes.cfg")) {
     return entries;
   }
   if (entries.TradeGenerators?.entries) {
@@ -27,7 +33,7 @@ export function transformTradePrototypes(entries: TraderEntries, { file }: { fil
     return { TradeGenerators: entries.TradeGenerators };
   }
   return null;
-}
+};
 export type TraderEntries = GetStructType<{
   SID: "BaseTraderNPC_Template";
   TradeGenerators: {

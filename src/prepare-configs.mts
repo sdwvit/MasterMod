@@ -12,13 +12,14 @@ export type Meta = {
   changenote: string;
   description: string;
   entriesTransformer(
-    entries: { SID: string },
-    context: { s: Struct<typeof entries>; i: number; arr: Struct[]; file: string },
+    entries: WithSID["entries"],
+    context: { struct: WithSID; index: number; array: Struct[]; filePath: string; rawContent: string },
   ): Entries | null;
   interestingContents: string[];
   interestingFiles: string[];
   interestingIds: string[];
   prohibitedIds: string[];
+  onFinish?(): void;
 };
 const emptyMeta = `
   import { Struct, Entries } from "s2cfgtojson";
@@ -69,31 +70,38 @@ const { meta } = (await import(metaPath)) as { meta: Meta };
 const { interestingIds, interestingFiles, interestingContents, prohibitedIds, entriesTransformer } = meta;
 
 const total = getCfgFiles()
-  .filter((file) => interestingFiles.some((i) => file.includes(i)))
-  .map((file) => {
-    const content = readOneFile(file);
-    if (interestingContents.length && !interestingContents.some((i) => content.includes(i))) {
+  .filter((file) => interestingFiles.some((i) => file.includes(`/${i}`)))
+  .map((filePath) => {
+    const rawContent = readOneFile(filePath);
+    if (interestingContents.length && !interestingContents.some((i) => rawContent.includes(i))) {
       return;
     }
     // console.log(`Reading file: ${file}`);
-    const pathToSave = path.parse(file.slice(BASE_CFG_DIR.length + 1));
+    const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
 
-    const structs = Struct.fromString<Struct<{ SID?: string }>>(content)
+    const structs = Struct.fromString<Struct<{ SID?: string }>>(rawContent)
       .filter(
-        (s): s is Struct<{ SID: string }> =>
+        (s): s is WithSID =>
           s.entries.SID &&
           (interestingIds.length ? interestingIds.some((id) => s.entries.SID.includes(id)) : true) &&
           prohibitedIds.every((id) => !s.entries.SID.includes(id)),
       )
-      .map((s, i, arr) => {
-        s.refurl = "../" + pathToSave.base;
-        s.refkey = s.entries.SID;
-        s._id = `${MOD_NAME}${idIsArrayIndex(s._id) ? "" : `_${s._id}`}`;
-        if (entriesTransformer) (s as Struct).entries = entriesTransformer(s.entries, { s, i, arr, file });
-        if (!s.entries) {
+      .map((struct, index, array) => {
+        struct.refurl = "../" + pathToSave.base;
+        struct.refkey = struct.entries.SID;
+        struct._id = `${MOD_NAME}${idIsArrayIndex(struct._id) ? "" : `_${struct._id}`}`;
+        if (entriesTransformer)
+          (struct as Struct).entries = entriesTransformer(struct.entries, {
+            struct,
+            index,
+            array,
+            filePath,
+            rawContent,
+          });
+        if (!struct.entries) {
           return null;
         }
-        return s;
+        return struct;
       })
       .filter(Boolean);
 
@@ -108,6 +116,13 @@ const total = getCfgFiles()
     }
     return structs;
   });
+meta.onFinish?.();
+
+function idIsArrayIndex(id: string): boolean {
+  return id && Struct.isNumber(Struct.extractKeyFromBrackets(id));
+}
+
+export type WithSID = Struct<{ SID: string }>;
 
 console.log(`Total: ${total.length} files processed.`);
 const writtenFiles = total.filter((s) => s?.length > 0);
@@ -115,7 +130,3 @@ console.log(`Total: ${writtenFiles.flat().length} structs in ${writtenFiles.leng
 console.log("Now packing the mod and injecting into the game...");
 await import("./packmod.mjs");
 await import("./push-to-sdk.mts");
-
-function idIsArrayIndex(id: string): boolean {
-  return id && Struct.isNumber(Struct.extractKeyFromBrackets(id));
-}

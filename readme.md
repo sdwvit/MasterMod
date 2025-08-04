@@ -16,7 +16,7 @@
    ```
 3. Run the generator:
    ```bash
-    npm run prepare-configs
+    npm run prepare
     ```
 
 ---
@@ -24,20 +24,16 @@
 
 Here is a list of modified files:
 
-- `Modified assets`:
-  - `T_enemymarker`
-  - `T_quest_enemymarker`
-  - `T_compass_shadow_battle`
-  - `T_ThreatGlowing`
-  - `T_ThreatGray`
 - `GameData`:
   - `DifficultyPrototypes`
   - `EffectPrototypes`
+  - `ItemGeneratorPrototypes`
   - `ObjPrototypes`
   - `StashPrototypes`
   - `TradePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
+  - `Gamepass_ItemGenerators`
 - `ItemPrototypes`:
   - `AttachPrototypes`
 - `ObjPrototypes`:

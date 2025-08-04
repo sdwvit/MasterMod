@@ -1,17 +1,23 @@
+import { Meta } from "./prepare-configs.mjs";
+import { GetStructType } from "s2cfgtojson";
+
 /**
  * Makes some consumables last longer.
  * @param entries
  * @param file
  */
-export function transformEffectPrototypes(entries: { SID: string; Duration: number }, { file }: { file: string }) {
-  if (!file.includes("EffectPrototypes.cfg")) {
+export const transformEffectPrototypes: Meta["entriesTransformer"] = (
+  entries: TransformEffect["entries"],
+  { filePath },
+) => {
+  if (!filePath.includes("EffectPrototypes.cfg")) {
     return entries;
   }
   if (!consumables.has(entries.SID)) {
     return null;
   }
   return { Duration: entries.Duration * 10 };
-}
+};
 const consumables = new Set([
   "EnergeticStamina",
   "EnergeticLimitedStamina",
@@ -34,3 +40,4 @@ const consumables = new Set([
   "WaterStaminaPerAction1",
   "HerculesWeight_Penalty",
 ]);
+type TransformEffect = GetStructType<{ SID: string; Duration: number }>;
