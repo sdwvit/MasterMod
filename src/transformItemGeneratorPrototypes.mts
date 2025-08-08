@@ -23,18 +23,16 @@ type ItemGeneratorType = GetStructType<{
   }[];
 }>;
 
-export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (
-  entries: ItemGeneratorType["entries"],
-  { filePath, index },
-) => {
-  if (
-    !filePath.includes("/ItemGeneratorPrototypes.cfg") &&
-    !filePath.includes("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")
-  ) {
+export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorType["entries"], { filePath, index }) => {
+  if (!filePath.includes("/ItemGeneratorPrototypes.cfg") && !filePath.includes("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) {
     return entries;
   }
 
   let keep = false;
+
+  if (prohibitedIds.some((id) => entries.SID.includes(id))) {
+    return null;
+  }
 
   Object.values(entries.ItemGenerator?.entries || {}).forEach((itemGen) => {
     Object.values(itemGen.entries?.PossibleItems?.entries || {}).forEach((possibleItem) => {
@@ -53,15 +51,14 @@ export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (
         chance /= Math.floor(semiRandom(index) * 8) + 2;
       }
       if (possibleItem.entries.MinCount) possibleItem.entries.MinCount = 1;
-      possibleItem.entries.Chance = parseFloat(chance.toFixed(3));
+      possibleItem.entries.Chance = 0.5; // todo
       if (isConsumable || isGrenade) {
         if (possibleItem.entries.MaxCount) possibleItem.entries.MaxCount = 1;
       }
       if (isAmmo) {
         if (possibleItem.entries.MaxCount) possibleItem.entries.MaxCount = Math.floor(semiRandom(index) * 9) + 1;
         if (possibleItem.entries.AmmoMinCount) possibleItem.entries.AmmoMinCount = 1;
-        if (possibleItem.entries.AmmoMaxCount)
-          possibleItem.entries.AmmoMaxCount = Math.floor(semiRandom(index) * 9) + 1;
+        if (possibleItem.entries.AmmoMaxCount) possibleItem.entries.AmmoMaxCount = Math.floor(semiRandom(index) * 9) + 1;
       }
     });
   });
@@ -69,12 +66,8 @@ export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (
   return keep ? entries : null;
 };
 
-const ammoPrototypes = new Set(
-  readFileAndGetStructs<WithSID>("ItemPrototypes/AmmoPrototypes.cfg").map((e) => e.entries.SID),
-);
-const consumablePrototypes = new Set(
-  readFileAndGetStructs<WithSID>("ItemPrototypes/ConsumablePrototypes.cfg").map((e) => e.entries.SID),
-);
-const grenadePrototypes = new Set(
-  readFileAndGetStructs<WithSID>("ItemPrototypes/GrenadePrototypes.cfg").map((e) => e.entries.SID),
-);
+const prohibitedIds = ["Arena"];
+
+const ammoPrototypes = new Set(readFileAndGetStructs<WithSID>("ItemPrototypes/AmmoPrototypes.cfg").map((e) => e.entries.SID));
+const consumablePrototypes = new Set(readFileAndGetStructs<WithSID>("ItemPrototypes/ConsumablePrototypes.cfg").map((e) => e.entries.SID));
+const grenadePrototypes = new Set(readFileAndGetStructs<WithSID>("ItemPrototypes/GrenadePrototypes.cfg").map((e) => e.entries.SID));

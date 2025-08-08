@@ -24,13 +24,14 @@
 
 Here is a list of modified files:
 
+- `ALifePrototypes`:
+  - `ALifeDirectorScenarioPrototypes`
 - `GameData`:
   - `DifficultyPrototypes`
   - `EffectPrototypes`
   - `ItemGeneratorPrototypes`
   - `ObjPrototypes`
   - `StashPrototypes`
-  - `TradePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`

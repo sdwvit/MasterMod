@@ -109,10 +109,7 @@ const total = getCfgFiles()
       const cfgEnclosingFolder = path.join(modFolderRaw, nestedDir, pathToSave.dir, pathToSave.name);
 
       if (!fs.existsSync(cfgEnclosingFolder)) fs.mkdirSync(cfgEnclosingFolder, { recursive: true });
-      fs.writeFileSync(
-        path.join(cfgEnclosingFolder, `${MOD_NAME}${pathToSave.base}`),
-        structs.map((s) => s.toString()).join("\n\n"),
-      );
+      fs.writeFileSync(path.join(cfgEnclosingFolder, `${MOD_NAME}${pathToSave.base}`), structs.map((s) => s.toString()).join("\n\n"));
     }
     return structs;
   });
@@ -130,3 +127,4 @@ console.log(`Total: ${writtenFiles.flat().length} structs in ${writtenFiles.leng
 console.log("Now packing the mod and injecting into the game...");
 await import("./packmod.mjs");
 await import("./push-to-sdk.mts");
+await import("./update-readme.mjs");

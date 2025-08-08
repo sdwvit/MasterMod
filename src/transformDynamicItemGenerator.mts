@@ -8,10 +8,7 @@ import { semiRandom } from "./semi-random.mjs";
  * @param entries
  * @param file
  */
-export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (
-  entries: DynamicItemGenerator["entries"],
-  { filePath },
-) => {
+export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entries: DynamicItemGenerator["entries"], { filePath }) => {
   if (!filePath.includes("DynamicItemGenerator.cfg")) {
     return entries;
   }
@@ -63,19 +60,18 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (
                   pi.entries.Weight ||= 1;
                   pi.entries.MinDurability = 0.01 + (1 / semiRandom(i)) * 0.04;
                   if (allArmorCosts[pi.entries.ItemPrototypeSID]) {
-                    pi.entries.MaxDurability =
-                      pi.entries.MinDurability + 5000 / allArmorCosts[pi.entries.ItemPrototypeSID];
-                    pi.entries.Chance = 500 / allArmorCosts[pi.entries.ItemPrototypeSID];
+                    pi.entries.Chance = 5000 / allArmorCosts[pi.entries.ItemPrototypeSID];
+                    pi.entries.MaxDurability = pi.entries.MinDurability + pi.entries.Chance;
                   } else {
                     console.warn(`Unknown armor cost for ${pi.entries.ItemPrototypeSID}, using fallback values.`);
 
-                    pi.entries.Chance = 500 / allArmorCosts[armorAliasMap[pi.entries.ItemPrototypeSID]];
-                    pi.entries.MaxDurability = pi.entries.MinDurability + 10 * pi.entries.Chance;
+                    pi.entries.Chance = 5000 / allArmorCosts[armorAliasMap[pi.entries.ItemPrototypeSID]];
+                    pi.entries.MaxDurability = pi.entries.MinDurability + pi.entries.Chance;
                     pi.entries.ItemPrototypeSID ||= armorAliasMap[pi.entries.ItemPrototypeSID];
                   }
-                  pi.entries.MinDurability = Math.round(pi.entries.MinDurability * 1e5) / 1e5;
-                  pi.entries.MaxDurability = Math.round(pi.entries.MaxDurability * 1e5) / 1e5;
-                  pi.entries.Chance = Math.round(pi.entries.Chance * 1e5) / 1e5;
+                  pi.entries.MinDurability = Math.round(pi.entries.MinDurability * 1e2) / 1e2;
+                  pi.entries.MaxDurability = Math.max(1, Math.round(pi.entries.MaxDurability * 1e2) / 1e2);
+                  pi.entries.Chance = 0.5; // todo;
                 });
             }
             break;
@@ -92,7 +88,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (
                 while (pi.entries.Chance > 0.01) {
                   pi.entries.Chance /= 10;
                 }
-                pi.entries.Chance = parseFloat(pi.entries.Chance.toFixed(5));
+                pi.entries.Chance = parseFloat(pi.entries.Chance.toFixed(4));
               });
             break;
           }
@@ -176,40 +172,40 @@ export const allArmorCosts = {
   SEVA_Spark_Armor: 50000,
   HeavyBattle_Spark_Armor: 53500,
   Battle_Dolg_End_Armor: 80000,
-  NPC_Sel_Armor: 3000,
-  NPC_Sel_Neutral_Armor: 3000,
-  NPC_Tec_Armor: 3000,
-  NPC_Cloak_Heavy_Neutral_Armor: 30000,
-  NPC_SkinCloak_Bandit_Armor: 17200,
+  NPC_Sel_Armor: 11600,
+  NPC_Sel_Neutral_Armor: 13500,
+  NPC_Tec_Armor: 21700,
+  NPC_Cloak_Heavy_Neutral_Armor: 36000,
+  NPC_SkinCloak_Bandit_Armor: 36000,
   NPC_HeavyExoskeleton_Mercenaries_Armor: 63000,
   NPC_Heavy_Military_Armor: 30000,
   NPC_Cloak_Heavy_Military_Armor: 30000,
-  NPC_Sci_Armor: 3250,
+  NPC_Sci_Armor: 39000,
   NPC_Battle_Noon_Armor: 10000,
   NPC_HeavyAnomaly_Noon_Armor: 30000,
   NPC_HeavyExoskeleton_Noon_Armor: 90000,
   NPC_Exoskeleton_Noon_Armor: 100000,
-  NPC_Spark_Armor: 2500,
-  NPC_Anomaly_Spark_Armor: 2500,
+  NPC_Spark_Armor: 25000,
+  NPC_Anomaly_Spark_Armor: 39000,
   NPC_HeavyExoskeleton_Spark_Armor: 90000,
   NPC_Heavy_Corps_Armor: 31000,
   NPC_Heavy2_Coprs_Armor: 32000,
   NPC_Heavy3_Corps_Armor: 35000,
   NPC_Heavy3Exoskeleton_Coprs_Armor: 90000,
   NPC_Exoskeleton_Coprs_Armor: 85000,
-  NPC_Richter_Armor: 3750,
+  NPC_Richter_Armor: 37500,
   NPC_Korshunov_Armor: 25000,
   NPC_Korshunov_Armor_2: 130000,
-  NPC_Dalin_Armor: 3750,
-  NPC_Agata_Armor: 3750,
-  NPC_Faust_Armor: 3750,
-  NPC_Kaymanov_Armor: 3750,
+  NPC_Dalin_Armor: 37500,
+  NPC_Agata_Armor: 37500,
+  NPC_Faust_Armor: 37500,
+  NPC_Kaymanov_Armor: 37500,
   NPC_Shram_Armor: 40000,
   NPC_Dekhtyarev_Armor: 40000,
-  NPC_Sidorovich_Armor: 3750,
-  NPC_Barmen_Armor: 3750,
-  NPC_Batya_Armor: 3750,
-  NPC_Tyotya_Armor: 3750,
+  NPC_Sidorovich_Armor: 37500,
+  NPC_Barmen_Armor: 37500,
+  NPC_Batya_Armor: 37500,
+  NPC_Tyotya_Armor: 37500,
   Light_Duty_Helmet: 12300,
   Heavy_Duty_Helmet: 25800,
   Heavy_Svoboda_Helmet: 32600,

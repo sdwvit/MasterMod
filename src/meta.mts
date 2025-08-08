@@ -1,7 +1,7 @@
 import { Meta } from "./prepare-configs.mjs";
 import { transformTradePrototypes } from "./transformTradePrototypes.mjs";
 import { repeatingQuests, transformRepeatingQuests } from "./transformRepeatingQuests.mjs";
-import { transformSpawnActorPrototypes, totals as spawnTotals } from "./transformSpawnActorPrototypes.mjs";
+import { totals as spawnTotals, transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
 import { mobs, transformMobs } from "./transformMobs.mjs";
 import { transformEffectPrototypes } from "./transformEffectPrototypes.mjs";
 import { transformDifficultyPrototypes } from "./transformDifficultyPrototypes.mjs";
@@ -10,6 +10,7 @@ import { transformObjPrototypes } from "./transformObjPrototypes.mjs";
 import { transformAttachPrototypes } from "./transformAttachPrototypes.mjs";
 import { transformStashPrototypes } from "./transformStashPrototypes.mjs";
 import { transformItemGeneratorPrototypes } from "./transformItemGeneratorPrototypes.mjs";
+import { transformALifeDirectorScenarioPrototypes } from "./transformALifeDirectorScenarioPrototypes.mjs";
 
 export const meta: Meta = {
   interestingFiles: [
@@ -23,9 +24,10 @@ export const meta: Meta = {
     "GameData/ObjPrototypes.cfg",
     ...repeatingQuests,
     "StashPrototypes.cfg",
-    "TradePrototypes.cfg",
+    "Wea.cfg",
     ...mobs,
     "SpawnActorPrototypes/WorldMap_WP/", // very expensive
+    "ALifeDirectorScenarioPrototypes.cfg",
   ],
   interestingContents: [],
   prohibitedIds: [],
@@ -46,6 +48,7 @@ export const meta: Meta = {
  [/list]
  [*] [QoL] Prevents Player and NPCs from being knocked down
  [*] [QoL] Removes Fall damage for Player and NPCs
+ [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles
  [*] [QoL/Balance] There is now no cooldown between repeatable quests
  [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact)
  [*] [Balance] Increases cost of Attachments to 1000%
@@ -100,6 +103,7 @@ All changes have been tested against fresh save file. Some of these changes won'
       transformTradePrototypes,
       transformStashPrototypes,
       transformItemGeneratorPrototypes,
+      transformALifeDirectorScenarioPrototypes,
     ].reduce((acc, f) => f(acc, c) as typeof entries, entries);
   },
   onFinish() {
