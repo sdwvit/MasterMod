@@ -23,7 +23,7 @@ type ItemGeneratorType = GetStructType<{
   }[];
 }>;
 
-export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorType["entries"], { filePath, index }) => {
+export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorType["entries"], { index }) => {
   let keep = false;
 
   if (prohibitedIds.some((id) => entries.SID.includes(id))) {

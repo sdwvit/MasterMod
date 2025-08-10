@@ -48,7 +48,7 @@ export const meta: Meta = {
  [*] [QoL] Removes Fall damage for Player and NPCs
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles
  [*] [QoL/Balance] There is now no cooldown between repeatable quests
- [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair to 200%, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact)
+ [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact)
  [*] [QoL] Unlocks blocking upgrades
  [*] [Balance] Fixes price scaling for upgraded items. 
  [*] [Balance] Increases cost of Attachments to 1000%

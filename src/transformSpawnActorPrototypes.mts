@@ -1,4 +1,4 @@
-import { ERank, ESpawnType, GetStructType, Struct } from "s2cfgtojson";
+import { ERank, ESpawnType, GetStructType } from "s2cfgtojson";
 import { Meta, WithSID } from "./prepare-configs.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 export const totals = {
@@ -116,23 +116,3 @@ const attachmentsOrQuestItems = new Set(
     ["Gun_Partner_SR", "Gun_Sotnyk_AR_GS"], // quest items
   ),
 );
-
-const gamePassItemGeneratorPrototypeSIDs = new Set(
-  [].concat(
-    readFileAndGetStructs<WithSID>("ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg").map((e) => e.entries.SID),
-    readFileAndGetStructs<WithSID>("ItemGeneratorPrototypes.cfg")
-      .filter((e) => e.refurl === "ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")
-      .map((e) => e.entries.SID),
-  ),
-);
-const lootSIDs = new Set([
-  "Bag",
-  "BlueBox",
-  "BigSafe",
-  "Backpack",
-  "SmallSafe",
-  "BackpackGrave_g",
-  "BackpackGrave_h",
-  "BackpackGrave_i",
-  "BackpackGrave_j",
-]);

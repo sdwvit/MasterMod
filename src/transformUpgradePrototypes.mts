@@ -29,7 +29,7 @@ type UpgradePrototype = GetStructType<{
 /**
  * Unlocks blocking upgrades.
  */
-export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototype["entries"], { filePath }) => {
+export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototype["entries"]) => {
   let keepo = null;
   if (entries.BlockingUpgradePrototypeSIDs?.entries) {
     keepo = entries;
