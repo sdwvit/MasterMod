@@ -24,6 +24,12 @@
 
 Here is a list of extended files (this mod uses new files, so it is compatible with other mods that don't modify the same SIDs):
 
+- `Modified assets`:
+  - `T_enemymarker`
+  - `T_quest_enemymarker`
+  - `T_compass_shadow_battle`
+  - `T_ThreatGlowing`
+  - `T_ThreatGray`
 - `ALifePrototypes`:
   - `ALifeDirectorScenarioPrototypes`
 - `GameData`:
