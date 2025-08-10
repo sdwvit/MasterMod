@@ -22,13 +22,7 @@ type StashPrototypesType = GetStructType<{
   }[];
 }>;
 
-export const transformStashPrototypes: Meta["entriesTransformer"] = (
-  entries: StashPrototypesType["entries"],
-  { filePath, index },
-) => {
-  if (!filePath.includes("/StashPrototypes.cfg")) {
-    return entries;
-  }
+export const transformStashPrototypes: Meta["entriesTransformer"] = (entries: StashPrototypesType["entries"], { index }) => {
   if (entries.SID === "empty") {
     return null;
   }

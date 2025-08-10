@@ -1,6 +1,6 @@
 import { Meta } from "./prepare-configs.mjs";
 import { transformTradePrototypes } from "./transformTradePrototypes.mjs";
-import { repeatingQuests, transformRepeatingQuests } from "./transformRepeatingQuests.mjs";
+import { transformRepeatingQuests } from "./transformRepeatingQuests.mjs";
 import { totals as spawnTotals, transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
 import { mobs, transformMobs } from "./transformMobs.mjs";
 import { transformEffectPrototypes } from "./transformEffectPrototypes.mjs";
@@ -12,6 +12,8 @@ import { transformStashPrototypes } from "./transformStashPrototypes.mjs";
 import { transformItemGeneratorPrototypes } from "./transformItemGeneratorPrototypes.mjs";
 import { transformALifeDirectorScenarioPrototypes } from "./transformALifeDirectorScenarioPrototypes.mjs";
 import { transformArmorPrototypes } from "./transformArmorPrototypes.mjs";
+import { transformUpgradePrototypes } from "./transformUpgradePrototypes.mjs";
+import { repeatingQuests } from "./repeatingQuests.mjs";
 
 export const meta: Meta = {
   interestingFiles: [
@@ -27,9 +29,10 @@ export const meta: Meta = {
     "StashPrototypes.cfg",
     "TradePrototypes.cfg",
     ...mobs,
-    // "SpawnActorPrototypes/WorldMap_WP/", // very expensive
+    "SpawnActorPrototypes/WorldMap_WP/", // very expensive
     "ALifeDirectorScenarioPrototypes.cfg",
     "ArmorPrototypes.cfg",
+    "UpgradePrototypes.cfg",
   ],
   interestingContents: [],
   prohibitedIds: [],
@@ -45,7 +48,9 @@ export const meta: Meta = {
  [*] [QoL] Removes Fall damage for Player and NPCs
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles
  [*] [QoL/Balance] There is now no cooldown between repeatable quests
- [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact)
+ [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair to 200%, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact)
+ [*] [QoL] Unlocks blocking upgrades
+ [*] [Balance] Fixes price scaling for upgraded items. 
  [*] [Balance] Increases cost of Attachments to 1000%
  [*] [Challenge] Traders are not allowed to sell gear
  [*] [Challenge] Traders or Bartenders are not allowed to buy gear
@@ -67,22 +72,31 @@ This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]g
 I aim to eventually make a collection with mods that are inspired by Stalker GAMMA.[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
   changenote: "Reduce chance of consumables, ammo, grenades drops from stashes.",
-  entriesTransformer: (entries, c) => {
-    return [
-      transformDynamicItemGenerator,
-      transformObjPrototypes,
-      transformDifficultyPrototypes,
-      transformAttachPrototypes,
-      transformEffectPrototypes,
-      transformMobs,
-      transformSpawnActorPrototypes,
-      transformRepeatingQuests,
-      transformTradePrototypes,
-      transformStashPrototypes,
-      transformItemGeneratorPrototypes,
-      transformALifeDirectorScenarioPrototypes,
-      transformArmorPrototypes,
-    ].reduce((acc, f) => f(acc, c) as typeof entries, entries);
+  getEntriesTransformer: ({ filePath }) => {
+    const transformers = [
+      filePath.endsWith("DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
+      (filePath.endsWith("GameData/ObjPrototypes.cfg") || filePath.endsWith("ObjPrototypes/GeneralNPCObjPrototypes.cfg")) && transformObjPrototypes,
+      filePath.endsWith("DifficultyPrototypes.cfg") && transformDifficultyPrototypes,
+      filePath.endsWith("AttachPrototypes.cfg") && transformAttachPrototypes,
+      filePath.endsWith("EffectPrototypes.cfg") && transformEffectPrototypes,
+      mobs.some((m) => filePath.endsWith(m)) && transformMobs,
+      filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes,
+      repeatingQuests.some((q) => filePath.endsWith(q)) && transformRepeatingQuests,
+      filePath.endsWith("TradePrototypes.cfg") && transformTradePrototypes,
+      filePath.endsWith("/StashPrototypes.cfg") && transformStashPrototypes,
+      (filePath.endsWith("/ItemGeneratorPrototypes.cfg") || filePath.endsWith("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) &&
+        transformItemGeneratorPrototypes,
+      filePath.endsWith("ALifeDirectorScenarioPrototypes.cfg") && transformALifeDirectorScenarioPrototypes,
+      filePath.endsWith("ArmorPrototypes.cfg") && transformArmorPrototypes,
+      filePath.endsWith("UpgradePrototypes.cfg") && transformUpgradePrototypes,
+    ].filter(Boolean) as Meta["entriesTransformer"][];
+
+    if (transformers.length === 0) {
+      return null;
+    }
+    return (entries, context) => {
+      return transformers.reduce((acc, f) => f(acc, context) as typeof entries, entries);
+    };
   },
   onFinish() {
     console.log("Removed preplaced items:", spawnTotals);

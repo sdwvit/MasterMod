@@ -6,13 +6,8 @@ import { semiRandom } from "./semi-random.mjs";
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
  * @param entries
- * @param file
  */
-export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entries: DynamicItemGenerator["entries"], { filePath }) => {
-  if (!filePath.includes("DynamicItemGenerator.cfg")) {
-    return entries;
-  }
-
+export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entries: DynamicItemGenerator["entries"]) => {
   /**
    * Does not allow traders to sell gear.
    */

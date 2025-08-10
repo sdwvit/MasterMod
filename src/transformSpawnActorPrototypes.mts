@@ -18,23 +18,14 @@ const logger = {
 /**
  * Removes preplaced items from the map. Like medkits, destructible items contents, and gear.
  */
-export const transformSpawnActorPrototypes: Meta["entriesTransformer"] = (
-  entries: GearEntries,
-  { filePath, struct },
-) => {
-  if (!filePath.includes("SpawnActorPrototypes")) {
-    return entries;
-  }
+export const transformSpawnActorPrototypes: Meta["entriesTransformer"] = (entries: GearEntries, { filePath }) => {
   if (!filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/")) {
     return null;
   }
   let newEntries: GearEntries | null = null;
   switch (entries.SpawnType) {
     case "ESpawnType::DestructibleObject":
-      if (
-        preplacedDestructibleItems.some((i) => entries.SpawnedPrototypeSID?.includes(i)) &&
-        entries.ItemGeneratorSettings
-      ) {
+      if (preplacedDestructibleItems.some((i) => entries.SpawnedPrototypeSID?.includes(i)) && entries.ItemGeneratorSettings) {
         Object.values(entries.ItemGeneratorSettings.entries).forEach((e) => {
           Object.values(e.entries?.ItemGenerators.entries || {}).forEach((ie) => {
             if (ie.entries?.PrototypeSID) {
@@ -66,10 +57,8 @@ export const transformSpawnActorPrototypes: Meta["entriesTransformer"] = (
 
       break;*/
     case "ESpawnType::Item":
-      const isMedkitReplacement =
-        entries.ItemSID?.includes("Medkit") || entries.PackOfItemsPrototypeSID?.includes("Medkit");
-      const isGearReplacement =
-        preplacedGear.some((i) => entries.ItemSID?.includes(i)) && !attachmentsOrQuestItems.has(entries.ItemSID);
+      const isMedkitReplacement = entries.ItemSID?.includes("Medkit") || entries.PackOfItemsPrototypeSID?.includes("Medkit");
+      const isGearReplacement = preplacedGear.some((i) => entries.ItemSID?.includes(i)) && !attachmentsOrQuestItems.has(entries.ItemSID);
       if (isGearReplacement || isMedkitReplacement) {
         logger.info(`Found preplaced Item: ${entries.ItemSID || entries.PackOfItemsPrototypeSID}. Hiding it.`);
         if (isMedkitReplacement) {

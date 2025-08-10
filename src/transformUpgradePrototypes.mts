@@ -1,0 +1,166 @@
+import { EConnectionLineState, EUpgradeTargetPartType, EUpgradeVerticalPosition, GetStructType } from "s2cfgtojson";
+import { Meta } from "./prepare-configs.mjs";
+
+type UpgradePrototype = GetStructType<{
+  ID: number;
+  SID: string;
+  Text: string;
+  Hint: string;
+  BaseCost: number;
+  HorizontalPosition: number;
+  VerticalPosition: EUpgradeVerticalPosition;
+  DiscountCoefficient: number;
+  RepairCostModifier: number;
+  IsModification: boolean;
+  HiddenWihoutItem: boolean;
+  AttachPrototypeSIDs: string[];
+  UpgradeTargetPart: EUpgradeTargetPartType;
+  EffectPrototypeSIDs: string[];
+  RequiredUpgradePrototypeSIDs: string[];
+  RequiredItemPrototypeSIDs: string[];
+  BlockingUpgradePrototypeSIDs: string[];
+  InterchangeableUpgradePrototypeSIDs: string[];
+  RequiredGlobalVariables: { GlobalVariableSID: string; Value: number }[];
+  BlockingGlobalVariables: { GlobalVariableSID: string; Value: number }[];
+  Skills: string[];
+  ConnectionLines: EConnectionLineState[];
+}>;
+
+/**
+ * Unlocks blocking upgrades.
+ */
+export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototype["entries"], { filePath }) => {
+  let keepo = null;
+  if (entries.BlockingUpgradePrototypeSIDs?.entries) {
+    keepo = entries;
+    Object.keys(entries.BlockingUpgradePrototypeSIDs.entries).forEach((key) => {
+      entries.BlockingUpgradePrototypeSIDs.entries[key] = "empty";
+    });
+  }
+  return keepo;
+};
+
+const prices = {
+  PM: 950,
+  UDP: 1425,
+  APB: 14000,
+  M10: 5700,
+  Rhino: 10000,
+  Kora: 6000,
+  Viper: 3000,
+  Bucket: 12000,
+  Integral: 17000,
+  AK74: 10000,
+  M16: 14000,
+  Grim: 25000,
+  Gvintar: 21000,
+  M860: 8000,
+  SPSA: 17000,
+  SVDM: 24000,
+  Mark: 28000,
+  M701: 35000,
+  ThreeLine: 3500,
+  Gauss: 120000,
+  Rpg7: 50000,
+  Sharpshooter: 41200,
+  Lummox: 12000,
+  Kaimanov: 950,
+  GStreet: 8900,
+  Encourage: 8200,
+  Shakh: 5700,
+  Krivenko: 3425,
+  Lynx: 25500,
+  Predator: 11800,
+  Sledgehammer: 22000,
+  Merc: 38000,
+  Gauss_Scar: 125000,
+  Cavalier: 40000,
+  Combatant: 12500,
+  Spitter: 10800,
+  AK74_Strelok: 9000,
+  NightStalker: 11000,
+  UDP_Deadeye: 1425,
+  S15: 32500,
+  Unknown: 18800,
+  Star: 4950,
+  Partner: 33400,
+  SOFMOD: 25700,
+  Drowned: 11500,
+  AK74_Korshunov: 9000,
+  ProjectY: 1750,
+  Deadeye: 2925,
+  Jemmy_Neutral: 11600,
+  Newbee_Neutral: 13500,
+  Nasos_Neutral: 21700,
+  Zorya_Neutral: 36000,
+  SEVA_Neutral: 48000,
+  Exoskeleton_Neutral: 65500,
+  SkinJacket_Bandit: 17200,
+  Jacket_Bandit: 17200,
+  Middle_Bandit: 24000,
+  Light_Mercenaries: 20200,
+  Exoskeleton_Mercenaries: 63000,
+  Heavy_Mercenaries: 42500,
+  Default_Military: 14000,
+  Heavy2_Military: 46000,
+  Anomaly_Scientific: 39000,
+  HeavyAnomaly_Scientific: 52000,
+  SciSEVA_Scientific: 54000,
+  Rook_Svoboda: 17100,
+  Battle_Svoboda: 36000,
+  SEVA_Svoboda: 53000,
+  Heavy_Svoboda: 50000,
+  HeavyExoskeleton_Svoboda: 68000,
+  Exoskeleton_Svoboda: 95000,
+  Rook_Dolg: 19100,
+  Battle_Dolg: 36500,
+  SEVA_Dolg: 46000,
+  Heavy_Dolg: 46000,
+  HeavyExoskeleton_Dolg: 63000,
+  Exoskeleton_Dolg: 90000,
+  Battle_Monolith: 51000,
+  HeavyAnomaly_Monolith: 57500,
+  HeavyExoskeleton_Monolith: 69000,
+  Exoskeleton_Monolith: 68000,
+  Battle_Varta: 37500,
+  BattleExoskeleton_Varta: 62500,
+  Battle_Spark: 41000,
+  HeavyAnomaly_Spark: 42500,
+  SEVA_Spark: 50000,
+  HeavyBattle_Spark: 53500,
+  Battle_Dolg_End: 80000,
+  Light_Duty_Helmet: 12300,
+  Heavy_Duty_Helmet: 25800,
+  Heavy_Svoboda_Helmet: 32600,
+  Heavy_Varta_Helmet: 18000,
+  Heavy_Military_Helmet: 36300,
+  Light_Mercenaries_Helmet: 19800,
+  Light_Military_Helmet: 16100,
+  Battle_Military_Helmet: 24700,
+  Light_Bandit_Helmet: 7500,
+  Light_Neutral_Helmet: 10500,
+  Anomaly_Scientific_Armor_PSY_preinstalled: 39000,
+
+  DutyArmor_4_E1: 3000,
+  DutyArmor_3_U1: 36500,
+  Exosekeleton_Neutral: 65500,
+  Seva_Dolg: 46000,
+  Seva_Neutral: 48000,
+  Seva_Svoboda: 53000,
+  Newbie_Neutral: 13500,
+  Kharod: 28000,
+  Dnipro: 34000,
+  SVU: 39000,
+
+  AKU: 6000,
+  Zubr: 20000,
+  G37: 17000,
+  Fora: 15000,
+  Lavina: 26000,
+  PKP: 30000,
+  Obrez: 1700,
+  TOZ: 3000,
+  D12: 24000,
+  Ram2: 29000,
+};
+const items = Object.keys(prices);

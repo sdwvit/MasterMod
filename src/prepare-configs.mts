@@ -2,7 +2,7 @@ import { Entries, Struct } from "s2cfgtojson";
 import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
-
+type Context<T> = { struct: T; index: number; array: T[]; filePath: string; rawContent: string; structsById: Record<string, T> };
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 // scan all local .cfg files
 const rootDir = path.join(import.meta.dirname, "..");
@@ -11,10 +11,8 @@ const BASE_CFG_DIR = path.join(process.env.SDK_PATH, nestedDir);
 export type Meta<T extends WithSID = WithSID> = {
   changenote: string;
   description: string;
-  entriesTransformer(
-    entries: T["entries"],
-    context: { struct: T; index: number; array: T[]; filePath: string; rawContent: string; structsById: Record<string, T> },
-  ): Entries | null;
+  entriesTransformer?(entries: T["entries"], context: Context<T>): Entries | null; // prefer getEntriesTransformer
+  getEntriesTransformer?(context: { filePath: string }): (entries: T["entries"], context: Context<T>) => Entries | null; // use this to transform entries
   interestingContents: string[];
   interestingFiles: string[];
   interestingIds: string[];
@@ -31,7 +29,7 @@ const emptyMeta = `
     interestingIds: [],
     description: "",
     changenote: "",
-    entriesTransformer: (entries: Entries) => entries,
+    getEntriesTransformer: () => (entries: Entries) => entries,
   };
 `.trim();
 
@@ -67,7 +65,7 @@ const metaPath = path.join(modFolder, "src", "meta.mts");
 if (!fs.existsSync(metaPath)) fs.writeFileSync(metaPath, emptyMeta);
 
 const { meta } = (await import(metaPath)) as { meta: Meta };
-const { interestingIds, interestingFiles, interestingContents, prohibitedIds, entriesTransformer } = meta;
+const { interestingIds, interestingFiles, interestingContents, prohibitedIds, getEntriesTransformer = () => meta.entriesTransformer } = meta;
 
 const total = getCfgFiles()
   .filter((file) => interestingFiles.some((i) => file.includes(`/${i}`)))
@@ -76,6 +74,11 @@ const total = getCfgFiles()
     if (interestingContents.length && !interestingContents.some((i) => rawContent.includes(i))) {
       return;
     }
+    const entriesTransformer = getEntriesTransformer({ filePath });
+    if (!entriesTransformer) {
+      return;
+    }
+    console.log(`Processing file: ${filePath}`);
 
     const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
     const structsById = Struct.fromString<WithSID>(rawContent).reduce(

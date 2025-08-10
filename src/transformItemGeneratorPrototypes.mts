@@ -24,10 +24,6 @@ type ItemGeneratorType = GetStructType<{
 }>;
 
 export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorType["entries"], { filePath, index }) => {
-  if (!filePath.includes("/ItemGeneratorPrototypes.cfg") && !filePath.includes("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) {
-    return entries;
-  }
-
   let keep = false;
 
   if (prohibitedIds.some((id) => entries.SID.includes(id))) {

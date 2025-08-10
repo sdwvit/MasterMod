@@ -6,13 +6,7 @@ type TradePrototype = GetStructType<{ TradeGenerators: { BuyLimitations: string[
 /**
  * Don't allow traders to buy weapons and armor.
  */
-export const transformTradePrototypes: Meta["entriesTransformer"] = (
-  entries: TradePrototype["entries"],
-  { filePath },
-) => {
-  if (!filePath.includes("TradePrototypes.cfg")) {
-    return entries;
-  }
+export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: TradePrototype["entries"]) => {
   if (entries.TradeGenerators?.entries) {
     Object.values(entries.TradeGenerators.entries)
       .filter((tg) => tg.entries)

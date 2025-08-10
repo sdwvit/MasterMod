@@ -4,13 +4,7 @@ import { GetStructType } from "s2cfgtojson";
 /**
  * Increases cost of Attachments by 10x.
  */
-export const transformAttachPrototypes: Meta["entriesTransformer"] = (
-  entries: AttachPrototypes["entries"],
-  { filePath },
-) => {
-  if (!filePath.includes("AttachPrototypes.cfg")) {
-    return entries;
-  }
+export const transformAttachPrototypes: Meta["entriesTransformer"] = (entries: AttachPrototypes["entries"]) => {
   if (!entries.Cost) {
     return null;
   }

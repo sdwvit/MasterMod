@@ -33,6 +33,7 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `ObjPrototypes`
   - `StashPrototypes`
   - `TradePrototypes`
+  - `UpgradePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`

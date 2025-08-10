@@ -29,10 +29,7 @@ type ArmorPrototype = { _refkey: string | number } & GetStructType<{
 /**
  * Makes so no armor blocks head, but also removes any psy protection. Forces player to use helmets.
  */
-export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: ArmorPrototype["entries"], { filePath }) => {
-  if (!filePath.includes("ArmorPrototypes.cfg")) {
-    return entries;
-  }
+export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: ArmorPrototype["entries"]) => {
   if (entries.SID.toLowerCase().includes("helmet") || entries.SID.includes("NPC")) {
     return null;
   }

@@ -4,15 +4,12 @@ import { Meta } from "./prepare-configs.mjs";
  * Increases cost of everything and damage on Hard difficulty.
  */
 export const transformDifficultyPrototypes: Meta["entriesTransformer"] = (_, { filePath }) => {
-  if (!filePath.includes("DifficultyPrototypes.cfg")) {
-    return _;
-  }
   if (_.SID !== "Hard") {
     return null;
   }
   return {
     Ammo_Cost: 4.0,
-    Repair_Cost: 4.0,
+    Repair_Cost: 2.0,
     Upgrade_Cost: 4.0,
     Consumable_Cost: 4.0,
     Armor_Cost: 4.0,

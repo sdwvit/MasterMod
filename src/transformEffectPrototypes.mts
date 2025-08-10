@@ -4,15 +4,8 @@ import { GetStructType } from "s2cfgtojson";
 /**
  * Makes some consumables last longer.
  * @param entries
- * @param file
  */
-export const transformEffectPrototypes: Meta["entriesTransformer"] = (
-  entries: TransformEffect["entries"],
-  { filePath },
-) => {
-  if (!filePath.includes("EffectPrototypes.cfg")) {
-    return entries;
-  }
+export const transformEffectPrototypes: Meta["entriesTransformer"] = (entries: TransformEffect["entries"]) => {
   if (!consumables.has(entries.SID)) {
     return null;
   }

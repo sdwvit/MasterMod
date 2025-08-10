@@ -5,15 +5,8 @@ import { Meta } from "./prepare-configs.mjs";
  * Prevents NPCs from being knocked down.
  * Also removes Fall damage.
  * @param entries
- * @param file
  */
-export const transformObjPrototypes: Meta["entriesTransformer"] = (entries: ObjPrototypes["entries"], { filePath }) => {
-  if (
-    !filePath.includes("GameData/ObjPrototypes.cfg") &&
-    !filePath.includes("ObjPrototypes/GeneralNPCObjPrototypes.cfg")
-  ) {
-    return entries;
-  }
+export const transformObjPrototypes: Meta["entriesTransformer"] = (entries: ObjPrototypes["entries"]) => {
   if (entries.SID === "NPCBase" || entries.SID === "Player") {
     class Protection extends Struct<{ Fall: number }> {
       _id: string = "Protection";

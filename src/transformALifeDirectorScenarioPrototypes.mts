@@ -4,13 +4,7 @@ import { EAgentArchetype, EAgentType, EALifeDirectorScenarioTarget, ERank, GetSt
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
  */
-export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"] = (
-  entries: ALifeDirectorScenarioPrototypes["entries"],
-  { filePath },
-) => {
-  if (!filePath.includes("ALifeDirectorScenarioPrototypes.cfg")) {
-    return entries;
-  }
+export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"] = (entries: ALifeDirectorScenarioPrototypes["entries"], {}) => {
   Object.values(entries.ALifeScenarioNPCArchetypesLimitsPerPlayerRank.entries || {})
     .filter((e) => e.entries)
     .forEach((e) => {

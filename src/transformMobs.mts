@@ -4,10 +4,7 @@ import { Meta } from "./prepare-configs.mts";
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
  */
-export const transformMobs: Meta["entriesTransformer"] = (entries: ObjectPrototype["entries"], { filePath }) => {
-  if (!mobs.some((m) => filePath.includes(m))) {
-    return entries;
-  }
+export const transformMobs: Meta["entriesTransformer"] = (entries: ObjectPrototype["entries"]) => {
   if (!entries.Protection || !entries.Protection.entries) {
     return null;
   }
