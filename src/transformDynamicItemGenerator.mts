@@ -85,8 +85,8 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
               .filter((pi) => pi.entries)
               .forEach((pi, j) => {
                 pi.entries.Chance = semiRandom(i + j); // Randomize
-                while (pi.entries.Chance > 0.05) {
-                  pi.entries.Chance **= 2;
+                while (pi.entries.Chance > 0.02) {
+                  pi.entries.Chance /= 2;
                 }
                 pi.entries.Chance = parseFloat(pi.entries.Chance.toFixed(4));
               });

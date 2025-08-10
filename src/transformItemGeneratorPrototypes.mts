@@ -34,8 +34,8 @@ export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (ent
     return null;
   }
 
-  Object.values(entries.ItemGenerator?.entries || {}).forEach((itemGen) => {
-    Object.values(itemGen.entries?.PossibleItems?.entries || {}).forEach((possibleItem) => {
+  Object.values(entries.ItemGenerator?.entries || {}).forEach((itemGen, i) => {
+    Object.values(itemGen.entries?.PossibleItems?.entries || {}).forEach((possibleItem, j) => {
       if (!possibleItem.entries) {
         return;
       }
@@ -46,12 +46,12 @@ export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (ent
         return;
       }
       keep = true;
-      let chance = possibleItem.entries.Chance || 1;
-      while (chance > 0.2) {
-        chance /= Math.floor(semiRandom(index) * 8) + 2;
+      let chance = semiRandom(i + j + index);
+      while (chance > 0.02) {
+        chance /= 2;
       }
+      possibleItem.entries.Chance = parseFloat(chance.toFixed(4));
       if (possibleItem.entries.MinCount) possibleItem.entries.MinCount = 1;
-      possibleItem.entries.Chance = parseFloat(chance.toFixed(3));
       if (isConsumable || isGrenade) {
         if (possibleItem.entries.MaxCount) possibleItem.entries.MaxCount = 1;
       }
