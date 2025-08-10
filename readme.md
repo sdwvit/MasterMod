@@ -32,10 +32,12 @@ Here is a list of modified files:
   - `ItemGeneratorPrototypes`
   - `ObjPrototypes`
   - `StashPrototypes`
+  - `TradePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`
 - `ItemPrototypes`:
+  - `ArmorPrototypes`
   - `AttachPrototypes`
 - `ObjPrototypes`:
   - `BlindDog`

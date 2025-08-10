@@ -8,12 +8,12 @@ dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const rootDir = path.join(import.meta.dirname, "..");
 const nestedDir = path.join("Stalker2", "Content", "GameLite");
 const BASE_CFG_DIR = path.join(process.env.SDK_PATH, nestedDir);
-export type Meta = {
+export type Meta<T extends WithSID = WithSID> = {
   changenote: string;
   description: string;
   entriesTransformer(
-    entries: WithSID["entries"],
-    context: { struct: WithSID; index: number; array: Struct[]; filePath: string; rawContent: string },
+    entries: T["entries"],
+    context: { struct: T; index: number; array: T[]; filePath: string; rawContent: string; structsById: Record<string, T> },
   ): Entries | null;
   interestingContents: string[];
   interestingFiles: string[];
@@ -76,18 +76,28 @@ const total = getCfgFiles()
     if (interestingContents.length && !interestingContents.some((i) => rawContent.includes(i))) {
       return;
     }
-    // console.log(`Reading file: ${file}`);
-    const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
 
-    const structs = Struct.fromString<Struct<{ SID?: string }>>(rawContent)
+    const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
+    const structsById = Struct.fromString<WithSID>(rawContent).reduce(
+      (acc, struct) => {
+        if (struct.entries.SID) {
+          acc[struct.entries.SID] = struct as WithSID;
+        }
+        return acc;
+      },
+      {} as Record<string, WithSID>,
+    );
+    const structs = Object.values(structsById)
       .filter(
         (s): s is WithSID =>
           s.entries.SID &&
           (interestingIds.length ? interestingIds.some((id) => s.entries.SID.includes(id)) : true) &&
           prohibitedIds.every((id) => !s.entries.SID.includes(id)),
       )
+      .map((s) => Struct.fromString<WithSID>(s.toString())[0])
       .map((struct, index, array) => {
         struct.refurl = "../" + pathToSave.base;
+        struct._refkey = struct.refkey;
         struct.refkey = struct.entries.SID;
         struct._id = `${MOD_NAME}${idIsArrayIndex(struct._id) ? "" : `_${struct._id}`}`;
         if (entriesTransformer)
@@ -97,6 +107,7 @@ const total = getCfgFiles()
             array,
             filePath,
             rawContent,
+            structsById,
           });
         if (!struct.entries) {
           return null;
@@ -119,7 +130,7 @@ function idIsArrayIndex(id: string): boolean {
   return id && Struct.isNumber(Struct.extractKeyFromBrackets(id));
 }
 
-export type WithSID = Struct<{ SID: string }>;
+export type WithSID<T = {}> = Struct<{ SID: string } & T> & { _refkey: Struct["refkey"] };
 
 console.log(`Total: ${total.length} files processed.`);
 const writtenFiles = total.filter((s) => s?.length > 0);

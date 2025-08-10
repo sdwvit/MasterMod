@@ -4,7 +4,10 @@ import { EAgentArchetype, EAgentType, EALifeDirectorScenarioTarget, ERank, GetSt
 /**
  * Increases cost of Attachments by 10x.
  */
-export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"] = (entries: ALifeDirectorScenarioPrototypes["entries"], { filePath }) => {
+export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"] = (
+  entries: ALifeDirectorScenarioPrototypes["entries"],
+  { filePath },
+) => {
   if (!filePath.includes("ALifeDirectorScenarioPrototypes.cfg")) {
     return entries;
   }
@@ -23,16 +26,18 @@ export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"
       .filter((e) => e[1].startsWith("GeneralNPC"))
       .map((e) => [e[0], "GuardNPC_Duty_CloseCombat"]),
   );
-  entries.ProhibitedAgentTypes.entries = Object.fromEntries(Object.entries(entries.ProhibitedAgentTypes.entries || {}).map((e) => [e[0], "EAgentType::RatSwarm"]));
+  entries.ProhibitedAgentTypes.entries = Object.fromEntries(
+    Object.entries(entries.ProhibitedAgentTypes.entries || {}).map((e) => [e[0], "EAgentType::RatSwarm"]),
+  );
   Object.values(entries.Scenarios.entries || {}).forEach((e) => {
     if (e.entries.ExpansionSquadNumMin) e.entries.ExpansionSquadNumMin *= 2;
     if (e.entries.ExpansionSquadNumMax) e.entries.ExpansionSquadNumMax *= 2;
   });
   Object.values(entries.ScenarioGroups.entries || {}).forEach((e) => {
-    if (e.entries.SpawnDelayMin) e.entries.SpawnDelayMin = Math.ceil(e.entries.SpawnDelayMin / 10);
-    if (e.entries.SpawnDelayMax) e.entries.SpawnDelayMax = Math.ceil(e.entries.SpawnDelayMax / 10);
-    if (e.entries.PostSpawnDirectorTimeoutMin) e.entries.PostSpawnDirectorTimeoutMin = Math.ceil(e.entries.PostSpawnDirectorTimeoutMin / 10);
-    if (e.entries.PostSpawnDirectorTimeoutMax) e.entries.PostSpawnDirectorTimeoutMax = Math.ceil(e.entries.PostSpawnDirectorTimeoutMax / 10);
+    if (e.entries.SpawnDelayMin) e.entries.SpawnDelayMin = Math.ceil(e.entries.SpawnDelayMin / 5);
+    if (e.entries.SpawnDelayMax) e.entries.SpawnDelayMax = Math.ceil(e.entries.SpawnDelayMax / 5);
+    if (e.entries.PostSpawnDirectorTimeoutMin) e.entries.PostSpawnDirectorTimeoutMin = Math.ceil(e.entries.PostSpawnDirectorTimeoutMin / 5);
+    if (e.entries.PostSpawnDirectorTimeoutMax) e.entries.PostSpawnDirectorTimeoutMax = Math.ceil(e.entries.PostSpawnDirectorTimeoutMax / 5);
   });
   return entries;
 };

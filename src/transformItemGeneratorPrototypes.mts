@@ -51,7 +51,7 @@ export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (ent
         chance /= Math.floor(semiRandom(index) * 8) + 2;
       }
       if (possibleItem.entries.MinCount) possibleItem.entries.MinCount = 1;
-      possibleItem.entries.Chance = 0.5; // todo
+      possibleItem.entries.Chance = parseFloat(chance.toFixed(3));
       if (isConsumable || isGrenade) {
         if (possibleItem.entries.MaxCount) possibleItem.entries.MaxCount = 1;
       }
