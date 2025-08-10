@@ -2,7 +2,7 @@ import { Meta } from "./prepare-configs.mjs";
 import { EAgentArchetype, EAgentType, EALifeDirectorScenarioTarget, ERank, GetStructType } from "s2cfgtojson";
 
 /**
- * Increases cost of Attachments by 10x.
+ * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
  */
 export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"] = (
   entries: ALifeDirectorScenarioPrototypes["entries"],
