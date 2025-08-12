@@ -71,8 +71,7 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 I aim to eventually make a collection with mods that are inspired by Stalker GAMMA.[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote:
-    "Fixed armor to no longer block head slot, reduced PSY protection to force helmet use, enabled blocking upgrades, and refined loot drop mechanics for better balance and gameplay flow.",
+  changenote: "Adjust NPC armor drop mechanics.",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
       filePath.endsWith("DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
