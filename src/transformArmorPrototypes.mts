@@ -24,13 +24,14 @@ type ArmorPrototype = { _refkey: string | number } & GetStructType<{
   SectionSettings: any;
   MeshGenerator: any;
   NpcMeshGenerator: any;
+  Invisible?: boolean;
 }>;
 
 /**
  * Makes so no armor blocks head, but also removes any psy protection. Forces player to use helmets.
  */
 export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: ArmorPrototype["entries"]) => {
-  if (entries.SID.toLowerCase().includes("helmet") || entries.SID.includes("NPC")) {
+  if (entries.SID.toLowerCase().includes("helmet") || bannedids.has(entries.SID)) {
     return null;
   }
   let keepo = null;
@@ -45,3 +46,19 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
   }
   return keepo;
 };
+
+const bannedids = new Set([
+  "NPC_Richter_Armor",
+  "NPC_Korshunov_Armor",
+  "NPC_Korshunov_Armor_2",
+  "NPC_Dalin_Armor",
+  "NPC_Agata_Armor",
+  "NPC_Faust_Armor",
+  "NPC_Kaymanov_Armor",
+  "NPC_Shram_Armor",
+  "NPC_Dekhtyarev_Armor",
+  "NPC_Sidorovich_Armor",
+  "NPC_Barmen_Armor",
+  "NPC_Batya_Armor",
+  "NPC_Tyotya_Armor",
+]);

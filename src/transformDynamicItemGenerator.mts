@@ -2,6 +2,8 @@ import { Entries, GetStructType } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 
+const precision = (e) => Math.round(e * 1e3) / 1e3;
+
 /**
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
@@ -47,26 +49,24 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
             {
               Object.values(e.entries.PossibleItems.entries)
                 .filter((pi) => pi.entries)
-                .forEach((pi) => {
-                  if (!armorAliasMap[pi.entries.ItemPrototypeSID] && !allArmorCosts[pi.entries.ItemPrototypeSID]) {
-                    (pi.entries as Entries) = {};
+                .forEach((pi, _, { length }) => {
+                  if (!armorAliasMap[pi.entries.ItemPrototypeSID] && !allArmorAdjustedCost[pi.entries.ItemPrototypeSID]) {
                     return;
                   }
-                  pi.entries.Weight ||= 1;
-                  pi.entries.MinDurability = 0.01 + (1 / semiRandom(i)) * 0.04;
-                  if (allArmorCosts[pi.entries.ItemPrototypeSID]) {
-                    pi.entries.Chance = 500 / allArmorCosts[pi.entries.ItemPrototypeSID];
-                    pi.entries.MaxDurability = pi.entries.MinDurability + pi.entries.Chance;
+                  let key = pi.entries.ItemPrototypeSID;
+                  if (!allArmorAdjustedCost[key]) key = armorAliasMap[key];
+                  const zeroToOne = 1 - (allArmorAdjustedCost[key] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
+                  const weight = (1 - zeroToOne * 0.14 + 0.01) / length;
+                  const chance = zeroToOne * 0.14 + 0.01; // 1% to 15%
+                  if (adjustButDontDrop.has(key)) {
+                    pi.entries.Weight = precision(weight);
                   } else {
-                    console.warn(`Unknown armor cost for ${pi.entries.ItemPrototypeSID}, using fallback values.`);
-
-                    pi.entries.Chance = 500 / allArmorCosts[armorAliasMap[pi.entries.ItemPrototypeSID]];
-                    pi.entries.MaxDurability = pi.entries.MinDurability + pi.entries.Chance;
-                    pi.entries.ItemPrototypeSID ||= armorAliasMap[pi.entries.ItemPrototypeSID];
+                    /** Drop probability is between 1% and 5% depending on item price; 5% is the cheapest */
+                    pi.entries.Chance = precision(chance);
+                    pi.entries.Weight = precision(weight);
+                    pi.entries.MinDurability = precision(semiRandom(i) * 0.05);
+                    pi.entries.MaxDurability = precision(pi.entries.MinDurability + semiRandom(i) * 0.5);
                   }
-                  pi.entries.MinDurability = Math.round(pi.entries.MinDurability * 1e2) / 1e2;
-                  pi.entries.MaxDurability = Math.max(0.95, Math.round(pi.entries.MaxDurability * 1e2) / 1e2);
-                  pi.entries.Chance = Math.round(pi.entries.Chance * 1e3) / 1e3;
                 });
             }
             break;
@@ -83,7 +83,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
                 while (pi.entries.Chance > 0.02) {
                   pi.entries.Chance /= 2;
                 }
-                pi.entries.Chance = parseFloat(pi.entries.Chance.toFixed(4));
+                pi.entries.Chance = precision(pi.entries.Chance);
               });
             break;
           }
@@ -126,93 +126,132 @@ export type DynamicItemGenerator = GetStructType<{
     }[];
   }[];
 }>;
-export const allArmorCosts = {
-  SkinJacket_Bandit_Armor: 17200,
-  Light_Duty_Helmet: 12300,
-  Heavy_Duty_Helmet: 25800,
-  Heavy_Svoboda_Helmet: 32600,
-  Heavy_Varta_Helmet: 18000,
-  Heavy_Military_Helmet: 36300,
-  Light_Mercenaries_Helmet: 19800,
-  Light_Military_Helmet: 16100,
-  Battle_Military_Helmet: 24700,
-  Light_Bandit_Helmet: 7500,
-  Light_Neutral_Helmet: 10500,
-  Jemmy_Neutral_Armor: 11600,
-  Newbee_Neutral_Armor: 13500,
-  Jacket_Bandit_Armor: 17200,
-  Nasos_Neutral_Armor: 21700,
-  Rook_Svoboda_Armor: 17100,
-  Rook_Dolg_Armor: 19100,
-  Middle_Bandit_Armor: 24000,
-  Light_Mercenaries_Armor: 20200,
-  Zorya_Neutral_Armor: 36000,
-  Anomaly_Scientific_Armor: 39000,
-  Default_Military_Armor: 14000,
-  Battle_Svoboda_Armor: 36000,
-  Battle_Spark_Armor: 41000,
-  Battle_Varta_Armor: 37500,
-  Battle_Dolg_Armor: 36500,
-  Heavy2_Military_Armor: 46000,
-  Heavy_Dolg_Armor: 46000,
-  Battle_Monolith_Armor: 51000,
-  SEVA_Neutral_Armor: 48000,
-  Heavy_Mercenaries_Armor: 42500,
-  HeavyAnomaly_Scientific_Armor: 52000,
-  SEVA_Dolg_Armor: 46000,
-  SEVA_Spark_Armor: 50000,
-  HeavyBattle_Spark_Armor: 53500,
-  HeavyAnomaly_Monolith_Armor: 57500,
-  SEVA_Svoboda_Armor: 53000,
-  HeavyAnomaly_Spark_Armor: 42500,
-  Battle_Dolg_End_Armor: 80000,
-  Heavy_Svoboda_Armor: 50000,
-  HeavyExoskeleton_Dolg_Armor: 63000,
-  SciSEVA_Scientific_Armor: 54000,
-  Exoskeleton_Dolg_Armor: 90000,
-  HeavyExoskeleton_Svoboda_Armor: 68000,
-  Exoskeleton_Neutral_Armor: 65500,
-  Exoskeleton_Mercenaries_Armor: 63000,
-  BattleExoskeleton_Varta_Armor: 62500,
-  HeavyExoskeleton_Monolith_Armor: 69000,
-  Exoskeleton_Svoboda_Armor: 95000,
-  Exoskeleton_Monolith_Armor: 68000,
-
-  NPC_Sel_Armor: 11600,
-  NPC_Sel_Neutral_Armor: 13500,
-  NPC_Tec_Armor: 21700,
-  NPC_Cloak_Heavy_Neutral_Armor: 36000,
-  NPC_SkinCloak_Bandit_Armor: 36000,
-  NPC_HeavyExoskeleton_Mercenaries_Armor: 63000,
-  NPC_Heavy_Military_Armor: 30000,
-  NPC_Cloak_Heavy_Military_Armor: 30000,
-  NPC_Sci_Armor: 39000,
-  NPC_Battle_Noon_Armor: 10000,
-  NPC_HeavyAnomaly_Noon_Armor: 30000,
-  NPC_HeavyExoskeleton_Noon_Armor: 90000,
-  NPC_Exoskeleton_Noon_Armor: 100000,
-  NPC_Spark_Armor: 25000,
-  NPC_Anomaly_Spark_Armor: 39000,
-  NPC_HeavyExoskeleton_Spark_Armor: 90000,
-  NPC_Heavy_Corps_Armor: 31000,
-  NPC_Heavy2_Coprs_Armor: 32000,
-  NPC_Heavy3_Corps_Armor: 35000,
-  NPC_Heavy3Exoskeleton_Coprs_Armor: 90000,
-  NPC_Exoskeleton_Coprs_Armor: 85000,
-  NPC_Richter_Armor: 37500,
-  NPC_Korshunov_Armor: 25000,
-  NPC_Korshunov_Armor_2: 130000,
-  NPC_Dalin_Armor: 37500,
-  NPC_Agata_Armor: 37500,
-  NPC_Faust_Armor: 37500,
-  NPC_Kaymanov_Armor: 37500,
-  NPC_Shram_Armor: 40000,
-  NPC_Dekhtyarev_Armor: 40000,
-  NPC_Sidorovich_Armor: 37500,
-  NPC_Barmen_Armor: 37500,
-  NPC_Batya_Armor: 37500,
-  NPC_Tyotya_Armor: 37500,
+export const allArmorAdjustedCost = {
+  Jemmy_Neutral_Armor: 15037,
+  Newbee_Neutral_Armor: 10286,
+  Nasos_Neutral_Armor: 20746,
+  Zorya_Neutral_Armor: 36429,
+  SEVA_Neutral_Armor: 85386,
+  Exoskeleton_Neutral_Armor: 171219,
+  SkinJacket_Bandit_Armor: 6091,
+  Jacket_Bandit_Armor: 9616,
+  Middle_Bandit_Armor: 13299,
+  Light_Mercenaries_Armor: 22391,
+  Exoskeleton_Mercenaries_Armor: 261339,
+  Heavy_Mercenaries_Armor: 38523,
+  Default_Military_Armor: 12573,
+  Heavy2_Military_Armor: 33979,
+  Anomaly_Scientific_Armor: 151369,
+  HeavyAnomaly_Scientific_Armor: 73079,
+  SciSEVA_Scientific_Armor: 72629,
+  Rook_Svoboda_Armor: 36260,
+  Battle_Svoboda_Armor: 24304,
+  SEVA_Svoboda_Armor: 43704,
+  Heavy_Svoboda_Armor: 64256,
+  HeavyExoskeleton_Svoboda_Armor: 124046,
+  Exoskeleton_Svoboda_Armor: 327669,
+  Rook_Dolg_Armor: 22907,
+  Battle_Dolg_Armor: 20878,
+  SEVA_Dolg_Armor: 43964,
+  Heavy_Dolg_Armor: 22544,
+  HeavyExoskeleton_Dolg_Armor: 96997,
+  Exoskeleton_Dolg_Armor: 170259,
+  Battle_Monolith_Armor: 43761,
+  HeavyAnomaly_Monolith_Armor: 33609,
+  HeavyExoskeleton_Monolith_Armor: 209346,
+  Exoskeleton_Monolith_Armor: 359076,
+  Battle_Varta_Armor: 13495,
+  BattleExoskeleton_Varta_Armor: 405369,
+  Battle_Spark_Armor: 24322,
+  HeavyAnomaly_Spark_Armor: 158133,
+  SEVA_Spark_Armor: 48799,
+  HeavyBattle_Spark_Armor: 56611,
+  Battle_Dolg_End_Armor: 237041,
+  NPC_Sel_Armor: 3109,
+  NPC_Sel_Neutral_Armor: 1382,
+  NPC_Tec_Armor: 1716,
+  NPC_Cloak_Heavy_Neutral_Armor: 39127,
+  NPC_SkinCloak_Bandit_Armor: 3431,
+  NPC_HeavyExoskeleton_Mercenaries_Armor: 34989,
+  NPC_Heavy_Military_Armor: 39127,
+  NPC_Cloak_Heavy_Military_Armor: 39127,
+  NPC_Sci_Armor: 4153,
+  NPC_Battle_Noon_Armor: 19446,
+  NPC_HeavyAnomaly_Noon_Armor: 39127,
+  NPC_HeavyExoskeleton_Noon_Armor: 92005,
+  NPC_Exoskeleton_Noon_Armor: 92005,
+  NPC_Spark_Armor: 1716,
+  NPC_Anomaly_Spark_Armor: 1716,
+  NPC_HeavyExoskeleton_Spark_Armor: 92005,
+  NPC_Heavy_Corps_Armor: 39127,
+  NPC_Heavy2_Coprs_Armor: 39127,
+  NPC_Heavy3_Corps_Armor: 39127,
+  NPC_Heavy3Exoskeleton_Coprs_Armor: 92005,
+  NPC_Exoskeleton_Coprs_Armor: 92005,
+  NPC_Richter_Armor: 4153,
+  NPC_Korshunov_Armor: 19446,
+  NPC_Korshunov_Armor_2: 50540,
+  NPC_Dalin_Armor: 4153,
+  NPC_Agata_Armor: 4153,
+  NPC_Faust_Armor: 4153,
+  NPC_Kaymanov_Armor: 4153,
+  NPC_Shram_Armor: 34653,
+  NPC_Dekhtyarev_Armor: 34653,
+  NPC_Sidorovich_Armor: 4153,
+  NPC_Barmen_Armor: 4153,
+  NPC_Batya_Armor: 4153,
+  NPC_Tyotya_Armor: 4153,
+  Light_Duty_Helmet: 6876,
+  Heavy_Duty_Helmet: 6366,
+  Heavy_Svoboda_Helmet: 5898,
+  Heavy_Varta_Helmet: 5365,
+  Heavy_Military_Helmet: 5719,
+  Light_Mercenaries_Helmet: 8941,
+  Light_Military_Helmet: 7840,
+  Battle_Military_Helmet: 5685,
+  Light_Bandit_Helmet: 6786,
+  Light_Neutral_Helmet: 6225,
+  Anomaly_Scientific_Armor_PSY_preinstalled: 151369,
 };
+
+const minimumArmorCost = Object.values(allArmorAdjustedCost).reduce((a, b) => Math.min(a, b), Infinity);
+const maximumArmorCost = Object.values(allArmorAdjustedCost).reduce((a, b) => Math.max(a, b), -Infinity);
+const adjustButDontDrop = new Set([
+  "NPC_Sel_Armor",
+  "NPC_Sel_Neutral_Armor",
+  "NPC_Tec_Armor",
+  "NPC_Cloak_Heavy_Neutral_Armor",
+  "NPC_SkinCloak_Bandit_Armor",
+  "NPC_HeavyExoskeleton_Mercenaries_Armor",
+  "NPC_Heavy_Military_Armor",
+  "NPC_Cloak_Heavy_Military_Armor",
+  "NPC_Sci_Armor",
+  "NPC_Battle_Noon_Armor",
+  "NPC_HeavyAnomaly_Noon_Armor",
+  "NPC_HeavyExoskeleton_Noon_Armor",
+  "NPC_Exoskeleton_Noon_Armor",
+  "NPC_Spark_Armor",
+  "NPC_Anomaly_Spark_Armor",
+  "NPC_HeavyExoskeleton_Spark_Armor",
+  "NPC_Heavy_Corps_Armor",
+  "NPC_Heavy2_Coprs_Armor",
+  "NPC_Heavy3_Corps_Armor",
+  "NPC_Heavy3Exoskeleton_Coprs_Armor",
+  "NPC_Exoskeleton_Coprs_Armor",
+  "NPC_Richter_Armor",
+  "NPC_Korshunov_Armor",
+  "NPC_Korshunov_Armor_2",
+  "NPC_Dalin_Armor",
+  "NPC_Agata_Armor",
+  "NPC_Faust_Armor",
+  "NPC_Kaymanov_Armor",
+  "NPC_Shram_Armor",
+  "NPC_Dekhtyarev_Armor",
+  "NPC_Sidorovich_Armor",
+  "NPC_Barmen_Armor",
+  "NPC_Batya_Armor",
+  "NPC_Tyotya_Armor",
+]);
 
 export const armorAliasMap = {
   DutyArmor_3_U1: "Battle_Dolg_Armor",

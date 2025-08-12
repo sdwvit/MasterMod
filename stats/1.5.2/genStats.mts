@@ -99,7 +99,7 @@ const cases: Record<string, { inflow: string[][]; ignoreProps?: Set<string>; rep
       "NoiseCoef",
       "ArmorSoundType",
       "StaggerEffectPrototypeSID",
-      "UpgradePrototypeSIDs",
+      "ProtectionNPC",
       "MeshGenerator",
       "NpcMeshGenerator",
       "VoiceModulatorSID",
