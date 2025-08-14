@@ -3,9 +3,19 @@ import { GetStructType } from "s2cfgtojson";
 
 /**
  * Makes some consumables last longer.
+ * Also negates KillVolumeEffect (borderguard instakill)
  * @param entries
  */
 export const transformEffectPrototypes: Meta["entriesTransformer"] = (entries: TransformEffect["entries"]) => {
+  if (entries.SID === "KillVolumeEffect") {
+    entries.ApplyExtraEffectPrototypeSIDs.entries = Object.fromEntries(
+      Object.entries(entries.ApplyExtraEffectPrototypeSIDs.entries).map((e) => {
+        e[1] = "empty";
+        return e;
+      }),
+    );
+    return entries;
+  }
   if (!consumables.has(entries.SID)) {
     return null;
   }
@@ -33,4 +43,4 @@ const consumables = new Set([
   "WaterStaminaPerAction1",
   "HerculesWeight_Penalty",
 ]);
-type TransformEffect = GetStructType<{ SID: string; Duration: number }>;
+type TransformEffect = GetStructType<{ SID: string; Duration: number; ApplyExtraEffectPrototypeSIDs: string[] }>;

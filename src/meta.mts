@@ -14,6 +14,7 @@ import { transformALifeDirectorScenarioPrototypes } from "./transformALifeDirect
 import { transformArmorPrototypes } from "./transformArmorPrototypes.mjs";
 import { transformUpgradePrototypes } from "./transformUpgradePrototypes.mjs";
 import { repeatingQuests } from "./repeatingQuests.mjs";
+import { transformNPCWeaponSettingsPrototypes } from "./transformNPCWeaponSettingsPrototypes.mjs";
 
 export const meta: Meta = {
   interestingFiles: [
@@ -33,6 +34,7 @@ export const meta: Meta = {
     "ALifeDirectorScenarioPrototypes.cfg",
     "ArmorPrototypes.cfg",
     "UpgradePrototypes.cfg",
+    "NPCWeaponSettingsPrototypes.cfg",
   ],
   interestingContents: [],
   prohibitedIds: [],
@@ -45,6 +47,7 @@ export const meta: Meta = {
  [*] [Challenge] Armors don't take head slot, but also don't protect from PSY damage, so you need to use helmets
  [*] [QoL] Prevents Player and NPCs from being knocked down
  [*] [QoL] Removes Fall damage for Player and NPCs
+ [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles
  [*] [QoL/Balance] There is now no cooldown between repeatable quests
  [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact)
@@ -79,6 +82,7 @@ All changes have been tested against fresh save file. Some of these changes won'
       filePath.endsWith("DifficultyPrototypes.cfg") && transformDifficultyPrototypes,
       filePath.endsWith("AttachPrototypes.cfg") && transformAttachPrototypes,
       filePath.endsWith("EffectPrototypes.cfg") && transformEffectPrototypes,
+      filePath.endsWith("NPCWeaponSettingsPrototypes.cfg") && transformNPCWeaponSettingsPrototypes,
       mobs.some((m) => filePath.endsWith(m)) && transformMobs,
       filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes,
       repeatingQuests.some((q) => filePath.endsWith(q)) && transformRepeatingQuests,
