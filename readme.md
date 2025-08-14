@@ -73,6 +73,8 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_C00_ROSTOK`
   - `RSQ09_C00_MALAHIT`
   - `RSQ10_C00_HARPY`
+- `CharacterWeaponSettingsPrototypes`:
+  - `NPCWeaponSettingsPrototypes`
 
 ## License
 
