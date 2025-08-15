@@ -101,7 +101,7 @@ const total = getCfgFiles()
       .map((struct, index, array) => {
         struct.refurl = "../" + pathToSave.base;
         struct._refkey = struct.refkey;
-        struct.refkey = struct.entries.SID;
+        struct.refkey = idIsArrayIndex(struct._id) ? struct._id : struct.entries.SID;
         struct._id = `${MOD_NAME}${idIsArrayIndex(struct._id) ? "" : `_${struct._id}`}`;
         if (entriesTransformer)
           (struct as Struct).entries = entriesTransformer(struct.entries, {

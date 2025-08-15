@@ -9,7 +9,7 @@ export const transformDifficultyPrototypes: Meta["entriesTransformer"] = (_) => 
   }
   return {
     Ammo_Cost: 4.0,
-    Repair_Cost: 4.0,
+    Repair_Cost: 2.0,
     Upgrade_Cost: 4.0,
     Consumable_Cost: 4.0,
     Armor_Cost: 4.0,

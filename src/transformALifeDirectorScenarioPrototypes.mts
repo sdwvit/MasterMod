@@ -1,5 +1,6 @@
 import { Meta } from "./prepare-configs.mjs";
-import { EAgentArchetype, EAgentType, EALifeDirectorScenarioTarget, ERank, GetStructType } from "s2cfgtojson";
+import { EAgentArchetype, EAgentType, EALifeDirectorScenarioTarget, ERank, GetStructType, Struct } from "s2cfgtojson";
+import ALifeDirectorScenarioPrototypes from "../GameLite/GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg";
 
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
@@ -8,10 +9,23 @@ export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"
   Object.values(entries.ALifeScenarioNPCArchetypesLimitsPerPlayerRank.entries || {})
     .filter((e) => e.entries)
     .forEach((e) => {
-      Object.values(e.entries.Restrictions.entries || {})
+      const restrictionsRef = e.entries.Restrictions;
+      const pseudogiant = new (Struct.createDynamicClass("_"))() as GetStructType<Restriction>;
+      pseudogiant.entries = {
+        AgentType: "EAgentType::Pseudogiant",
+        MaxCount: 1.5, // going to be doubled later in code
+      };
+      const nextIndex =
+        parseInt(
+          Object.keys(restrictionsRef.entries || {})
+            .filter((e) => parseInt(e))
+            .pop() || "-1",
+        ) + 1;
+      Struct.addEntry(restrictionsRef, "[*]", pseudogiant, nextIndex);
+      Object.values(restrictionsRef.entries || {})
         .filter((e) => e.entries)
         .forEach((e) => {
-          e.entries.MaxCount = e.entries.MaxCount > 1 ? e.entries.MaxCount * 2 : 2;
+          e.entries.MaxCount *= 2;
         });
     });
   entries.RestrictedObjPrototypeSIDs.entries = Object.fromEntries(
@@ -35,7 +49,10 @@ export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"
   });
   return entries;
 };
-
+type Restriction = {
+  AgentType: EAgentType;
+  MaxCount: number;
+};
 type ALifeDirectorScenarioPrototypes = GetStructType<{
   SID: string;
   DefaultSpawnDelayMin: number;
@@ -53,10 +70,7 @@ type ALifeDirectorScenarioPrototypes = GetStructType<{
   FallbackMaxSpawnCount: number;
   ALifeScenarioNPCArchetypesLimitsPerPlayerRank: {
     Rank: ERank;
-    Restrictions: {
-      AgentType: EAgentType;
-      MaxCount: number;
-    }[];
+    Restrictions: Restriction[];
   }[];
   RestrictedObjPrototypeSIDs: string[];
   ProhibitedAgentTypes: EAgentType[];

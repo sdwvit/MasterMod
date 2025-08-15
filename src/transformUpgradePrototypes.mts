@@ -1,7 +1,8 @@
 import { EConnectionLineState, EUpgradeTargetPartType, EUpgradeVerticalPosition, GetStructType } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
+import UpgradePrototypes from "../GameLite/GameData/UpgradePrototypes.cfg";
 
-type UpgradePrototype = GetStructType<{
+type UpgradePrototypes = GetStructType<{
   ID: number;
   SID: string;
   Text: string;
@@ -29,12 +30,20 @@ type UpgradePrototype = GetStructType<{
 /**
  * Unlocks blocking upgrades.
  */
-export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototype["entries"]) => {
+export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototypes["entries"]) => {
   let keepo = null;
+  if (entries.SID === "empty") {
+    return {
+      SID: entries.SID,
+      ID: entries.ID,
+      RepairCostModifier: `0.02f`,
+    };
+  }
   if (entries.BlockingUpgradePrototypeSIDs?.entries) {
-    keepo = entries;
     Object.keys(entries.BlockingUpgradePrototypeSIDs.entries).forEach((key) => {
       entries.BlockingUpgradePrototypeSIDs.entries[key] = "empty";
+      keepo ||= {};
+      keepo.BlockingUpgradePrototypeSIDs = entries.BlockingUpgradePrototypeSIDs;
     });
   }
   return keepo;
