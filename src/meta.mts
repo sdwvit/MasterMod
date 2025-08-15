@@ -50,7 +50,7 @@ export const meta: Meta = {
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
  [*] [QoL/Balance] There is now no cooldown between repeatable quests.
- [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
+ [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair (200%), ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
  [*] [QoL] Unlocks blocking upgrades.
  [*] [Balance] Fixes price scaling for upgraded items.
  [*] [Balance] Increases cost of Attachments to 1000%.
@@ -61,10 +61,10 @@ export const meta: Meta = {
  [*] [Balance] Removes armor from vanilla mutants.
  [*] [Balance] NPCs drop armor, but it is damaged and will cost a lot to repair.
  [*] [Challenge] Reduced 💊 Consumables, 🔫 Ammo, and 💣 Grenades drops from bodies and stashes.
+ [*] [Challenge] 🥠 7674 instances of destructible objects now don't drop items.
  [*] [Challenge] 🍔 Wooden Boxes, Plywood Crates don't drop food.
  [*] [Challenge] 🩹 Metal Crates don't drop medkits or bandages.
  [*] [Challenge] 🔫 Wooden Ammo Crates don't drop ammo.
- [*] [Challenge] 🥠 7674 instances of destructible objects now don't drop items.
  [*] [Challenge] 🪃 431 instances of preplaced weapons or armor were removed (no more falcon / exo rush.
  [*] [Challenge] 💊 97 instances of preplaced medkits were removed.
  [*] [Challenge] 🧰 1166 instances of stashes were nerfed. 
@@ -74,7 +74,7 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 I aim to eventually make a collection with mods that are inspired by Stalker GAMMA.[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Тew [QoL] Removes instakill effect from invisible border guards as well as spawned guards",
+  changenote: "Code refactoring, friendlier repair costs, and more pseudogiants in lairs",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
       filePath.endsWith("DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
