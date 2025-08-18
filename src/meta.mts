@@ -50,7 +50,7 @@ export const meta: Meta = {
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
  [*] [QoL/Balance] There is now no cooldown between repeatable quests.
- [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair (200%), ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
+ [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair (300%), ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
  [*] [QoL] Unlocks blocking upgrades.
  [*] [Balance] Fixes price scaling for upgraded items.
  [*] [Balance] Increases cost of Attachments to 1000%.
