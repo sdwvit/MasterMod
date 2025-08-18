@@ -15,6 +15,7 @@ import { transformArmorPrototypes } from "./transformArmorPrototypes.mjs";
 import { transformUpgradePrototypes } from "./transformUpgradePrototypes.mjs";
 import { repeatingQuests } from "./repeatingQuests.mjs";
 import { transformNPCWeaponSettingsPrototypes } from "./transformNPCWeaponSettingsPrototypes.mjs";
+import { transformWeaponGeneralSetupPrototypes } from "./transformWeaponGeneralSetupPrototypes.mts";
 
 export const meta: Meta = {
   interestingFiles: [
@@ -30,11 +31,12 @@ export const meta: Meta = {
     "StashPrototypes.cfg",
     "TradePrototypes.cfg",
     ...mobs,
-    //"SpawnActorPrototypes/WorldMap_WP/", // very expensive
+    // "SpawnActorPrototypes/WorldMap_WP/", // very expensive
     "ALifeDirectorScenarioPrototypes.cfg",
     "ArmorPrototypes.cfg",
     "UpgradePrototypes.cfg",
     "NPCWeaponSettingsPrototypes.cfg",
+    "WeaponGeneralSetupPrototypes.cfg",
   ],
   interestingContents: [],
   prohibitedIds: [],
@@ -65,7 +67,7 @@ export const meta: Meta = {
  [*] [Challenge] 🍔 Wooden Boxes, Plywood Crates don't drop food.
  [*] [Challenge] 🩹 Metal Crates don't drop medkits or bandages.
  [*] [Challenge] 🔫 Wooden Ammo Crates don't drop ammo.
- [*] [Challenge] 🪃 431 instances of preplaced weapons or armor were removed (no more falcon / exo rush.
+ [*] [Challenge] 🪃 431 instances of preplaced weapons or armor were removed (no more falcon / exo rush).
  [*] [Challenge] 💊 97 instances of preplaced medkits were removed.
  [*] [Challenge] 🧰 1166 instances of stashes were nerfed. 
 [/list]
@@ -93,6 +95,7 @@ All changes have been tested against fresh save file. Some of these changes won'
       filePath.endsWith("ALifeDirectorScenarioPrototypes.cfg") && transformALifeDirectorScenarioPrototypes,
       filePath.endsWith("ArmorPrototypes.cfg") && transformArmorPrototypes,
       filePath.endsWith("UpgradePrototypes.cfg") && transformUpgradePrototypes,
+      filePath.endsWith("WeaponGeneralSetupPrototypes.cfg") && transformWeaponGeneralSetupPrototypes,
     ].filter(Boolean) as Meta["entriesTransformer"][];
 
     if (transformers.length === 0) {
