@@ -1,4 +1,4 @@
-import { GetStructType } from "s2cfgtojson";
+import { GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import WeaponGeneralSetupPrototypes from "../GameLite/GameData/WeaponData/WeaponGeneralSetupPrototypes.cfg";
 
@@ -40,15 +40,20 @@ const uniqueAttachmentsToAlternatives: Record<string, string> = {
   Sharpshooter_Silen: "EN_Silen_3",
   Gun_Silence_Silen: "RU_Silen_2",
   Sofmod_Silen: "EN_Silen_3",
-  // GunDrowned_MagPaired: "GunAK_MagPaired", removing crashes the game
-  M701_Scope: "EN_X8Scope_1",
+  //GunDrowned_MagPaired: "GunAK_MagPaired", // removing crashes the game on existing save
   Gun_GStreet_MagIncreased: "GunM10_MagIncreased",
-  // Gun_Shakh_MagIncreased: "GunViper_MagIncreased", removing crashes the game
+  // Gun_Shakh_MagIncreased: "GunViper_MagIncreased", // removing crashes the game on existing save
   GunPKP_Korshunov_MagLarge: "GunPKP_MagLarge",
+
+  M701_Scope: "EN_X8Scope_1",
+  M701_Colim_Scope: "EN_ColimScope_1",
+  SVDM_Scope: "RU_X4Scope_1",
+  Gvintar_Scope: "RU_X4Scope_1",
+  SVU_Scope: "RU_X8Scope_1",
 };
 
 /**
- * Makes unique weapons backwards compatible with non-unique reference weapons: attachments / upgrades / prices.
+ * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
 export const transformWeaponGeneralSetupPrototypes: Meta["entriesTransformer"] = (entries: WeaponGeneralSetupPrototypes["entries"], context) => {
   let keepo = null;
@@ -61,20 +66,39 @@ export const transformWeaponGeneralSetupPrototypes: Meta["entriesTransformer"] =
   });
   if (keepo) {
     if (entries.CompatibleAttachments) {
+      const extraCompatibleAttachments = {};
+
       const currentCompatibleAttachments = Object.fromEntries(
         Object.entries(entries.CompatibleAttachments.entries)
           .filter((e) => e[1].entries)
-          .map(([_, v]) => [v.entries.AttachPrototypeSID, v]),
+          .map(([_, v]) => {
+            if (uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]) {
+              const dummy = new (Struct.createDynamicClass("dummy"))() as typeof v;
+              dummy.entries = { ...v.entries };
+              dummy.entries.AttachPrototypeSID = uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID];
+              extraCompatibleAttachments[uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]] = dummy;
+            }
+            return [v.entries.AttachPrototypeSID, v];
+          }),
       );
       const refCompatibleAttachments = Object.fromEntries(
         Object.entries((context.structsById[context.struct._refkey] as WeaponGeneralSetupPrototypes)?.entries.CompatibleAttachments?.entries || {}) // todo this only scans within the current file, so DLC weapons's ref would be undefined. manually read the base file and add it here if dlc stuff is needed
           .filter((e) => e[1].entries)
-          .map(([_, v]) => [v.entries.AttachPrototypeSID, v]),
+          .map(([_, v]) => {
+            if (uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]) {
+              const dummy = new (Struct.createDynamicClass("dummy"))() as typeof v;
+              dummy.entries = { ...v.entries };
+              dummy.entries.AttachPrototypeSID = uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID];
+              extraCompatibleAttachments[uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]] = dummy;
+            }
+            return [v.entries.AttachPrototypeSID, v];
+          }),
       );
 
       const dedup = {
         ...refCompatibleAttachments,
         ...currentCompatibleAttachments,
+        ...(extraCompatibleAttachments as typeof currentCompatibleAttachments),
       };
 
       entries.CompatibleAttachments.entries = Object.fromEntries(Object.values(dedup).map((e, i) => [i, e]));
