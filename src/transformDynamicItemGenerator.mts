@@ -1,4 +1,4 @@
-import { Entries, GetStructType } from "s2cfgtojson";
+import { Entries, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 
@@ -47,27 +47,52 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
         switch (e.entries?.Category) {
           case "EItemGenerationCategory::BodyArmor":
             {
-              Object.values(e.entries.PossibleItems.entries)
-                .filter((pi) => pi.entries)
-                .forEach((pi, _, { length }) => {
-                  if (!armorAliasMap[pi.entries.ItemPrototypeSID] && !allArmorAdjustedCost[pi.entries.ItemPrototypeSID]) {
-                    return;
-                  }
-                  let key = pi.entries.ItemPrototypeSID;
-                  if (!allArmorAdjustedCost[key]) key = armorAliasMap[key];
+              const options = Object.values(e.entries.PossibleItems.entries).filter(
+                (pi) => pi.entries && allArmorAdjustedCost[pi.entries.ItemPrototypeSID],
+              );
+              if (!options.length) {
+                return;
+              }
+              const weights = Object.fromEntries(
+                options.map((pi) => {
+                  const key = pi.entries.ItemPrototypeSID;
                   const zeroToOne = 1 - (allArmorAdjustedCost[key] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
-                  const weight = (1 - zeroToOne * 0.14 + 0.01) / length;
                   const chance = zeroToOne * 0.14 + 0.01; // 1% to 15%
-                  if (adjustButDontDrop.has(key)) {
-                    pi.entries.Weight = precision(weight);
-                  } else {
-                    /** Drop probability is between 1% and 5% depending on item price; 5% is the cheapest */
-                    pi.entries.Chance = precision(chance);
-                    pi.entries.Weight = precision(weight);
-                    pi.entries.MinDurability = precision(semiRandom(i) * 0.05);
-                    pi.entries.MaxDurability = precision(pi.entries.MinDurability + semiRandom(i) * 0.5);
-                  }
-                });
+                  return [key, chance];
+                }),
+              );
+
+              const ab = options.filter((pi) => !adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
+              const cd = options.filter((pi) => adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
+
+              ab.forEach((pi) => {
+                const dummy = new (Struct.createDynamicClass("dummy"))() as (typeof options)[0];
+                dummy.entries = { ...pi.entries };
+                delete dummy.entries.Chance;
+                cd.push(dummy);
+                let i = 0;
+                while (e.entries.PossibleItems.entries[i]) {
+                  i++;
+                }
+                e.entries.PossibleItems.entries[i] = dummy;
+              });
+
+              const maxAB = Math.max(0, ...ab.map((pi) => weights[pi.entries.ItemPrototypeSID]));
+
+              const abSum = ab.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
+              const cdSum = cd.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
+
+              const x = abSum / maxAB;
+              const y = cdSum / (1 - maxAB);
+              ab.forEach((pi) => {
+                pi.entries.Chance = 1;
+                pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / x);
+                pi.entries.MinDurability = precision(semiRandom(i) * 0.05);
+                pi.entries.MaxDurability = precision(pi.entries.MinDurability + weights[pi.entries.ItemPrototypeSID] * 0.5);
+              });
+              cd.forEach((pi) => {
+                pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / y);
+              });
             }
             break;
           /**
@@ -132,7 +157,9 @@ export const allArmorAdjustedCost = {
   Nasos_Neutral_Armor: 20746,
   Zorya_Neutral_Armor: 36429,
   SEVA_Neutral_Armor: 85386,
+  Seva_Neutral_Armor: 85386,
   Exoskeleton_Neutral_Armor: 171219,
+  Exosekeleton_Neutral_Armor: 171219,
   SkinJacket_Bandit_Armor: 6091,
   Jacket_Bandit_Armor: 9616,
   Middle_Bandit_Armor: 13299,
@@ -147,12 +174,15 @@ export const allArmorAdjustedCost = {
   Rook_Svoboda_Armor: 36260,
   Battle_Svoboda_Armor: 24304,
   SEVA_Svoboda_Armor: 43704,
+  Seva_Svoboda_Armor: 43704,
   Heavy_Svoboda_Armor: 64256,
   HeavyExoskeleton_Svoboda_Armor: 124046,
   Exoskeleton_Svoboda_Armor: 327669,
   Rook_Dolg_Armor: 22907,
   Battle_Dolg_Armor: 20878,
+  DutyArmor_3_U1: 20878,
   SEVA_Dolg_Armor: 43964,
+  Seva_Dolg_Armor: 43964,
   Heavy_Dolg_Armor: 22544,
   HeavyExoskeleton_Dolg_Armor: 96997,
   Exoskeleton_Dolg_Armor: 170259,
@@ -252,11 +282,3 @@ const adjustButDontDrop = new Set([
   "NPC_Batya_Armor",
   "NPC_Tyotya_Armor",
 ]);
-
-export const armorAliasMap = {
-  DutyArmor_3_U1: "Battle_Dolg_Armor",
-  Exosekeleton_Neutral_Armor: "Exoskeleton_Neutral_Armor",
-  Seva_Dolg_Armor: "SEVA_Dolg_Armor",
-  Seva_Neutral_Armor: "SEVA_Neutral_Armor",
-  Seva_Svoboda_Armor: "SEVA_Svoboda_Armor",
-};
