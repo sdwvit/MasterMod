@@ -1,4 +1,4 @@
-import { Entries, GetStructType, Struct } from "s2cfgtojson";
+import { EItemGenerationCategory, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 
@@ -42,9 +42,10 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
       .filter((e) => e.entries)
       .forEach((e, i) => {
         /**
-         * Allows NPCs to drop armor.
+         * Allows NPCs to drop armor and helmets.
          */
         switch (e.entries?.Category) {
+          case "EItemGenerationCategory::Head":
           case "EItemGenerationCategory::BodyArmor":
             {
               const options = Object.values(e.entries.PossibleItems.entries).filter(
@@ -134,22 +135,26 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
   return entries;
 };
 
+type CommaSeparatedRank = ERank | `${ERank}, ${ERank}` | `${ERank}, ${ERank}, ${ERank}` | `${ERank}, ${ERank}, ${ERank}, ${ERank}`;
+type PossibleItem = {
+  ItemGeneratorPrototypeSID?: string;
+  ItemPrototypeSID: string;
+  Weight: number;
+  MinDurability: number;
+  MaxDurability: number;
+  Chance: number;
+  AmmoMinCount?: number;
+  AmmoMaxCount?: number;
+};
+type ItemGenerator = {
+  Category?: EItemGenerationCategory;
+  PlayerRank?: CommaSeparatedRank;
+  ReputationThreshold?: number;
+  PossibleItems?: PossibleItem[];
+};
 export type DynamicItemGenerator = GetStructType<{
-  SID: "GeneralNPC_Neutral_CloseCombat_ItemGenerator";
-  ItemGenerator: {
-    Category?: string;
-    ReputationThreshold?: number;
-    PossibleItems?: {
-      ItemGeneratorPrototypeSID?: string;
-      ItemPrototypeSID: string;
-      Weight: number;
-      MinDurability: number;
-      MaxDurability: number;
-      Chance: number;
-      AmmoMinCount?: number;
-      AmmoMaxCount?: number;
-    }[];
-  }[];
+  SID: string;
+  ItemGenerator: ItemGenerator[];
 }>;
 export const allArmorAdjustedCost = {
   Jemmy_Neutral_Armor: 15037,
@@ -246,6 +251,7 @@ export const allArmorAdjustedCost = {
 
 const minimumArmorCost = Object.values(allArmorAdjustedCost).reduce((a, b) => Math.min(a, b), Infinity);
 const maximumArmorCost = Object.values(allArmorAdjustedCost).reduce((a, b) => Math.max(a, b), -Infinity);
+
 const adjustButDontDrop = new Set([
   "NPC_Sel_Armor",
   "NPC_Sel_Neutral_Armor",
