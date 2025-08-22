@@ -1,8 +1,10 @@
 import { EItemGenerationCategory, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
+import { extraArmorsByFaction } from "./extraArmors.mjs";
+import { factions } from "./factions.mjs";
 
-const precision = (e) => Math.round(e * 1e3) / 1e3;
+const precision = (e: number) => Math.round(e * 1e3) / 1e3;
 
 /**
  * Does not allow traders to sell gear.
@@ -44,8 +46,10 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
         /**
          * Allows NPCs to drop armor and helmets.
          */
+        // noinspection FallThroughInSwitchStatementJS
         switch (e.entries?.Category) {
           case "EItemGenerationCategory::Head":
+            e.entries.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
           case "EItemGenerationCategory::BodyArmor":
             {
               const options = Object.values(e.entries.PossibleItems.entries).filter(
@@ -57,41 +61,46 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
               const weights = Object.fromEntries(
                 options.map((pi) => {
                   const key = pi.entries.ItemPrototypeSID;
-                  const zeroToOne = 1 - (allArmorAdjustedCost[key] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
-                  const chance = zeroToOne * 0.14 + 0.01; // 1% to 15%
-                  return [key, chance];
+                  return [key, getChanceForSID(key)];
                 }),
               );
 
               const ab = options.filter((pi) => !adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
               const cd = options.filter((pi) => adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
 
-              ab.forEach((pi) => {
-                const dummy = new (Struct.createDynamicClass("dummy"))() as (typeof options)[0];
-                dummy.entries = { ...pi.entries };
-                delete dummy.entries.Chance;
-                cd.push(dummy);
-                let i = 0;
-                while (e.entries.PossibleItems.entries[i]) {
-                  i++;
+              if (!cd.length && e.entries?.Category === "EItemGenerationCategory::BodyArmor") {
+                const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]);
+                if (faction) {
+                  const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
+                  Object.entries(extraArmors).forEach(([originalSID, npcArmorSID]) => {
+                    const dummyPossibleItem = new (Struct.createDynamicClass(npcArmorSID))() as GetStructType<PossibleItem>;
+                    dummyPossibleItem.entries = { ItemPrototypeSID: npcArmorSID } as GetStructType<PossibleItem>["entries"];
+                    weights[npcArmorSID] = getChanceForSID(originalSID);
+                    let i = 0;
+                    while (e.entries.PossibleItems.entries[i]) {
+                      i++;
+                    }
+                    e.entries.PossibleItems.entries[i] = dummyPossibleItem;
+                    cd.push(dummyPossibleItem);
+                  });
                 }
-                e.entries.PossibleItems.entries[i] = dummy;
-              });
+              }
 
               const maxAB = Math.max(0, ...ab.map((pi) => weights[pi.entries.ItemPrototypeSID]));
 
               const abSum = ab.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
               const cdSum = cd.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
 
-              const x = abSum / maxAB;
+              const x = cdSum ? abSum / maxAB : abSum;
               const y = cdSum / (1 - maxAB);
               ab.forEach((pi) => {
-                pi.entries.Chance = 1;
+                pi.entries.Chance = precision(weights[pi.entries.ItemPrototypeSID]);
                 pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / x);
-                pi.entries.MinDurability = precision(semiRandom(i) * 0.05);
+                pi.entries.MinDurability = precision(semiRandom(i) * 0.04 + 0.01);
                 pi.entries.MaxDurability = precision(pi.entries.MinDurability + weights[pi.entries.ItemPrototypeSID] * 0.5);
               });
               cd.forEach((pi) => {
+                pi.entries.Chance = 1; // make sure it always spawns on npc
                 pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / y);
               });
             }
@@ -123,8 +132,10 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
                 pi.entries.AmmoMaxCount = Math.floor(1 + 5 * semiRandom(i + j));
               });
             break;
+          case "EItemGenerationCategory::SubItemGenerator":
+            break;
           default:
-            (e.entries as Entries) = {};
+            //(e.entries as Entries) = {};
             break;
         }
       });
@@ -288,3 +299,8 @@ const adjustButDontDrop = new Set([
   "NPC_Batya_Armor",
   "NPC_Tyotya_Armor",
 ]);
+
+function getChanceForSID(sid: string) {
+  const zeroToOne = 1 - (allArmorAdjustedCost[sid] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
+  return zeroToOne * 0.14 + 0.01; // 1% to 15%
+}

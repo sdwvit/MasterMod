@@ -1,0 +1,26 @@
+import { extraArmorsByFaction } from "./extraArmors.mjs";
+
+export const factions: Record<string, keyof typeof extraArmorsByFaction> = {
+  neutral: "neutral",
+  bandit: "bandit",
+  mercenaries: "mercenary",
+  mercenary: "mercenary",
+  military: "military",
+  militaries: "military",
+  corps: "corpus",
+  coprs: "corpus",
+  corpus: "corpus",
+  scientific: "scientist",
+  sci: "scientist",
+  scientists: "scientist",
+  scientist: "scientist",
+  svoboda: "freedom",
+  freedom: "freedom",
+  dolg: "duty",
+  duty: "duty",
+  noon: "monolith",
+  monolith: "monolith",
+  granit: "monolith",
+  varta: "varta",
+  spark: "spark",
+};

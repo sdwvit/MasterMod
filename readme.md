@@ -24,6 +24,9 @@
 
 Here is a list of extended files (this mod uses new files, so it is compatible with other mods that don't modify the same SIDs):
 
+- `ItemPrototypes`:
+  - `ArmorPrototypes`
+  - `AttachPrototypes`
 - `WeaponData`:
   - `WeaponGeneralSetupPrototypes`
 - `Modified assets`:
@@ -45,9 +48,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`
-- `ItemPrototypes`:
-  - `ArmorPrototypes`
-  - `AttachPrototypes`
 - `ObjPrototypes`:
   - `BlindDog`
   - `Bloodsucker`
