@@ -10,6 +10,8 @@ type ArmorPrototype = GetStructType<{
   Weight: number;
   bBlockHead?: boolean;
   Cost: number;
+  ItemGridWidth?: number;
+  ItemGridHeight?: number;
   ArtifactSlots: number;
   Protection: {
     Burn: number;
@@ -47,6 +49,8 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
         newArmor.entries = {
           SID: newSID,
           Invisible: true,
+          ItemGridWidth: 1,
+          ItemGridHeight: 1,
         } as ArmorPrototype["entries"];
         newArmor.refkey = original;
         newArmor.refurl = armor.refurl;
