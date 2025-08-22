@@ -1,7 +1,8 @@
-import { GetStructType } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
+import { GetStructType, Struct } from "s2cfgtojson";
+import { Meta, WithSID } from "./prepare-configs.mjs";
+import { extraArmors } from "./extraArmors.mjs";
 
-type ArmorPrototype = { _refkey: string | number } & GetStructType<{
+type ArmorPrototype = GetStructType<{
   SID: string;
   Icon: string;
   MeshPrototypeSID: string;
@@ -27,13 +28,33 @@ type ArmorPrototype = { _refkey: string | number } & GetStructType<{
   Invisible?: boolean;
 }>;
 
+const oncePerFile = new Set<string>();
+
 /**
  * Makes so no armor blocks head, but also removes any psy protection. Forces player to use helmets.
  */
-export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: ArmorPrototype["entries"]) => {
+export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: ArmorPrototype["entries"], context) => {
   if (entries.SID.toLowerCase().includes("helmet") || bannedids.has(entries.SID)) {
     return null;
   }
+
+  if (!oncePerFile.has(context.filePath)) {
+    // add extra spark armor
+    extraArmors.forEach(([original, newSID]) => {
+      const armor = context.array.find((a) => a.entries.SID === original);
+      if (armor) {
+        const newArmor = new (Struct.createDynamicClass(newSID))() as WithSID;
+        newArmor.entries = { SID: newSID };
+        newArmor.refkey = original;
+        newArmor.refurl = armor.refurl;
+        newArmor._id = newSID;
+        newArmor.isRoot = true;
+        context.extraStructs.push(newArmor);
+      }
+      oncePerFile.add(context.filePath);
+    });
+  }
+
   let keepo = null;
   if (entries.bBlockHead) {
     keepo ||= { SID: entries.SID };

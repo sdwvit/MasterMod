@@ -2,7 +2,7 @@ import { Entries, Struct } from "s2cfgtojson";
 import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
-type Context<T> = { struct: T; index: number; array: T[]; filePath: string; rawContent: string; structsById: Record<string, T> };
+type Context<T> = { struct: T; index: number; array: T[]; extraStructs: T[]; filePath: string; rawContent: string; structsById: Record<string, T> };
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 // scan all local .cfg files
 const rootDir = path.join(import.meta.dirname, "..");
@@ -90,6 +90,7 @@ const total = getCfgFiles()
       },
       {} as Record<string, WithSID>,
     );
+    const extraStructs: WithSID[] = [];
     const structs = Object.values(structsById)
       .filter(
         (s): s is WithSID =>
@@ -98,12 +99,15 @@ const total = getCfgFiles()
           prohibitedIds.every((id) => !s.entries.SID.includes(id)),
       )
       .map((s) => Struct.fromString<WithSID>(s.toString())[0])
-      .map((struct, index, array) => {
+      .map((struct) => {
         struct.refurl = "../" + pathToSave.base;
         struct._refkey = struct.refkey;
         struct.refkey = idIsArrayIndex(struct._id) ? struct._id : struct.entries.SID;
         struct._id = `${MOD_NAME}${idIsArrayIndex(struct._id) ? "" : `_${struct._id}`}`;
-        if (entriesTransformer)
+        return struct;
+      })
+      .map((struct, index, array) => {
+        if (entriesTransformer) {
           (struct as Struct).entries = entriesTransformer(struct.entries, {
             struct,
             index,
@@ -111,12 +115,15 @@ const total = getCfgFiles()
             filePath,
             rawContent,
             structsById,
+            extraStructs,
           });
+        }
         if (!struct.entries) {
           return null;
         }
         return struct;
       })
+      .concat(extraStructs)
       .filter(Boolean);
 
     if (structs.length) {
