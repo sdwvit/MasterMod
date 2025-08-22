@@ -58,26 +58,27 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
               if (!options.length) {
                 return;
               }
-
               const weights = Object.fromEntries(
                 options.map((pi) => {
                   const key = pi.entries.ItemPrototypeSID;
-                  return [key, getChanceForArmor(key)];
+                  const zeroToOne = 1 - (allArmorAdjustedCost[key] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
+                  const chance = zeroToOne * 0.14 + 0.01; // 1% to 15%
+                  return [key, chance];
                 }),
               );
 
               const ab = options.filter((pi) => !adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
               const cd = options.filter((pi) => adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
 
-              if (!cd.length && e.entries.Category === "EItemGenerationCategory::BodyArmor") {
+              if (!cd.length && e.entries?.Category === "EItemGenerationCategory::BodyArmor") {
                 const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]);
                 if (faction) {
                   const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
                   Object.entries(extraArmors).forEach(([originalSID, npcArmorSID]) => {
                     const dummyPossibleItem = new (Struct.createDynamicClass(npcArmorSID))() as GetStructType<PossibleItem>;
-                    dummyPossibleItem.entries = { ItemPrototypeSID: npcArmorSID } as GetStructType<PossibleItem>["entries"];
-                    weights[npcArmorSID] = getChanceForArmor(originalSID);
-                    let i = 0;
+                    dummyPossibleItem.entries = { ItemPrototypeSID: npcArmorSID, Chance: 1 } as GetStructType<PossibleItem>["entries"]; // todo debug
+                    weights[npcArmorSID] = weights[originalSID];
+                    let i = 10;
                     while (e.entries.PossibleItems.entries[i]) {
                       i++;
                     }
@@ -95,7 +96,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
               const x = cdSum ? abSum / maxAB : abSum;
               const y = cdSum / (1 - maxAB);
               ab.forEach((pi) => {
-                pi.entries.Chance = 1;
+                pi.entries.Chance = precision(weights[pi.entries.ItemPrototypeSID]);
                 pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / x);
                 pi.entries.MinDurability = precision(semiRandom(i) * 0.04 + 0.01);
                 pi.entries.MaxDurability = precision(pi.entries.MinDurability + weights[pi.entries.ItemPrototypeSID] * 0.5);
@@ -299,12 +300,3 @@ const adjustButDontDrop = new Set([
   "NPC_Batya_Armor",
   "NPC_Tyotya_Armor",
 ]);
-
-function getChanceForArmor(sid: string) {
-  const adjustedCost = allArmorAdjustedCost[sid];
-  if (!adjustedCost) {
-    return 0;
-  }
-  const zeroToOne = 1 - (adjustedCost - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
-  return zeroToOne * 0.14 + 0.01; // 1% to 15%
-}
