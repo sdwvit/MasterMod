@@ -79,9 +79,10 @@ export const meta: Meta = {
 [hr][/hr]
 [h3]Source code:[/h3]
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
-I aim to eventually make a collection with mods that are inspired by Stalker GAMMA.[h3][/h3]
+[h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Code refactoring, friendlier repair costs, and more pseudogiants in lairs",
+  changenote:
+    "NPC wear (and occasionally drop) more different armor based on their faction, rebalance armor drop chances, adjusted repeatable quests rewards, reverted repair prices, default rifle scopes now can be detached and sold, unique weapons are now compatible with basic scopes",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
       filePath.endsWith("DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
