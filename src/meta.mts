@@ -18,6 +18,7 @@ import { transformNPCWeaponSettingsPrototypes } from "./transformNPCWeaponSettin
 import { transformWeaponGeneralSetupPrototypes } from "./transformWeaponGeneralSetupPrototypes.mts";
 import { transformQuestRewardsPrototypes } from "./transformQuestRewardsPrototypes.mjs";
 import { transformDialogPrototypes } from "./transformDialogPrototypes.mjs";
+import { logger } from "./logger.mjs";
 
 export const meta: Meta = {
   interestingFiles: [
@@ -112,6 +113,6 @@ All changes have been tested against fresh save file. Some of these changes won'
     };
   },
   onFinish() {
-    console.log("Removed preplaced items:", spawnTotals);
+    logger.log("Removed preplaced items:", spawnTotals);
   },
 };

@@ -2,6 +2,7 @@ import { Entries, Struct } from "s2cfgtojson";
 import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
+import { logger } from "./logger.mjs";
 
 type Context<T> = {
   struct: T;
@@ -89,7 +90,7 @@ const total = getCfgFiles()
     if (!entriesTransformer) {
       return;
     }
-    console.log(`Processing file: ${filePath}`);
+    logger.log(`Processing file: ${filePath}`);
 
     const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
     const structsById = Struct.fromString<WithSID>(rawContent).reduce(
@@ -154,10 +155,10 @@ function idIsArrayIndex(id: string): boolean {
 
 export type WithSID<T = {}> = Struct<{ SID: string } & T> & { _refkey: Struct["refkey"] };
 
-console.log(`Total: ${total.length} files processed.`);
+logger.log(`Total: ${total.length} files processed.`);
 const writtenFiles = total.filter((s) => s?.length > 0);
-console.log(`Total: ${writtenFiles.flat().length} structs in ${writtenFiles.length} files written.`);
-console.log("Now packing the mod and injecting into the game...");
+logger.log(`Total: ${writtenFiles.flat().length} structs in ${writtenFiles.length} files written.`);
+logger.log("Now packing the mod and injecting into the game...");
 await import("./packmod.mjs");
 await import("./push-to-sdk.mts");
 await import("./update-readme.mjs");

@@ -3,6 +3,7 @@ import childProcess from "node:child_process";
 
 import dotEnv from "dotenv";
 import * as fs from "node:fs";
+import { logger } from "./logger.mjs";
 
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const MOD_PATH = path.join(import.meta.dirname, "..");
@@ -12,7 +13,7 @@ const cmd = (name: string) => {
   const folderStructure = path.join("Stalker2", "Mods", name, "Content", "Paks", "Windows");
   const sourcePath = path.join(STAGED_PATH, name, "Windows", folderStructure);
   const destinationPath = path.join(MOD_PATH, "steamworkshop", folderStructure);
-  console.log(`Pulling staged mod from ${sourcePath}...`);
+  logger.log(`Pulling staged mod from ${sourcePath}...`);
   if (fs.readdirSync(sourcePath).length === 0) {
     console.error(`No files found in source path: ${sourcePath}`);
     process.exit(1);

@@ -1,6 +1,7 @@
 import path from "node:path";
 import dotEnv from "dotenv";
 import * as fs from "node:fs";
+import { logger } from "./logger.mjs";
 
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const root = path.join(import.meta.dirname, "..");
@@ -74,5 +75,5 @@ Free for non-commercial use. For commercial use, please contact GSC - authors of
 Copying or modifying the code should keep the author mentioned in the comments (https://github.com/sdwvit).
 `.trim();
 
-console.log("Updating readme.md...");
+logger.log("Updating readme.md...");
 fs.writeFileSync(readmePath, readmeContent, "utf8");
