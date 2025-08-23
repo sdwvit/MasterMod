@@ -37,6 +37,15 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `T_ThreatGray`
 - `ALifePrototypes`:
   - `ALifeDirectorScenarioPrototypes`
+- `DialogPrototypes`:
+  - `RSQ01_Dialog_Warlock_RSQ`
+  - `RSQ04_Dialog_Drabadan_RSQ`
+  - `RSQ05_Dialog_Sich_RSQ`
+  - `RSQ06_Dialog_Sidorovich_RSQ`
+  - `RSQ07_Dialog_Barmen_RSQ`
+  - `RSQ08_Dialog_Barmen_RSQ`
+  - `RSQ09_Dialog_Spica_RSQ`
+  - `RSQ10_Dialog_Harpy_RSQ`
 - `GameData`:
   - `DifficultyPrototypes`
   - `EffectPrototypes`
@@ -48,6 +57,16 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`
+- `QuestRewardsPrototypes`:
+  - `RSQ00_Reward`
+  - `RSQ01_Reward`
+  - `RSQ04_Reward`
+  - `RSQ05_Reward`
+  - `RSQ06_Reward`
+  - `RSQ07_Reward`
+  - `RSQ08_Reward`
+  - `RSQ09_Reward`
+  - `RSQ10_Reward`
 - `ObjPrototypes`:
   - `BlindDog`
   - `Bloodsucker`

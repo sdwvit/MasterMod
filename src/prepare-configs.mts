@@ -2,8 +2,19 @@ import { Entries, Struct } from "s2cfgtojson";
 import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
-type Context<T> = { struct: T; index: number; array: T[]; extraStructs: T[]; filePath: string; rawContent: string; structsById: Record<string, T> };
+
+type Context<T> = {
+  struct: T;
+  fileIndex: number;
+  index: number;
+  array: T[];
+  extraStructs: T[];
+  filePath: string;
+  rawContent: string;
+  structsById: Record<string, T>;
+};
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
+
 // scan all local .cfg files
 const rootDir = path.join(import.meta.dirname, "..");
 const nestedDir = path.join("Stalker2", "Content", "GameLite");
@@ -69,7 +80,7 @@ const { interestingIds, interestingFiles, interestingContents, prohibitedIds, ge
 
 const total = getCfgFiles()
   .filter((file) => interestingFiles.some((i) => file.includes(`/${i}`)))
-  .map((filePath) => {
+  .map((filePath, fileIndex) => {
     const rawContent = readOneFile(filePath);
     if (interestingContents.length && !interestingContents.some((i) => rawContent.includes(i))) {
       return;
@@ -111,6 +122,7 @@ const total = getCfgFiles()
           (struct as Struct).entries = entriesTransformer(struct.entries, {
             struct,
             index,
+            fileIndex,
             array,
             filePath,
             rawContent,

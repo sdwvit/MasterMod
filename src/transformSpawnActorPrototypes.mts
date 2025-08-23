@@ -1,20 +1,14 @@
 import { ERank, ESpawnType, GetStructType } from "s2cfgtojson";
 import { Meta, WithSID } from "./prepare-configs.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
+import { logger } from "./logger.mts";
 export const totals = {
   DestructibleObject: 0,
   Gear: 0,
   Medkit: 0,
   ItemContainer: 0,
 };
-const ALLOW_LOG = false;
-const logger = {
-  info: (...args: any[]) => {
-    if (ALLOW_LOG) {
-      console.log(...args);
-    }
-  },
-};
+
 /**
  * Removes preplaced items from the map. Like medkits, destructible items contents, and gear.
  */

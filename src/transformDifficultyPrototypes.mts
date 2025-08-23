@@ -1,5 +1,5 @@
 import { Meta } from "./prepare-configs.mjs";
-
+export const DIFFICULTY_FACTOR = 4;
 /**
  * Increases cost of everything and damage on Hard difficulty.
  */
@@ -8,16 +8,16 @@ export const transformDifficultyPrototypes: Meta["entriesTransformer"] = (_) => 
     return null;
   }
   return {
-    Ammo_Cost: 4.0,
-    Repair_Cost: 3.0,
-    Upgrade_Cost: 4.0,
-    Consumable_Cost: 4.0,
-    Armor_Cost: 4.0,
-    Weapon_Cost: 4.0,
-    Artifact_Cost: 4.0,
+    Ammo_Cost: DIFFICULTY_FACTOR,
+    Repair_Cost: DIFFICULTY_FACTOR - 1,
+    Upgrade_Cost: DIFFICULTY_FACTOR,
+    Consumable_Cost: DIFFICULTY_FACTOR,
+    Armor_Cost: DIFFICULTY_FACTOR,
+    Weapon_Cost: DIFFICULTY_FACTOR,
+    Artifact_Cost: DIFFICULTY_FACTOR,
 
-    Weapon_BaseDamage: 4,
-    NPC_Weapon_BaseDamage: 4,
-    Mutant_BaseDamage: 4,
+    Weapon_BaseDamage: DIFFICULTY_FACTOR,
+    NPC_Weapon_BaseDamage: DIFFICULTY_FACTOR,
+    Mutant_BaseDamage: DIFFICULTY_FACTOR,
   };
 };

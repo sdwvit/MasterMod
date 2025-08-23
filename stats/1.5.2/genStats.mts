@@ -3,6 +3,7 @@ import { Struct } from "s2cfgtojson";
 import { WithSID } from "../../src/prepare-configs.mjs";
 import dotEnv from "dotenv";
 import path from "node:path";
+import { deepMerge } from "../../src/deepMerge.mjs";
 
 dotEnv.config({ path: path.join(import.meta.dirname, "..", "..", ".env") });
 
@@ -32,23 +33,6 @@ function get<T extends Struct>(obj: T, path: `${string}.${string}` | string, loo
 }
 const cleanSID = (s) => s.replace(/(_Player(_WS)?|_GS)$/, "");
 
-const deepMerge = (target, source, preferLeft = true) => {
-  if (typeof target !== "object" || typeof source !== "object") {
-    return source;
-  }
-  for (const key of Object.keys(source)) {
-    if (key in target) {
-      target[key] = deepMerge(target[key], source[key]);
-    } else {
-      if (preferLeft) {
-        target[key] ||= source[key];
-      } else {
-        target[key] = source[key];
-      }
-    }
-  }
-  return target;
-};
 const getDeepKeys = (e: Struct, ignoreProps: Set<string>, parentKey?: string) => {
   if (!e.entries) {
     return [];

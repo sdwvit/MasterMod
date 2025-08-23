@@ -1,6 +1,6 @@
 import { Meta } from "./prepare-configs.mjs";
 import { transformTradePrototypes } from "./transformTradePrototypes.mjs";
-import { transformRepeatingQuests } from "./transformRepeatingQuests.mjs";
+import { transformQuestNodePrototypes } from "./transformQuestNodePrototypes.mjs";
 import { totals as spawnTotals, transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
 import { mobs, transformMobs } from "./transformMobs.mjs";
 import { transformEffectPrototypes } from "./transformEffectPrototypes.mjs";
@@ -13,9 +13,11 @@ import { transformItemGeneratorPrototypes } from "./transformItemGeneratorProtot
 import { transformALifeDirectorScenarioPrototypes } from "./transformALifeDirectorScenarioPrototypes.mjs";
 import { transformArmorPrototypes } from "./transformArmorPrototypes.mjs";
 import { transformUpgradePrototypes } from "./transformUpgradePrototypes.mjs";
-import { repeatingQuests } from "./repeatingQuests.mjs";
+import { repeatingQuestsDialogPrototypes, repeatingQuestsQuestNodePrototypes, repeatingQuestsQuestRewardsPrototypes } from "./repeatingQuests.mjs";
 import { transformNPCWeaponSettingsPrototypes } from "./transformNPCWeaponSettingsPrototypes.mjs";
 import { transformWeaponGeneralSetupPrototypes } from "./transformWeaponGeneralSetupPrototypes.mts";
+import { transformQuestRewardsPrototypes } from "./transformQuestRewardsPrototypes.mjs";
+import { transformDialogPrototypes } from "./transformDialogPrototypes.mjs";
 
 export const meta: Meta = {
   interestingFiles: [
@@ -27,7 +29,9 @@ export const meta: Meta = {
     "Gamepass_ItemGenerators.cfg",
     "ObjPrototypes/GeneralNPCObjPrototypes.cfg",
     "GameData/ObjPrototypes.cfg",
-    ...repeatingQuests,
+    ...repeatingQuestsQuestNodePrototypes,
+    ...repeatingQuestsQuestRewardsPrototypes,
+    ...repeatingQuestsDialogPrototypes,
     "StashPrototypes.cfg",
     "TradePrototypes.cfg",
     ...mobs,
@@ -87,7 +91,9 @@ All changes have been tested against fresh save file. Some of these changes won'
       filePath.endsWith("NPCWeaponSettingsPrototypes.cfg") && transformNPCWeaponSettingsPrototypes,
       mobs.some((m) => filePath.endsWith(m)) && transformMobs,
       filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes,
-      repeatingQuests.some((q) => filePath.endsWith(q)) && transformRepeatingQuests,
+      repeatingQuestsQuestNodePrototypes.some((q) => filePath.endsWith(q)) && transformQuestNodePrototypes,
+      repeatingQuestsQuestRewardsPrototypes.some((q) => filePath.endsWith(q)) && transformQuestRewardsPrototypes,
+      repeatingQuestsDialogPrototypes.some((q) => filePath.endsWith(q)) && transformDialogPrototypes,
       filePath.endsWith("TradePrototypes.cfg") && transformTradePrototypes,
       filePath.endsWith("/StashPrototypes.cfg") && transformStashPrototypes,
       (filePath.endsWith("/ItemGeneratorPrototypes.cfg") || filePath.endsWith("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) &&
