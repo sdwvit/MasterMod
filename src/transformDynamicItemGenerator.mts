@@ -124,7 +124,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
           }
           case "EItemGenerationCategory::WeaponPrimary":
           case "EItemGenerationCategory::WeaponPistol":
-          case "EItemGenerationCategory::WeaponSecondary":
+          case "EItemGenerationCategory::WeaponSecondary": {
             Object.values(e.entries.PossibleItems.entries)
               .filter((_) => _.entries)
               .forEach((pi, j) => {
@@ -132,6 +132,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
                 pi.entries.AmmoMaxCount = Math.floor(1 + 5 * semiRandom(i + j));
               });
             break;
+          }
           case "EItemGenerationCategory::SubItemGenerator":
             break;
           default:
@@ -157,6 +158,7 @@ type PossibleItem = {
   AmmoMinCount?: number;
   AmmoMaxCount?: number;
 };
+
 type ItemGenerator = {
   Category?: EItemGenerationCategory;
   PlayerRank?: CommaSeparatedRank;
