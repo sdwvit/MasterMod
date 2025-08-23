@@ -57,10 +57,12 @@ export const meta: Meta = {
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
  [*] [QoL/Balance] There is now no cooldown between repeatable quests.
- [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair (300%), ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
- [*] [QoL] Unlocks blocking upgrades.
- [*] [Balance] Fixes price scaling for upgraded items.
+ [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
  [*] [Balance] Increases cost of Attachments to 1000%.
+ [*] [Balance] Repeatable Quest Rewards are increased to 400%, but are made random with 25% spread both ways.
+ [*] [Balance] Rifles default scopes can now be detached and sold.
+ [*] [QoL] Unlocks blocking upgrades. 
+ [*] [QoL] Unique weapons are now compatible with basic scopes.
  [*] [Challenge] Traders are not allowed to sell gear.
  [*] [Challenge] Traders or Bartenders are not allowed to buy gear.
  [*] [Challenge / Balance] 🔪🗡🦟️ Increase given and taken damage on Hard difficulty to 400%.
@@ -68,10 +70,7 @@ export const meta: Meta = {
  [*] [Balance] Removes armor from vanilla mutants.
  [*] [Balance] NPCs drop armor, but it is damaged and will cost a lot to repair.
  [*] [Challenge] Reduced 💊 Consumables, 🔫 Ammo, and 💣 Grenades drops from bodies and stashes.
- [*] [Challenge] 🥠 7674 instances of destructible objects now don't drop items.
- [*] [Challenge] 🍔 Wooden Boxes, Plywood Crates don't drop food.
- [*] [Challenge] 🩹 Metal Crates don't drop medkits or bandages.
- [*] [Challenge] 🔫 Wooden Ammo Crates don't drop ammo.
+ [*] [Challenge] 🥠 7674 destructible objects now don't drop items (🍔 Wooden Boxes, 🍔 Plywood Crates, 🩹 Metal Crates, 🔫 Wooden Ammo Crates).
  [*] [Challenge] 🪃 431 instances of preplaced weapons or armor were removed (no more falcon / exo rush).
  [*] [Challenge] 💊 97 instances of preplaced medkits were removed.
  [*] [Challenge] 🧰 1166 instances of stashes were nerfed. 
