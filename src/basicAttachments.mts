@@ -1,4 +1,4 @@
-export const basicAttachments = {
+export const basicScopes = {
   RU_ColimScope_1: true,
   EN_ColimScope_1: true,
   EN_GoloScope_1: true,
@@ -8,6 +8,80 @@ export const basicAttachments = {
   EN_X4Scope_1: true,
   RU_X8Scope_1: true,
   EN_X8Scope_1: true,
+};
+
+export const scopeDefinitions = {
+  EN: {
+    EN_GoloScope_1: {
+      AttachPrototypeSID: "EN_GoloScope_1",
+      Socket: "GoloScopeSocket",
+      IconPosX: 155,
+      IconPosY: 9,
+    },
+    EN_ColimScope_1: {
+      AttachPrototypeSID: "EN_ColimScope_1",
+      Socket: "ColimScopeSocket",
+      IconPosX: 155,
+      IconPosY: 9,
+    },
+    EN_X2Scope_1: {
+      AttachPrototypeSID: "EN_X2Scope_1",
+      Socket: "X2ScopeSocket",
+      IconPosX: 155,
+      IconPosY: 9,
+      AimMuzzleVFXSocket: "X2ScopeMuzzle",
+    },
+    EN_X4Scope_1: {
+      AttachPrototypeSID: "EN_X4Scope_1",
+      Socket: "X4ScopeSocket",
+      IconPosX: 60,
+      IconPosY: 0,
+      AimMuzzleVFXSocket: "X4ScopeMuzzle",
+    },
+    EN_X8Scope_1: {
+      AttachPrototypeSID: "EN_X8Scope_1",
+      Socket: "X8ScopeSocket",
+      IconPosX: 60,
+      IconPosY: 0,
+      AimMuzzleVFXSocket: "X8ScopeMuzzle",
+      AimShellShutterVFXSocket: "X8ScopeShells",
+    },
+  },
+  nEN: {
+    RU_ColimScope_1: {
+      AttachPrototypeSID: "RU_ColimScope_1",
+      Socket: "ColimScopeSocket",
+      IconPosX: 155,
+      IconPosY: 9,
+    },
+    RU_X2Scope_1: {
+      AttachPrototypeSID: "RU_X2Scope_1",
+      Socket: "X2ScopeSocket",
+      IconPosX: 155,
+      IconPosY: 9,
+      AimMuzzleVFXSocket: "X2ScopeMuzzle",
+      AimShellShutterVFXSocket: "X2ScopeShells",
+    },
+    RU_X4Scope_1: {
+      AttachPrototypeSID: "RU_X4Scope_1",
+      Socket: "X4ScopeSocket",
+      IconPosX: 60,
+      IconPosY: 0,
+      AimMuzzleVFXSocket: "X4ScopeMuzzle",
+      AimShellShutterVFXSocket: "X4ScopeShells",
+    },
+    RU_X8Scope_1: {
+      AttachPrototypeSID: "RU_X8Scope_1",
+      Socket: "X8ScopeSocket",
+      IconPosX: 60,
+      IconPosY: 0,
+      AimMuzzleVFXSocket: "X8ScopeMuzzle",
+    },
+  },
+};
+
+export const basicAttachments = {
+  ...basicScopes,
   RU_Silen_1: true,
   RU_Silen_2: true,
   RU_Silen_3: true,

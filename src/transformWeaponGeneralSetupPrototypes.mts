@@ -7,6 +7,27 @@ import WeaponGeneralSetupPrototypes from "../GameLite/GameData/WeaponData/Weapon
  */
 export const transformWeaponGeneralSetupPrototypes: Meta["entriesTransformer"] = (entries: WeaponGeneralSetupPrototypes["entries"], context) => {
   let keepo = null;
+  /*  // add more compatible scopes
+  if (entries.CompatibleAttachments?.entries) {
+    const interestingScopes = Object.values(entries.CompatibleAttachments.entries)
+      .filter((e) => basicScopes[e.entries?.AttachPrototypeSID])
+      .map((e) => e.entries.AttachPrototypeSID);
+    const interestingScopesSet = new Set(interestingScopes);
+    const isEN = interestingScopes.some((s) => s.startsWith("EN_"));
+
+    let i = 0;
+    while (entries.CompatibleAttachments.entries[i]) i++;
+    Object.values(scopeDefinitions[isEN ? "EN" : "nEN"]).forEach((def) => {
+      if (!interestingScopesSet.has(def.AttachPrototypeSID)) {
+        const newEntry = new (Struct.createDynamicClass("dummy"))() as (typeof entries.CompatibleAttachments.entries)[number];
+        newEntry.entries = { ...def } as typeof newEntry.entries;
+        entries.CompatibleAttachments.entries[i] = newEntry;
+        i++;
+        keepo = entries;
+      }
+    });
+  }*/
+
   Object.values(entries.PreinstalledAttachmentsItemPrototypeSIDs?.entries || {}).forEach((e) => {
     if (e.entries?.bHiddenInInventory && uniqueAttachmentsToAlternatives[e.entries?.AttachSID]) {
       keepo = entries;
@@ -90,6 +111,7 @@ type WeaponGeneralSetupPrototypes = { _refkey: string | number } & GetStructType
     WeaponSpecificIcon: string;
     AimMuzzleVFXSocket: string;
     RequiredUpgradeIDs: string[];
+    AimShellShutterVFXSocket: string;
     AdditionalMeshes: {
       MeshPrototypeSID: string;
       Socket: string;
