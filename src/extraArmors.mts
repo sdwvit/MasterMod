@@ -4,119 +4,119 @@ export const newHeadlessArmors = {
   MasterMod_BattleExoskeleton_Varta_Armor_headless: {
     ref: "BattleExoskeleton_Varta_Armor",
     entries: {
-      // LocalizationSID: "BattleExoskeleton_Varta_Armor",
+      LocalizationSID: "BattleExoskeleton_Varta_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_BattleExoskeleton_Varta_Armor_headless.T_IFI_BattleExoskeleton_Varta_Armor_headless'`,
     },
   },
   MasterMod_Exoskeleton_Mercenaries_Armor_headless: {
     ref: "Exoskeleton_Mercenaries_Armor",
     entries: {
-      // LocalizationSID: "Exoskeleton_Mercenaries_Armor",
+      LocalizationSID: "Exoskeleton_Mercenaries_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Mercenaries_Armor_headless.T_IFI_Exoskeleton_Mercenaries_Armor_headless'`,
     },
   },
   MasterMod_Exoskeleton_Monolith_Armor_headless: {
     ref: "Exoskeleton_Monolith_Armor",
     entries: {
-      // LocalizationSID: "Exoskeleton_Monolith_Armor",
+      LocalizationSID: "Exoskeleton_Monolith_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Monolith_Armor_headless.T_IFI_Exoskeleton_Monolith_Armor_headless'`,
     },
   },
   MasterMod_Exoskeleton_Neutral_Armor_headless: {
     ref: "Exoskeleton_Neutral_Armor",
     entries: {
-      // LocalizationSID: "Exoskeleton_Neutral_Armor",
+      LocalizationSID: "Exoskeleton_Neutral_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Neutral_Armor_headless.T_IFI_Exoskeleton_Neutral_Armor_headless'`,
     },
   },
   MasterMod_Exoskeleton_Svoboda_Armor_headless: {
     ref: "Exoskeleton_Svoboda_Armor",
     entries: {
-      // LocalizationSID: "Exoskeleton_Svoboda_Armor",
+      LocalizationSID: "Exoskeleton_Svoboda_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Svoboda_Armor_headless.T_IFI_Exoskeleton_Svoboda_Armor_headless'`,
     },
   },
   MasterMod_Heavy_Dolg_Armor_headless: {
     ref: "Heavy_Dolg_Armor",
     entries: {
-      // LocalizationSID: "Heavy_Dolg_Armor",
+      LocalizationSID: "Heavy_Dolg_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_DOL_03_headless.T_IFI_FOL_DOL_03_headless'`,
     },
   },
   MasterMod_Heavy2_Military_Armor_headless: {
     ref: "Heavy2_Military_Armor",
     entries: {
-      // LocalizationSID: "Heavy2_Military_Armor",
+      LocalizationSID: "Heavy2_Military_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MIL_04_headless.T_IFI_FOL_MIL_04_headless'`,
     },
   },
   MasterMod_HeavyAnomaly_Monolith_Armor_headless: {
     ref: "HeavyAnomaly_Monolith_Armor",
     entries: {
-      // LocalizationSID: "HeavyAnomaly_Monolith_Armor",
+      LocalizationSID: "HeavyAnomaly_Monolith_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MON_04_headless.T_IFI_FOL_MON_04_headless'`,
     },
   },
   MasterMod_Exoskeleton_Dolg_Armor_headless: {
     ref: "Exoskeleton_Dolg_Armor",
     entries: {
-      // LocalizationSID: "Exoskeleton_Dolg_Armor",
+      LocalizationSID: "Exoskeleton_Dolg_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_STA_05_headless.T_IFI_FOL_STA_05_headless'`,
     },
   },
   MasterMod_Heavy_Svoboda_Armor_headless: {
     ref: "Heavy_Svoboda_Armor",
     entries: {
-      // LocalizationSID: "Heavy_Svoboda_Armor",
+      LocalizationSID: "Heavy_Svoboda_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_SVO_02_headless.T_IFI_FOL_SVO_02_headless'`,
     },
   },
   MasterMod_Heavy_Mercenaries_Armor_headless: {
     ref: "Heavy_Mercenaries_Armor",
     entries: {
-      // LocalizationSID: "Heavy_Mercenaries_Armor",
+      LocalizationSID: "Heavy_Mercenaries_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Heavy_Mercenaries_Armor_headless.T_IFI_Heavy_Mercenaries_Armor_headless'`,
     },
   },
   MasterMod_HeavyBattle_Spark_Armor_headless: {
     ref: "HeavyBattle_Spark_Armor",
     entries: {
-      // LocalizationSID: "HeavyBattle_Spark_Armor",
+      LocalizationSID: "HeavyBattle_Spark_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Spark_Armor_headless.T_IFI_HeavyBattle_Spark_Armor_headless'`,
     },
   },
   MasterMod_HeavyExoskeleton_Dolg_Armor_headless: {
     ref: "HeavyExoskeleton_Dolg_Armor",
     entries: {
-      // LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
+      LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Dolg_Armor_headless.T_IFI_HeavyExoskeleton_Dolg_Armor_headless'`,
     },
   },
   MasterMod_NPC_HeavyExoskeleton_Mercenaries_Armor_headless: {
     ref: "NPC_HeavyExoskeleton_Mercenaries_Armor",
     entries: {
-      // LocalizationSID: "NPC_HeavyExoskeleton_Mercenaries_Armor",
+      LocalizationSID: "NPC_HeavyExoskeleton_Mercenaries_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Mercenaries_Armor_headless.T_IFI_HeavyExoskeleton_Mercenaries_Armor_headless'`,
     },
   },
   MasterMod_HeavyExoskeleton_Monolith_Armor_headless: {
     ref: "HeavyExoskeleton_Monolith_Armor",
     entries: {
-      // LocalizationSID: "HeavyExoskeleton_Monolith_Armor",
+      LocalizationSID: "HeavyExoskeleton_Monolith_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Monolith_Armor_headless.T_IFI_HeavyExoskeleton_Monolith_Armor_headless'`,
     },
   },
   MasterMod_HeavyExoskeleton_Svoboda_Armor_headless: {
     ref: "HeavyExoskeleton_Svoboda_Armor",
     entries: {
-      // LocalizationSID: "HeavyExoskeleton_Svoboda_Armor",
+      LocalizationSID: "HeavyExoskeleton_Svoboda_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Svoboda_Armor_headless.T_IFI_HeavyExoskeleton_Svoboda_Armor_headless'`,
     },
   },
   MasterMod_HeavyExoskeleton_Varta_Armor_headless: {
     ref: "HeavyExoskeleton_Varta_Armor",
     entries: {
-      // LocalizationSID: "MasterMod_HeavyExoskeleton_Varta_Armor_headless",
+      LocalizationSID: "HeavyExoskeleton_Varta_Armor",
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Varta_Armor_headless.T_IFI_HeavyExoskeleton_Varta_Armor_headless'`,
     },
   },
