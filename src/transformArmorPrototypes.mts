@@ -4,7 +4,9 @@ import { extraArmors, newHeadlessArmors } from "./extraArmors.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { logger } from "./logger.mjs";
+import dotEnv from "dotenv";
 
+dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const oncePerFile = new Set<string>();
 
 const nestedDir = path.join("Stalker2", "Content", "GameLite");
