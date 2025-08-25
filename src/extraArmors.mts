@@ -1,94 +1,235 @@
-export const extraArmorsByFaction = {
-  spark: {
-    HeavyBattle_Spark_Armor: "MasterMod_NPC_HeavyBattle_Spark_Armor",
-    Battle_Spark_Armor: "MasterMod_NPC_Battle_Spark_Armor",
-    HeavyAnomaly_Spark_Armor: "MasterMod_NPC_HeavyAnomaly_Spark_Armor",
-    SEVA_Spark_Armor: "MasterMod_NPC_SEVA_Spark_Armor",
-    NPC_HeavyExoskeleton_Spark_Armor: "MasterMod_NPC_NPC_HeavyExoskeleton_Spark_Armor",
-    NPC_Spark_Armor: "MasterMod_NPC_NPC_Spark_Armor",
-    NPC_Anomaly_Spark_Armor: "MasterMod_NPC_NPC_Anomaly_Spark_Armor",
+import { factions } from "./factions.mjs";
+
+export const newHeadlessArmors = {
+  MasterMod_BattleExoskeleton_Varta_Armor_headless: {
+    ref: "BattleExoskeleton_Varta_Armor",
+    entries: {
+      // LocalizationSID: "BattleExoskeleton_Varta_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_BattleExoskeleton_Varta_Armor_headless.T_IFI_BattleExoskeleton_Varta_Armor_headless'`,
+    },
   },
-  neutral: {
-    Jemmy_Neutral_Armor: "MasterMod_NPC_Jemmy_Neutral_Armor",
-    Newbee_Neutral_Armor: "MasterMod_NPC_Newbee_Neutral_Armor",
-    Nasos_Neutral_Armor: "MasterMod_NPC_Nasos_Neutral_Armor",
-    Zorya_Neutral_Armor: "MasterMod_NPC_Zorya_Neutral_Armor",
-    SEVA_Neutral_Armor: "MasterMod_NPC_SEVA_Neutral_Armor",
-    Seva_Neutral_Armor: "MasterMod_NPC_Seva_Neutral_Armor",
-    Exoskeleton_Neutral_Armor: "MasterMod_NPC_Exoskeleton_Neutral_Armor",
-    Exosekeleton_Neutral_Armor: "MasterMod_NPC_Exosekeleton_Neutral_Armor",
-    NPC_Sel_Neutral_Armor: "MasterMod_NPC_NPC_Sel_Neutral_Armor",
-    NPC_Cloak_Heavy_Neutral_Armor: "MasterMod_NPC_NPC_Cloak_Heavy_Neutral_Armor",
+  MasterMod_Exoskeleton_Mercenaries_Armor_headless: {
+    ref: "Exoskeleton_Mercenaries_Armor",
+    entries: {
+      // LocalizationSID: "Exoskeleton_Mercenaries_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Mercenaries_Armor_headless.T_IFI_Exoskeleton_Mercenaries_Armor_headless'`,
+    },
   },
-  bandit: {
-    SkinJacket_Bandit_Armor: "MasterMod_NPC_SkinJacket_Bandit_Armor",
-    Jacket_Bandit_Armor: "MasterMod_NPC_Jacket_Bandit_Armor",
-    Middle_Bandit_Armor: "MasterMod_NPC_Middle_Bandit_Armor",
-    NPC_SkinCloak_Bandit_Armor: "MasterMod_NPC_NPC_SkinCloak_Bandit_Armor",
+  MasterMod_Exoskeleton_Monolith_Armor_headless: {
+    ref: "Exoskeleton_Monolith_Armor",
+    entries: {
+      // LocalizationSID: "Exoskeleton_Monolith_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Monolith_Armor_headless.T_IFI_Exoskeleton_Monolith_Armor_headless'`,
+    },
   },
-  mercenary: {
-    Light_Mercenaries_Armor: "MasterMod_NPC_Light_Mercenaries_Armor",
-    Exoskeleton_Mercenaries_Armor: "MasterMod_NPC_Exoskeleton_Mercenaries_Armor",
-    Heavy_Mercenaries_Armor: "MasterMod_NPC_Heavy_Mercenaries_Armor",
-    NPC_HeavyExoskeleton_Mercenaries_Armor: "MasterMod_NPC_NPC_HeavyExoskeleton_Mercenaries_Armor",
+  MasterMod_Exoskeleton_Neutral_Armor_headless: {
+    ref: "Exoskeleton_Neutral_Armor",
+    entries: {
+      // LocalizationSID: "Exoskeleton_Neutral_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Neutral_Armor_headless.T_IFI_Exoskeleton_Neutral_Armor_headless'`,
+    },
   },
-  military: {
-    Default_Military_Armor: "MasterMod_NPC_Default_Military_Armor",
-    Heavy2_Military_Armor: "MasterMod_NPC_Heavy2_Military_Armor",
-    NPC_Heavy_Military_Armor: "MasterMod_NPC_NPC_Heavy_Military_Armor",
-    NPC_Cloak_Heavy_Military_Armor: "MasterMod_NPC_NPC_Cloak_Heavy_Military_Armor",
+  MasterMod_Exoskeleton_Svoboda_Armor_headless: {
+    ref: "Exoskeleton_Svoboda_Armor",
+    entries: {
+      // LocalizationSID: "Exoskeleton_Svoboda_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Svoboda_Armor_headless.T_IFI_Exoskeleton_Svoboda_Armor_headless'`,
+    },
   },
-  corpus: {
-    NPC_Heavy_Corps_Armor: "MasterMod_NPC_NPC_Heavy_Corps_Armor",
-    NPC_Heavy3_Corps_Armor: "MasterMod_NPC_NPC_Heavy3_Corps_Armor",
-    NPC_Heavy2_Coprs_Armor: "MasterMod_NPC_NPC_Heavy2_Coprs_Armor",
-    NPC_Heavy3Exoskeleton_Coprs_Armor: "MasterMod_NPC_NPC_Heavy3Exoskeleton_Coprs_Armor",
-    NPC_Exoskeleton_Coprs_Armor: "MasterMod_NPC_NPC_Exoskeleton_Coprs_Armor",
+  MasterMod_Heavy_Dolg_Armor_headless: {
+    ref: "Heavy_Dolg_Armor",
+    entries: {
+      // LocalizationSID: "Heavy_Dolg_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_DOL_03_headless.T_IFI_FOL_DOL_03_headless'`,
+    },
   },
-  scientist: {
-    Anomaly_Scientific_Armor: "MasterMod_NPC_Anomaly_Scientific_Armor",
-    HeavyAnomaly_Scientific_Armor: "MasterMod_NPC_HeavyAnomaly_Scientific_Armor",
-    SciSEVA_Scientific_Armor: "MasterMod_NPC_SciSEVA_Scientific_Armor",
-    Anomaly_Scientific_Armor_PSY_preinstalled: "MasterMod_NPC_Anomaly_Scientific_Armor_PSY_preinstalled",
-    NPC_Sci_Armor: "MasterMod_NPC_NPC_Sci_Armor",
+  MasterMod_Heavy2_Military_Armor_headless: {
+    ref: "Heavy2_Military_Armor",
+    entries: {
+      // LocalizationSID: "Heavy2_Military_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MIL_04_headless.T_IFI_FOL_MIL_04_headless'`,
+    },
   },
-  freedom: {
-    Rook_Svoboda_Armor: "MasterMod_NPC_Rook_Svoboda_Armor",
-    Battle_Svoboda_Armor: "MasterMod_NPC_Battle_Svoboda_Armor",
-    SEVA_Svoboda_Armor: "MasterMod_NPC_SEVA_Svoboda_Armor",
-    Seva_Svoboda_Armor: "MasterMod_NPC_Seva_Svoboda_Armor",
-    Heavy_Svoboda_Armor: "MasterMod_NPC_Heavy_Svoboda_Armor",
-    HeavyExoskeleton_Svoboda_Armor: "MasterMod_NPC_HeavyExoskeleton_Svoboda_Armor",
-    Exoskeleton_Svoboda_Armor: "MasterMod_NPC_Exoskeleton_Svoboda_Armor",
+  MasterMod_HeavyAnomaly_Monolith_Armor_headless: {
+    ref: "HeavyAnomaly_Monolith_Armor",
+    entries: {
+      // LocalizationSID: "HeavyAnomaly_Monolith_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MON_04_headless.T_IFI_FOL_MON_04_headless'`,
+    },
   },
-  duty: {
-    Rook_Dolg_Armor: "MasterMod_NPC_Rook_Dolg_Armor",
-    Battle_Dolg_Armor: "MasterMod_NPC_Battle_Dolg_Armor",
-    SEVA_Dolg_Armor: "MasterMod_NPC_SEVA_Dolg_Armor",
-    Seva_Dolg_Armor: "MasterMod_NPC_Seva_Dolg_Armor",
-    Heavy_Dolg_Armor: "MasterMod_NPC_Heavy_Dolg_Armor",
-    HeavyExoskeleton_Dolg_Armor: "MasterMod_NPC_HeavyExoskeleton_Dolg_Armor",
-    Exoskeleton_Dolg_Armor: "MasterMod_NPC_Exoskeleton_Dolg_Armor",
-    Battle_Dolg_End_Armor: "MasterMod_NPC_Battle_Dolg_End_Armor",
-    DutyArmor_3_U1: "MasterMod_NPC_DutyArmor_3_U1",
+  MasterMod_Exoskeleton_Dolg_Armor_headless: {
+    ref: "Exoskeleton_Dolg_Armor",
+    entries: {
+      // LocalizationSID: "Exoskeleton_Dolg_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_STA_05_headless.T_IFI_FOL_STA_05_headless'`,
+    },
   },
-  monolith: {
-    NPC_Battle_Noon_Armor: "MasterMod_NPC_NPC_Battle_Noon_Armor",
-    NPC_HeavyAnomaly_Noon_Armor: "MasterMod_NPC_NPC_HeavyAnomaly_Noon_Armor",
-    NPC_HeavyExoskeleton_Noon_Armor: "MasterMod_NPC_NPC_HeavyExoskeleton_Noon_Armor",
-    NPC_Exoskeleton_Noon_Armor: "MasterMod_NPC_NPC_Exoskeleton_Noon_Armor",
-    Battle_Monolith_Armor: "MasterMod_NPC_Battle_Monolith_Armor",
-    HeavyAnomaly_Monolith_Armor: "MasterMod_NPC_HeavyAnomaly_Monolith_Armor",
-    HeavyExoskeleton_Monolith_Armor: "MasterMod_NPC_HeavyExoskeleton_Monolith_Armor",
-    Exoskeleton_Monolith_Armor: "MasterMod_NPC_Exoskeleton_Monolith_Armor",
+  MasterMod_Heavy_Svoboda_Armor_headless: {
+    ref: "Heavy_Svoboda_Armor",
+    entries: {
+      // LocalizationSID: "Heavy_Svoboda_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_SVO_02_headless.T_IFI_FOL_SVO_02_headless'`,
+    },
   },
-  varta: {
-    Battle_Varta_Armor: "MasterMod_NPC_Battle_Varta_Armor",
-    BattleExoskeleton_Varta_Armor: "MasterMod_NPC_BattleExoskeleton_Varta_Armor",
+  MasterMod_Heavy_Mercenaries_Armor_headless: {
+    ref: "Heavy_Mercenaries_Armor",
+    entries: {
+      // LocalizationSID: "Heavy_Mercenaries_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Heavy_Mercenaries_Armor_headless.T_IFI_Heavy_Mercenaries_Armor_headless'`,
+    },
   },
+  MasterMod_HeavyBattle_Spark_Armor_headless: {
+    ref: "HeavyBattle_Spark_Armor",
+    entries: {
+      // LocalizationSID: "HeavyBattle_Spark_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Spark_Armor_headless.T_IFI_HeavyBattle_Spark_Armor_headless'`,
+    },
+  },
+  MasterMod_HeavyExoskeleton_Dolg_Armor_headless: {
+    ref: "HeavyExoskeleton_Dolg_Armor",
+    entries: {
+      // LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Dolg_Armor_headless.T_IFI_HeavyExoskeleton_Dolg_Armor_headless'`,
+    },
+  },
+  MasterMod_NPC_HeavyExoskeleton_Mercenaries_Armor_headless: {
+    ref: "NPC_HeavyExoskeleton_Mercenaries_Armor",
+    entries: {
+      // LocalizationSID: "NPC_HeavyExoskeleton_Mercenaries_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Mercenaries_Armor_headless.T_IFI_HeavyExoskeleton_Mercenaries_Armor_headless'`,
+    },
+  },
+  MasterMod_HeavyExoskeleton_Monolith_Armor_headless: {
+    ref: "HeavyExoskeleton_Monolith_Armor",
+    entries: {
+      // LocalizationSID: "HeavyExoskeleton_Monolith_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Monolith_Armor_headless.T_IFI_HeavyExoskeleton_Monolith_Armor_headless'`,
+    },
+  },
+  MasterMod_HeavyExoskeleton_Svoboda_Armor_headless: {
+    ref: "HeavyExoskeleton_Svoboda_Armor",
+    entries: {
+      // LocalizationSID: "HeavyExoskeleton_Svoboda_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Svoboda_Armor_headless.T_IFI_HeavyExoskeleton_Svoboda_Armor_headless'`,
+    },
+  },
+  MasterMod_HeavyExoskeleton_Varta_Armor_headless: {
+    ref: "HeavyExoskeleton_Varta_Armor",
+    entries: {
+      // LocalizationSID: "MasterMod_HeavyExoskeleton_Varta_Armor_headless",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Varta_Armor_headless.T_IFI_HeavyExoskeleton_Varta_Armor_headless'`,
+    },
+  },
+} as const;
+
+export const extraArmorsByFaction: Record<(typeof factions)[keyof typeof factions], string[][]> = {
+  spark: [
+    ["HeavyBattle_Spark_Armor", "MasterMod_NPC_HeavyBattle_Spark_Armor"],
+    ["Battle_Spark_Armor", "MasterMod_NPC_Battle_Spark_Armor"],
+    ["HeavyAnomaly_Spark_Armor", "MasterMod_NPC_HeavyAnomaly_Spark_Armor"],
+    ["SEVA_Spark_Armor", "MasterMod_NPC_SEVA_Spark_Armor"],
+    ["NPC_HeavyExoskeleton_Spark_Armor", "MasterMod_NPC_NPC_HeavyExoskeleton_Spark_Armor"],
+    ["NPC_Spark_Armor", "MasterMod_NPC_NPC_Spark_Armor"],
+    ["NPC_Anomaly_Spark_Armor", "MasterMod_NPC_NPC_Anomaly_Spark_Armor"],
+    [newHeadlessArmors.MasterMod_HeavyBattle_Spark_Armor_headless.ref, "MasterMod_HeavyBattle_Spark_Armor_headless"],
+  ],
+  neutral: [
+    ["Jemmy_Neutral_Armor", "MasterMod_NPC_Jemmy_Neutral_Armor"],
+    ["Newbee_Neutral_Armor", "MasterMod_NPC_Newbee_Neutral_Armor"],
+    ["Nasos_Neutral_Armor", "MasterMod_NPC_Nasos_Neutral_Armor"],
+    ["Zorya_Neutral_Armor", "MasterMod_NPC_Zorya_Neutral_Armor"],
+    ["SEVA_Neutral_Armor", "MasterMod_NPC_SEVA_Neutral_Armor"],
+    ["Seva_Neutral_Armor", "MasterMod_NPC_Seva_Neutral_Armor"],
+    ["Exoskeleton_Neutral_Armor", "MasterMod_NPC_Exoskeleton_Neutral_Armor"],
+    ["Exosekeleton_Neutral_Armor", "MasterMod_NPC_Exosekeleton_Neutral_Armor"],
+    ["NPC_Sel_Neutral_Armor", "MasterMod_NPC_NPC_Sel_Neutral_Armor"],
+    ["NPC_Cloak_Heavy_Neutral_Armor", "MasterMod_NPC_NPC_Cloak_Heavy_Neutral_Armor"],
+    [newHeadlessArmors.MasterMod_Exoskeleton_Neutral_Armor_headless.ref, "MasterMod_Exoskeleton_Neutral_Armor_headless"],
+  ],
+  bandit: [
+    ["SkinJacket_Bandit_Armor", "MasterMod_NPC_SkinJacket_Bandit_Armor"],
+    ["Jacket_Bandit_Armor", "MasterMod_NPC_Jacket_Bandit_Armor"],
+    ["Middle_Bandit_Armor", "MasterMod_NPC_Middle_Bandit_Armor"],
+    ["NPC_SkinCloak_Bandit_Armor", "MasterMod_NPC_NPC_SkinCloak_Bandit_Armor"],
+  ],
+  mercenary: [
+    ["Light_Mercenaries_Armor", "MasterMod_NPC_Light_Mercenaries_Armor"],
+    ["Exoskeleton_Mercenaries_Armor", "MasterMod_NPC_Exoskeleton_Mercenaries_Armor"],
+    ["Heavy_Mercenaries_Armor", "MasterMod_NPC_Heavy_Mercenaries_Armor"],
+    ["NPC_HeavyExoskeleton_Mercenaries_Armor", "MasterMod_NPC_NPC_HeavyExoskeleton_Mercenaries_Armor"],
+    [newHeadlessArmors.MasterMod_NPC_HeavyExoskeleton_Mercenaries_Armor_headless.ref, "MasterMod_NPC_HeavyExoskeleton_Mercenaries_Armor_headless"],
+    [newHeadlessArmors.MasterMod_Heavy_Mercenaries_Armor_headless.ref, "MasterMod_Heavy_Mercenaries_Armor_headless"],
+    [newHeadlessArmors.MasterMod_Exoskeleton_Mercenaries_Armor_headless.ref, "MasterMod_Exoskeleton_Mercenaries_Armor_headless"],
+  ],
+  military: [
+    ["Default_Military_Armor", "MasterMod_NPC_Default_Military_Armor"],
+    ["Heavy2_Military_Armor", "MasterMod_NPC_Heavy2_Military_Armor"],
+    ["NPC_Heavy_Military_Armor", "MasterMod_NPC_NPC_Heavy_Military_Armor"],
+    ["NPC_Cloak_Heavy_Military_Armor", "MasterMod_NPC_NPC_Cloak_Heavy_Military_Armor"],
+    [newHeadlessArmors.MasterMod_Heavy2_Military_Armor_headless.ref, "MasterMod_Heavy2_Military_Armor_headless"],
+  ],
+  corpus: [
+    ["NPC_Heavy_Corps_Armor", "MasterMod_NPC_NPC_Heavy_Corps_Armor"],
+    ["NPC_Heavy3_Corps_Armor", "MasterMod_NPC_NPC_Heavy3_Corps_Armor"],
+    ["NPC_Heavy2_Coprs_Armor", "MasterMod_NPC_NPC_Heavy2_Coprs_Armor"],
+    ["NPC_Heavy3Exoskeleton_Coprs_Armor", "MasterMod_NPC_NPC_Heavy3Exoskeleton_Coprs_Armor"],
+    ["NPC_Exoskeleton_Coprs_Armor", "MasterMod_NPC_NPC_Exoskeleton_Coprs_Armor"],
+  ],
+  scientist: [
+    ["Anomaly_Scientific_Armor", "MasterMod_NPC_Anomaly_Scientific_Armor"],
+    ["HeavyAnomaly_Scientific_Armor", "MasterMod_NPC_HeavyAnomaly_Scientific_Armor"],
+    ["SciSEVA_Scientific_Armor", "MasterMod_NPC_SciSEVA_Scientific_Armor"],
+    ["Anomaly_Scientific_Armor_PSY_preinstalled", "MasterMod_NPC_Anomaly_Scientific_Armor_PSY_preinstalled"],
+    ["NPC_Sci_Armor", "MasterMod_NPC_NPC_Sci_Armor"],
+  ],
+  freedom: [
+    ["Rook_Svoboda_Armor", "MasterMod_NPC_Rook_Svoboda_Armor"],
+    ["Battle_Svoboda_Armor", "MasterMod_NPC_Battle_Svoboda_Armor"],
+    ["SEVA_Svoboda_Armor", "MasterMod_NPC_SEVA_Svoboda_Armor"],
+    ["Seva_Svoboda_Armor", "MasterMod_NPC_Seva_Svoboda_Armor"],
+    ["Heavy_Svoboda_Armor", "MasterMod_NPC_Heavy_Svoboda_Armor"],
+    ["HeavyExoskeleton_Svoboda_Armor", "MasterMod_NPC_HeavyExoskeleton_Svoboda_Armor"],
+    ["Exoskeleton_Svoboda_Armor", "MasterMod_NPC_Exoskeleton_Svoboda_Armor"],
+    [newHeadlessArmors.MasterMod_Exoskeleton_Svoboda_Armor_headless.ref, "MasterMod_Exoskeleton_Svoboda_Armor_headless"],
+    [newHeadlessArmors.MasterMod_HeavyExoskeleton_Svoboda_Armor_headless.ref, "MasterMod_HeavyExoskeleton_Svoboda_Armor_headless"],
+    [newHeadlessArmors.MasterMod_Heavy_Svoboda_Armor_headless.ref, "MasterMod_Heavy_Svoboda_Armor_headless"],
+  ],
+  duty: [
+    ["Rook_Dolg_Armor", "MasterMod_NPC_Rook_Dolg_Armor"],
+    ["Battle_Dolg_Armor", "MasterMod_NPC_Battle_Dolg_Armor"],
+    ["SEVA_Dolg_Armor", "MasterMod_NPC_SEVA_Dolg_Armor"],
+    ["Seva_Dolg_Armor", "MasterMod_NPC_Seva_Dolg_Armor"],
+    ["Heavy_Dolg_Armor", "MasterMod_NPC_Heavy_Dolg_Armor"],
+    ["HeavyExoskeleton_Dolg_Armor", "MasterMod_NPC_HeavyExoskeleton_Dolg_Armor"],
+    ["Exoskeleton_Dolg_Armor", "MasterMod_NPC_Exoskeleton_Dolg_Armor"],
+    ["Battle_Dolg_End_Armor", "MasterMod_NPC_Battle_Dolg_End_Armor"],
+    ["DutyArmor_3_U1", "MasterMod_NPC_DutyArmor_3_U1"],
+    [newHeadlessArmors.MasterMod_Exoskeleton_Dolg_Armor_headless.ref, "MasterMod_Exoskeleton_Dolg_Armor_headless"],
+    [newHeadlessArmors.MasterMod_HeavyExoskeleton_Dolg_Armor_headless.ref, "MasterMod_HeavyExoskeleton_Dolg_Armor_headless"],
+    [newHeadlessArmors.MasterMod_Heavy_Dolg_Armor_headless.ref, "MasterMod_Heavy_Dolg_Armor_headless"],
+  ],
+  monolith: [
+    ["NPC_Battle_Noon_Armor", "MasterMod_NPC_NPC_Battle_Noon_Armor"],
+    ["NPC_HeavyAnomaly_Noon_Armor", "MasterMod_NPC_NPC_HeavyAnomaly_Noon_Armor"],
+    ["NPC_HeavyExoskeleton_Noon_Armor", "MasterMod_NPC_NPC_HeavyExoskeleton_Noon_Armor"],
+    ["NPC_Exoskeleton_Noon_Armor", "MasterMod_NPC_NPC_Exoskeleton_Noon_Armor"],
+    ["Battle_Monolith_Armor", "MasterMod_NPC_Battle_Monolith_Armor"],
+    ["HeavyAnomaly_Monolith_Armor", "MasterMod_NPC_HeavyAnomaly_Monolith_Armor"],
+    ["HeavyExoskeleton_Monolith_Armor", "MasterMod_NPC_HeavyExoskeleton_Monolith_Armor"],
+    ["Exoskeleton_Monolith_Armor", "MasterMod_NPC_Exoskeleton_Monolith_Armor"],
+    [newHeadlessArmors.MasterMod_Exoskeleton_Monolith_Armor_headless.ref, "MasterMod_Exoskeleton_Monolith_Armor_headless"],
+    [newHeadlessArmors.MasterMod_HeavyExoskeleton_Monolith_Armor_headless.ref, "MasterMod_HeavyExoskeleton_Monolith_Armor_headless"],
+    [newHeadlessArmors.MasterMod_HeavyAnomaly_Monolith_Armor_headless.ref, "MasterMod_HeavyAnomaly_Monolith_Armor_headless"],
+  ],
+  varta: [
+    ["Battle_Varta_Armor", "MasterMod_NPC_Battle_Varta_Armor"],
+    ["BattleExoskeleton_Varta_Armor", "MasterMod_NPC_BattleExoskeleton_Varta_Armor"],
+    [newHeadlessArmors.MasterMod_BattleExoskeleton_Varta_Armor_headless.ref, "MasterMod_BattleExoskeleton_Varta_Armor_headless"],
+    [newHeadlessArmors.MasterMod_HeavyExoskeleton_Varta_Armor_headless.ref, "MasterMod_HeavyExoskeleton_Varta_Armor_headless"],
+  ],
 };
 
-const extraNpcArmors = {
+export const extraArmors = [
   ...extraArmorsByFaction.neutral,
   ...extraArmorsByFaction.bandit,
   ...extraArmorsByFaction.mercenary,
@@ -100,5 +241,4 @@ const extraNpcArmors = {
   ...extraArmorsByFaction.monolith,
   ...extraArmorsByFaction.varta,
   ...extraArmorsByFaction.spark,
-};
-export const extraArmors = Object.entries(extraNpcArmors);
+];

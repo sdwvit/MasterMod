@@ -1,7 +1,7 @@
 import { EItemGenerationCategory, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
-import { extraArmorsByFaction } from "./extraArmors.mjs";
+import { extraArmorsByFaction, newHeadlessArmors } from "./extraArmors.mjs";
 import { factions } from "./factions.mjs";
 
 const precision = (e: number) => Math.round(e * 1e3) / 1e3;
@@ -72,16 +72,20 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
                 const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]);
                 if (faction) {
                   const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
-                  Object.entries(extraArmors).forEach(([originalSID, npcArmorSID]) => {
-                    const dummyPossibleItem = new (Struct.createDynamicClass(npcArmorSID))() as GetStructType<PossibleItem>;
-                    dummyPossibleItem.entries = { ItemPrototypeSID: npcArmorSID } as GetStructType<PossibleItem>["entries"];
-                    weights[npcArmorSID] = getChanceForSID(originalSID);
+                  extraArmors.forEach(([originalSID, newArmorSID]) => {
+                    const dummyPossibleItem = new (Struct.createDynamicClass(newArmorSID))() as GetStructType<PossibleItem>;
+                    dummyPossibleItem.entries = { ItemPrototypeSID: newArmorSID } as GetStructType<PossibleItem>["entries"];
+                    weights[newArmorSID] = getChanceForSID(originalSID);
                     let i = 0;
                     while (e.entries.PossibleItems.entries[i]) {
                       i++;
                     }
                     e.entries.PossibleItems.entries[i] = dummyPossibleItem;
-                    cd.push(dummyPossibleItem);
+                    if (newHeadlessArmors[newArmorSID]) {
+                      ab.push(dummyPossibleItem);
+                    } else {
+                      cd.push(dummyPossibleItem);
+                    }
                   });
                 }
               }

@@ -51,7 +51,7 @@ export const meta: Meta = {
 [h3]All changes to the base game:[/h3]
 [list]
  [*] [Challenge] No enemy markers. No threat indicators.
- [*] [Challenge] Armors don't take head slot, but also don't protect from PSY damage, so you need to use helmets.
+ [*] [Challenge] Armors don't take head slot (except for SEVA's), but also don't protect from PSY damage, so you need to use helmets.
  [*] [QoL] Prevents Player and NPCs from being knocked down.
  [*] [QoL] Removes Fall damage for Player and NPCs.
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
@@ -80,8 +80,7 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote:
-    "NPC wear (and occasionally drop) more different armor based on their faction, rebalance armor drop chances, adjusted repeatable quests rewards, reverted repair prices, default rifle scopes now can be detached and sold, unique weapons are now compatible with basic scopes",
+  changenote: "Update Threat Indicators to ver. from 24 Aug 2025 @ 4:20pm",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
       filePath.endsWith("DynamicItemGenerator.cfg") && transformDynamicItemGenerator,

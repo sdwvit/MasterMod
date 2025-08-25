@@ -1,6 +1,4 @@
-import { extraArmorsByFaction } from "./extraArmors.mjs";
-
-export const factions: Record<string, keyof typeof extraArmorsByFaction> = {
+export const factions = {
   neutral: "neutral",
   bandit: "bandit",
   mercenaries: "mercenary",
