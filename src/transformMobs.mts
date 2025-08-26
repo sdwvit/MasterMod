@@ -1,14 +1,14 @@
-import { GetStructType } from "s2cfgtojson";
+import { GetStructType, MutantBase } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mts";
 
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
  */
-export const transformMobs: Meta["entriesTransformer"] = (entries: ObjectPrototype["entries"]) => {
+export const transformMobs: Meta["entriesTransformer"] = (entries: MutantBase["entries"]) => {
   if (!entries.Protection || !entries.Protection.entries) {
     return null;
   }
-  entries.Protection.entries = { Strike: 0.0001 }; // Set Strike protection to 0 for all mobs
+  entries.Protection.entries = { Strike: 0.0001 } as typeof entries.Protection.entries; // Set Strike protection to 0 for all mobs
   return { Protection: entries.Protection };
 };
 export const mobs = [
@@ -28,4 +28,3 @@ export const mobs = [
   "Snork.cfg",
   "Tushkan.cfg",
 ];
-type ObjectPrototype = GetStructType<{ SID: string; Protection: { Strike: number } }>;

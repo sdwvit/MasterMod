@@ -1,32 +1,12 @@
-import { ERank, GetStructType } from "s2cfgtojson";
+import { StashPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 
-type StashPrototypesType = GetStructType<{
-  SID: string;
-  ItemGenerators: {
-    Rank: ERank;
-    SmartLootParams: {
-      ConsumablesParams: {
-        ItemSetCount: number;
-        MinSpawnChance: number;
-        MaxSpawnChance: number;
-        Items: {
-          ItemPrototypeSID: string;
-          MinCount: number;
-          MaxCount: number;
-          Weight: number;
-        }[];
-      }[];
-    };
-  }[];
-}>;
-
-export const transformStashPrototypes: Meta["entriesTransformer"] = (entries: StashPrototypesType["entries"], { index }) => {
+export const transformStashPrototypes: Meta["entriesTransformer"] = (entries: StashPrototype["entries"], { index }) => {
   if (entries.SID === "empty") {
     return null;
   }
-  let newEntries: StashPrototypesType["entries"] | null = null;
+  let newEntries: StashPrototype["entries"] | null = null;
   Object.values(entries.ItemGenerators.entries)
     .filter((e) => e.entries)
     .forEach((e) => {

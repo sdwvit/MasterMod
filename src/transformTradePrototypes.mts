@@ -1,7 +1,5 @@
-import { GetStructType, Struct } from "s2cfgtojson";
+import { Struct, TradePrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
-
-type TradePrototype = GetStructType<{ TradeGenerators: { BuyLimitations: string[] }[]; SID: string }>;
 
 /**
  * Don't allow traders to buy weapons and armor.
@@ -11,7 +9,7 @@ export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: Tr
     Object.values(entries.TradeGenerators.entries)
       .filter((tg) => tg.entries)
       .forEach((tg) => {
-        tg.entries.BuyLimitations ||= new BuyLimitations();
+        tg.entries.BuyLimitations ||= new BuyLimitations() as any;
         const existing = Object.values(tg.entries.BuyLimitations.entries);
         if (existing.includes("EItemType::Weapon") && existing.includes("EItemType::Armor")) {
           return;
@@ -21,19 +19,13 @@ export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: Tr
           while (tg.entries.BuyLimitations.entries[i] && tg.entries.BuyLimitations.entries[i] !== itemType) {
             i++;
           }
-          tg.entries.BuyLimitations.entries[i] = itemType;
+          tg.entries.BuyLimitations.entries[i] = itemType as any;
         });
       });
     return { TradeGenerators: entries.TradeGenerators };
   }
   return null;
 };
-export type TraderEntries = GetStructType<{
-  SID: "BaseTraderNPC_Template";
-  TradeGenerators: {
-    BuyLimitations: ("EItemType::Weapon" | "EItemType::Armor")[];
-  }[];
-}>["entries"];
 
 class BuyLimitations extends Struct {
   _id = "BuyLimitations";

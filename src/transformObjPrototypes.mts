@@ -1,4 +1,4 @@
-import { GetStructType, Struct } from "s2cfgtojson";
+import { GetStructType, ObjPrototype, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 
 /**
@@ -6,7 +6,7 @@ import { Meta } from "./prepare-configs.mjs";
  * Also removes Fall damage.
  * @param entries
  */
-export const transformObjPrototypes: Meta["entriesTransformer"] = (entries: ObjPrototypes["entries"]) => {
+export const transformObjPrototypes: Meta["entriesTransformer"] = (entries: ObjPrototype["entries"]) => {
   if (entries.SID === "NPCBase" || entries.SID === "Player") {
     class Protection extends Struct<{ Fall: number }> {
       _id: string = "Protection";
@@ -17,8 +17,3 @@ export const transformObjPrototypes: Meta["entriesTransformer"] = (entries: ObjP
   }
   return null;
 };
-export type ObjPrototypes = GetStructType<{
-  CanBeKnockedDown: boolean;
-  SID: string;
-  Protection: { Fall: number };
-}>;

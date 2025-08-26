@@ -1,36 +1,10 @@
-import { EConnectionLineState, EUpgradeTargetPartType, EUpgradeVerticalPosition, GetStructType } from "s2cfgtojson";
+import { UpgradePrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
-import UpgradePrototypes from "../GameLite/GameData/UpgradePrototypes.cfg";
-
-type UpgradePrototypes = GetStructType<{
-  ID: number;
-  SID: string;
-  Text: string;
-  Hint: string;
-  BaseCost: number;
-  HorizontalPosition: number;
-  VerticalPosition: EUpgradeVerticalPosition;
-  DiscountCoefficient: number;
-  RepairCostModifier: number;
-  IsModification: boolean;
-  HiddenWihoutItem: boolean;
-  AttachPrototypeSIDs: string[];
-  UpgradeTargetPart: EUpgradeTargetPartType;
-  EffectPrototypeSIDs: string[];
-  RequiredUpgradePrototypeSIDs: string[];
-  RequiredItemPrototypeSIDs: string[];
-  BlockingUpgradePrototypeSIDs: string[];
-  InterchangeableUpgradePrototypeSIDs: string[];
-  RequiredGlobalVariables: { GlobalVariableSID: string; Value: number }[];
-  BlockingGlobalVariables: { GlobalVariableSID: string; Value: number }[];
-  Skills: string[];
-  ConnectionLines: EConnectionLineState[];
-}>;
 
 /**
  * Unlocks blocking upgrades.
  */
-export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototypes["entries"]) => {
+export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototype["entries"]) => {
   let keepo = null;
   if (entries.SID === "empty") {
     return {

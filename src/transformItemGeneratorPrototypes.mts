@@ -1,29 +1,9 @@
-import { EItemGenerationCategory, EUISound, GetStructType } from "s2cfgtojson";
+import { EItemGenerationCategory, EUISound, GetStructType, ItemGeneratorPrototype } from "s2cfgtojson";
 import { Meta, WithSID } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
-type ItemGeneratorType = GetStructType<{
-  SID: string;
-  SpecificRewardSound: EUISound;
-  ItemGenerator: {
-    Category: EItemGenerationCategory;
-    PossibleItems: {
-      ItemPrototypeSID: string;
-      ItemGeneratorPrototypeSID: string;
-      Weight: number;
-      Chance: number;
-      MinDurability: number;
-      MaxDurability: number;
-      MinCount: number;
-      MaxCount: number;
-      AmmoMinCount: number;
-      AmmoMaxCount: number;
-      bRequireWeapon: boolean;
-    }[];
-  }[];
-}>;
 
-export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorType["entries"], { index }) => {
+export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorPrototype["entries"], { index }) => {
   let keep = false;
 
   if (prohibitedIds.some((id) => entries.SID.includes(id))) {

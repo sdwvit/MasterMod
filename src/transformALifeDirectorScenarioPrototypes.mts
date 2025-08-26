@@ -1,11 +1,10 @@
 import { Meta } from "./prepare-configs.mjs";
-import { EAgentArchetype, EAgentType, EALifeDirectorScenarioTarget, ERank, GetStructType, Struct } from "s2cfgtojson";
-import ALifeDirectorScenarioPrototypes from "../GameLite/GameData/ALifePrototypes/ALifeDirectorScenarioPrototypes.cfg";
+import { ALifeDirectorScenarioPrototype, EAgentType, GetStructType, Struct } from "s2cfgtojson";
 
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
  */
-export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"] = (entries: ALifeDirectorScenarioPrototypes["entries"], {}) => {
+export const transformALifeDirectorScenarioPrototypes: Meta["entriesTransformer"] = (entries: ALifeDirectorScenarioPrototype["entries"], {}) => {
   Object.values(entries.ALifeScenarioNPCArchetypesLimitsPerPlayerRank.entries || {})
     .filter((e) => e.entries)
     .forEach((e) => {
@@ -53,57 +52,3 @@ type Restriction = {
   AgentType: EAgentType;
   MaxCount: number;
 };
-type ALifeDirectorScenarioPrototypes = GetStructType<{
-  SID: string;
-  DefaultSpawnDelayMin: number;
-  DefaultSpawnDelayMax: number;
-  DefaultPostSpawnDirectorTimeoutMin: number;
-  DefaultPostSpawnDirectorTimeoutMax: number;
-  DefaultALifeLairExpansionToPlayerTimeMin: number;
-  DefaultALifeLairExpansionToPlayerTimeMax: number;
-  DefaultExpansionSquadNumMin: number;
-  DefaultExpansionSquadNumMax: number;
-  DefaultShouldDespawnNPCs: true;
-  DefaultEmissionScenarioGroup: string;
-  DefaultScenarioGroup: string;
-  DefaultEmptyScenarioGroup: string;
-  FallbackMaxSpawnCount: number;
-  ALifeScenarioNPCArchetypesLimitsPerPlayerRank: {
-    Rank: ERank;
-    Restrictions: Restriction[];
-  }[];
-  RestrictedObjPrototypeSIDs: string[];
-  ProhibitedAgentTypes: EAgentType[];
-  FallbackNPCTypes: string[];
-  Scenarios: Record<
-    string,
-    {
-      SID: string;
-      PlayerRequiredRank: ERank;
-      ScenarioSquads: {
-        AgentArchetype?: EAgentArchetype;
-        AgentPrototypeSID?: string;
-        bPlayerEnemy: boolean;
-        RelationGroup: number;
-        AliveMultiplierMin: number;
-        AliveMultiplierMax: number;
-        WoundedMultiplier: number;
-        DeadMultiplier: number;
-      }[];
-      ScenarioGroupsTarget: EALifeDirectorScenarioTarget;
-      ExpansionSquadNumMin?: number;
-      ExpansionSquadNumMax?: number;
-    }
-  >;
-  ScenarioGroups: Record<
-    string,
-    {
-      SID: string;
-      ScenarioSIDs: Record<string, { ScenarioWeight: number }>;
-      SpawnDelayMin: number;
-      SpawnDelayMax: number;
-      PostSpawnDirectorTimeoutMin: number;
-      PostSpawnDirectorTimeoutMax: number;
-    }
-  >;
-}>;

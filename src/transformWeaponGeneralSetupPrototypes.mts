@@ -1,12 +1,11 @@
-import { GetStructType, Struct } from "s2cfgtojson";
+import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
-import WeaponGeneralSetupPrototypes from "../GameLite/GameData/WeaponData/WeaponGeneralSetupPrototypes.cfg";
 import { uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
 
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
-export const transformWeaponGeneralSetupPrototypes: Meta["entriesTransformer"] = (entries: WeaponGeneralSetupPrototypes["entries"], context) => {
+export const transformWeaponGeneralSetupPrototypes: Meta["entriesTransformer"] = (entries: WeaponGeneralSetupPrototype["entries"], context) => {
   let keepo = null;
   /*  // add more compatible scopes
   if (entries.CompatibleAttachments?.entries) {
@@ -54,7 +53,9 @@ export const transformWeaponGeneralSetupPrototypes: Meta["entriesTransformer"] =
           }),
       );
       const refCompatibleAttachments = Object.fromEntries(
-        Object.entries((context.structsById[context.struct._refkey] as WeaponGeneralSetupPrototypes)?.entries.CompatibleAttachments?.entries || {}) // todo this only scans within the current file, so DLC weapons's ref would be undefined. manually read the base file and add it here if dlc stuff is needed
+        Object.entries(
+          (context.structsById[context.struct._refkey] as unknown as WeaponGeneralSetupPrototype)?.entries.CompatibleAttachments?.entries || {},
+        ) // todo this only scans within the current file, so DLC weapons's ref would be undefined. manually read the base file and add it here if dlc stuff is needed
           .filter((e) => e[1].entries)
           .map(([_, v]) => {
             if (uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]) {
@@ -101,34 +102,3 @@ const oncePerFile = new Set<string>(); // put outside the function so it runs on
 
   return keepo;
 };
-
-type WeaponGeneralSetupPrototypes = { _refkey: string | number } & GetStructType<{
-  SID: string;
-  CompatibleAttachments: {
-    AttachPrototypeSID: string;
-    Socket: string;
-    IconPosX: number;
-    IconPosY: number;
-    WeaponSpecificIcon: string;
-    AimMuzzleVFXSocket: string;
-    RequiredUpgradeIDs: string[];
-    AimShellShutterVFXSocket: string;
-    AdditionalMeshes: {
-      MeshPrototypeSID: string;
-      Socket: string;
-    }[];
-  }[];
-  PreinstalledAttachmentsItemPrototypeSIDs: {
-    AttachSID: string;
-    bHiddenInInventory: boolean;
-  }[];
-  UpgradePrototypeSIDs: string[];
-  WeaponStaticMeshParts: {
-    MeshPath: string;
-    SocketName: string;
-    Materials: {
-      MaterialPath: string;
-      MaterialSlot: number;
-    }[];
-  }[];
-}>;

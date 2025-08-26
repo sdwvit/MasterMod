@@ -1,6 +1,7 @@
 import { factions } from "./factions.mjs";
+import { GetStructType } from "s2cfgtojson";
 
-export const newHeadlessArmors = {
+export const newHeadlessArmors: Record<string, Partial<GetStructType<any>>> = {
   MasterMod_BattleExoskeleton_Varta_Armor_headless: {
     ref: "BattleExoskeleton_Varta_Armor",
     entries: {

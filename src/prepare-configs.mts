@@ -3,6 +3,7 @@ import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
 import { logger } from "./logger.mjs";
+import { deepMerge } from "./deepMerge.mjs";
 
 type Context<T> = {
   struct: T;
@@ -86,6 +87,7 @@ const total = getCfgFiles()
     if (interestingContents.length && !interestingContents.some((i) => rawContent.includes(i))) {
       return;
     }
+
     const entriesTransformer = getEntriesTransformer({ filePath });
     if (!entriesTransformer) {
       return;

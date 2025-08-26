@@ -1,9 +1,10 @@
+import { DifficultyPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 export const DIFFICULTY_FACTOR = 4;
 /**
  * Increases cost of everything and damage on Hard difficulty.
  */
-export const transformDifficultyPrototypes: Meta["entriesTransformer"] = (_) => {
+export const transformDifficultyPrototypes: Meta["entriesTransformer"] = (_: DifficultyPrototype["entries"]) => {
   if (_.SID !== "Hard") {
     return null;
   }

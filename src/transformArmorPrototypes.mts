@@ -1,10 +1,11 @@
-import { GetStructType, Struct } from "s2cfgtojson";
+import { ArmorPrototype, Struct } from "s2cfgtojson";
 import { Meta, WithSID } from "./prepare-configs.mjs";
 import { extraArmors, newHeadlessArmors } from "./extraArmors.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { logger } from "./logger.mjs";
 import dotEnv from "dotenv";
+import { deepMerge } from "./deepMerge.mjs";
 
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const oncePerFile = new Set<string>();
@@ -23,7 +24,7 @@ const allArmorDefs = Object.fromEntries(
     ) as ArmorPrototype[]
   ).map((e) => [e.entries.SID, e] as const),
 );
-
+const d = deepMerge;
 /**
  * Makes so no armor blocks head, but also removes any psy protection. Forces player to use helmets.
  */
@@ -81,33 +82,6 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
 
   return null;
 };
-type ArmorPrototype = GetStructType<{
-  SID: string;
-  Icon: string;
-  MeshPrototypeSID: string;
-  BaseDurability: number;
-  Weight: number;
-  bBlockHead?: boolean;
-  Cost: number;
-  ItemGridWidth?: number;
-  ItemGridHeight?: number;
-  ArtifactSlots: number;
-  Protection: {
-    Burn: number;
-    Shock: number;
-    ChemicalBurn: number;
-    Radiation: number;
-    PSY: number;
-    Strike: number;
-    Fall: number;
-  };
-  ProtectionNPC: any;
-  UpgradePrototypeSIDs: string[];
-  SectionSettings: any;
-  MeshGenerator: any;
-  NpcMeshGenerator: any;
-  Invisible?: boolean;
-}>;
 
 const bannedids = new Set([
   "NPC_Richter_Armor",

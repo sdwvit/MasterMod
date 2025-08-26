@@ -1,4 +1,4 @@
-import { EUISound, GetStructType } from "s2cfgtojson";
+import { _QuestReward, EUISound, GetStructType, ItemGeneratorPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
 import { logger } from "./logger.mjs";
@@ -12,7 +12,7 @@ export const REWARD_FORMULA = (min: number, max: number) => [
 /**
  * Increase reward for repeatable quests
  */
-export const transformQuestRewardsPrototypes: Meta["entriesTransformer"] = (entries: QuestRewardsPrototype["entries"], context) => {
+export const transformQuestRewardsPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorPrototype["entries"], context) => {
   if (entries.MoneyGenerator) {
     const min = entries.MoneyGenerator.entries.MinCount;
     const max = entries.MoneyGenerator.entries.MaxCount;
@@ -26,12 +26,3 @@ export const transformQuestRewardsPrototypes: Meta["entriesTransformer"] = (entr
 
   return null;
 };
-
-type QuestRewardsPrototype = GetStructType<{
-  SID: string;
-  SpecificRewardSound?: EUISound;
-  MoneyGenerator: {
-    MinCount: number;
-    MaxCount: number;
-  };
-}>;

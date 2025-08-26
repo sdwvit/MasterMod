@@ -1,4 +1,4 @@
-import { EItemGenerationCategory, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
+import { DynamicItemGenerator, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { extraArmorsByFaction, newHeadlessArmors } from "./extraArmors.mjs";
@@ -25,7 +25,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
           case "EItemGenerationCategory::WeaponPrimary":
           case "EItemGenerationCategory::WeaponPistol":
           case "EItemGenerationCategory::WeaponSecondary":
-            e.entries = { ReputationThreshold: 1000000 } as typeof e.entries;
+            e.entries = { ReputationThreshold: 1000000 } as unknown as typeof e.entries;
             break;
           case "EItemGenerationCategory::SubItemGenerator":
             Object.values(e.entries.PossibleItems.entries).forEach((pi) => {
@@ -49,7 +49,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
         // noinspection FallThroughInSwitchStatementJS
         switch (e.entries?.Category) {
           case "EItemGenerationCategory::Head":
-            e.entries.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
+            e.entries.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master" as ERank;
           case "EItemGenerationCategory::BodyArmor":
             {
               const options = Object.values(e.entries.PossibleItems.entries).filter(
@@ -151,7 +151,6 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
   return entries;
 };
 
-type CommaSeparatedRank = ERank | `${ERank}, ${ERank}` | `${ERank}, ${ERank}, ${ERank}` | `${ERank}, ${ERank}, ${ERank}, ${ERank}`;
 type PossibleItem = {
   ItemGeneratorPrototypeSID?: string;
   ItemPrototypeSID: string;
@@ -163,16 +162,6 @@ type PossibleItem = {
   AmmoMaxCount?: number;
 };
 
-type ItemGenerator = {
-  Category?: EItemGenerationCategory;
-  PlayerRank?: CommaSeparatedRank;
-  ReputationThreshold?: number;
-  PossibleItems?: PossibleItem[];
-};
-export type DynamicItemGenerator = GetStructType<{
-  SID: string;
-  ItemGenerator: ItemGenerator[];
-}>;
 export const allArmorAdjustedCost = {
   Jemmy_Neutral_Armor: 15037,
   Newbee_Neutral_Armor: 10286,
