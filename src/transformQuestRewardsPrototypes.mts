@@ -1,9 +1,9 @@
-import { _QuestReward, EUISound, GetStructType, ItemGeneratorPrototype } from "s2cfgtojson";
+import { ItemGeneratorPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
 import { logger } from "./logger.mjs";
 
-const spread = [0.75, 1.25];
+const spread = [0.5, 1];
 
 export const REWARD_FORMULA = (min: number, max: number) => [
   Math.round(DIFFICULTY_FACTOR * min * spread[0]),
@@ -12,7 +12,7 @@ export const REWARD_FORMULA = (min: number, max: number) => [
 /**
  * Increase reward for repeatable quests
  */
-export const transformQuestRewardsPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorPrototype["entries"], context) => {
+export const transformQuestRewardsPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorPrototype["entries"]) => {
   if (entries.MoneyGenerator) {
     const min = entries.MoneyGenerator.entries.MinCount;
     const max = entries.MoneyGenerator.entries.MaxCount;

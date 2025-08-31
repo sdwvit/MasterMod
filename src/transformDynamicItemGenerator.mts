@@ -1,15 +1,15 @@
-import { DynamicItemGenerator, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
+import { ArmorPrototype, DynamicItemGenerator, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
-import { extraArmorsByFaction, newHeadlessArmors } from "./extraArmors.mjs";
+import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newHeadlessArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
+import fs from "node:fs";
 
 const precision = (e: number) => Math.round(e * 1e3) / 1e3;
 
 /**
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
- * @param entries
  */
 export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entries: DynamicItemGenerator["entries"]) => {
   /**
@@ -75,7 +75,7 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
                   extraArmors.forEach(([originalSID, newArmorSID]) => {
                     const dummyPossibleItem = new (Struct.createDynamicClass(newArmorSID))() as GetStructType<PossibleItem>;
                     dummyPossibleItem.entries = { ItemPrototypeSID: newArmorSID } as GetStructType<PossibleItem>["entries"];
-                    weights[newArmorSID] = getChanceForSID(originalSID);
+                    weights[newArmorSID] = getChanceForSID(allArmorAdjustedCost[newArmorSID] ? newArmorSID : originalSID);
                     let i = 0;
                     while (e.entries.PossibleItems.entries[i]) {
                       i++;
@@ -162,98 +162,71 @@ type PossibleItem = {
   AmmoMaxCount?: number;
 };
 
-export const allArmorAdjustedCost = {
-  Jemmy_Neutral_Armor: 15037,
-  Newbee_Neutral_Armor: 10286,
-  Nasos_Neutral_Armor: 20746,
-  Zorya_Neutral_Armor: 36429,
-  SEVA_Neutral_Armor: 85386,
-  Seva_Neutral_Armor: 85386,
-  Exoskeleton_Neutral_Armor: 171219,
-  Exosekeleton_Neutral_Armor: 171219,
-  SkinJacket_Bandit_Armor: 6091,
-  Jacket_Bandit_Armor: 9616,
-  Middle_Bandit_Armor: 13299,
-  Light_Mercenaries_Armor: 22391,
-  Exoskeleton_Mercenaries_Armor: 261339,
-  Heavy_Mercenaries_Armor: 38523,
-  Default_Military_Armor: 12573,
-  Heavy2_Military_Armor: 33979,
-  Anomaly_Scientific_Armor: 151369,
-  HeavyAnomaly_Scientific_Armor: 73079,
-  SciSEVA_Scientific_Armor: 72629,
-  Rook_Svoboda_Armor: 36260,
-  Battle_Svoboda_Armor: 24304,
-  SEVA_Svoboda_Armor: 43704,
-  Seva_Svoboda_Armor: 43704,
-  Heavy_Svoboda_Armor: 64256,
-  HeavyExoskeleton_Svoboda_Armor: 124046,
-  Exoskeleton_Svoboda_Armor: 327669,
-  Rook_Dolg_Armor: 22907,
-  Battle_Dolg_Armor: 20878,
-  DutyArmor_3_U1: 20878,
-  SEVA_Dolg_Armor: 43964,
-  Seva_Dolg_Armor: 43964,
-  Heavy_Dolg_Armor: 22544,
-  HeavyExoskeleton_Dolg_Armor: 96997,
-  Exoskeleton_Dolg_Armor: 170259,
-  Battle_Monolith_Armor: 43761,
-  HeavyAnomaly_Monolith_Armor: 33609,
-  HeavyExoskeleton_Monolith_Armor: 209346,
-  Exoskeleton_Monolith_Armor: 359076,
-  Battle_Varta_Armor: 13495,
-  BattleExoskeleton_Varta_Armor: 405369,
-  Battle_Spark_Armor: 24322,
-  HeavyAnomaly_Spark_Armor: 158133,
-  SEVA_Spark_Armor: 48799,
-  HeavyBattle_Spark_Armor: 56611,
-  Battle_Dolg_End_Armor: 237041,
-  NPC_Sel_Armor: 3109,
-  NPC_Sel_Neutral_Armor: 1382,
-  NPC_Tec_Armor: 1716,
-  NPC_Cloak_Heavy_Neutral_Armor: 39127,
-  NPC_SkinCloak_Bandit_Armor: 3431,
-  NPC_HeavyExoskeleton_Mercenaries_Armor: 34989,
-  NPC_Heavy_Military_Armor: 39127,
-  NPC_Cloak_Heavy_Military_Armor: 39127,
-  NPC_Sci_Armor: 4153,
-  NPC_Battle_Noon_Armor: 19446,
-  NPC_HeavyAnomaly_Noon_Armor: 39127,
-  NPC_HeavyExoskeleton_Noon_Armor: 92005,
-  NPC_Exoskeleton_Noon_Armor: 92005,
-  NPC_Spark_Armor: 1716,
-  NPC_Anomaly_Spark_Armor: 1716,
-  NPC_HeavyExoskeleton_Spark_Armor: 92005,
-  NPC_Heavy_Corps_Armor: 39127,
-  NPC_Heavy2_Coprs_Armor: 39127,
-  NPC_Heavy3_Corps_Armor: 39127,
-  NPC_Heavy3Exoskeleton_Coprs_Armor: 92005,
-  NPC_Exoskeleton_Coprs_Armor: 92005,
-  NPC_Richter_Armor: 4153,
-  NPC_Korshunov_Armor: 19446,
-  NPC_Korshunov_Armor_2: 50540,
-  NPC_Dalin_Armor: 4153,
-  NPC_Agata_Armor: 4153,
-  NPC_Faust_Armor: 4153,
-  NPC_Kaymanov_Armor: 4153,
-  NPC_Shram_Armor: 34653,
-  NPC_Dekhtyarev_Armor: 34653,
-  NPC_Sidorovich_Armor: 4153,
-  NPC_Barmen_Armor: 4153,
-  NPC_Batya_Armor: 4153,
-  NPC_Tyotya_Armor: 4153,
-  Light_Duty_Helmet: 6876,
-  Heavy_Duty_Helmet: 6366,
-  Heavy_Svoboda_Helmet: 5898,
-  Heavy_Varta_Helmet: 5365,
-  Heavy_Military_Helmet: 5719,
-  Light_Mercenaries_Helmet: 8941,
-  Light_Military_Helmet: 7840,
-  Battle_Military_Helmet: 5685,
-  Light_Bandit_Helmet: 6786,
-  Light_Neutral_Helmet: 6225,
-  Anomaly_Scientific_Armor_PSY_preinstalled: 151369,
-};
+function calculateArmorScore(armor: ArmorPrototype): number {
+  const e = armor.entries;
+  const protectionNormalization = { Burn: 100, Shock: 100, ChemicalBurn: 100, Radiation: 100, PSY: 100, Strike: 5, Fall: 100 };
+  const protectionScales = { Burn: 5, Shock: 7, ChemicalBurn: 5, Radiation: 10, PSY: 10, Strike: 63, Fall: 1 };
+  const protectionScore = Object.keys(protectionScales).reduce((sum, key) => {
+    const normalized = (protectionScales[key] * e.Protection.entries[key]) / protectionNormalization[key];
+    return sum + normalized / 100;
+  }, 0);
+  const durabilityScore = ((e.BaseDurability || minDurability) - minDurability) / (maxDurability - minDurability);
+  const weightScore = Math.atan(10e10) - Math.atan((e.Weight + 4.31) / 6.73);
+  const blockHeadScore = e.bBlockHead ? 1 : 0;
+  const speedScore = e.IncreaseSpeedCoef ?? 0; // always 1
+  const noiseScore = e.NoiseCoef ?? 0; // always 1
+  const slotsScore =
+    ((e.ArtifactSlots ?? 0) +
+      Object.values(e.UpgradePrototypeSIDs?.entries || {})
+        .filter((u) => typeof u === "string")
+        .filter((u) => u.toLowerCase().includes("container") || u.toLowerCase().includes("_artifact")).length) /
+    10; // 1 to 2
+  const preventLimping =
+    e.bPreventFromLimping && !Object.values(e.UpgradePrototypeSIDs?.entries || {}).find((u) => typeof u === "string" && u.includes("AddRunEffect"))
+      ? 0
+      : 1;
+
+  const costScore = Math.atan(10e10) - Math.atan((e.Cost + 27025) / 42000);
+  const scoreScales = {
+    costScore: 7.5,
+    protectionScore: 50,
+    durabilityScore: 7.5,
+    weightScore: 5,
+    slotsScore: 25,
+    blockHeadScore: 2.5,
+    preventLimping: 2.5,
+    speedScore: 0,
+    noiseScore: 0,
+  };
+  const scoreKeys = { costScore, protectionScore, durabilityScore, weightScore, slotsScore, blockHeadScore, preventLimping, speedScore, noiseScore };
+  const score = Object.keys(scoreKeys).reduce((sum, e) => sum + scoreKeys[e] * scoreScales[e], 0);
+  return score / 100; // 0 to 1
+}
+
+const maxDurability = Math.max(...Object.values(allDefaultArmorDefs).map((a) => a.entries.BaseDurability ?? 0));
+const minDurability = Math.min(...Object.values(allDefaultArmorDefs).map((a) => a.entries.BaseDurability ?? 10000));
+
+export const allArmorAdjustedCost = Object.fromEntries(
+  Object.values({
+    ...allDefaultArmorDefs,
+    ...Object.fromEntries(
+      allExtraArmors.map((e) => {
+        const dummy = new (Struct.createDynamicClass(e[1]))() as ArmorPrototype & { entries: { SID: string } };
+        dummy.entries = { SID: e[1] } as any;
+        dummy.refkey = e[0];
+
+        return [e[1], dummy];
+      }),
+    ),
+    ...newHeadlessArmors,
+  })
+    .filter((armor) => !armor.entries.SID.includes("Template"))
+    .map((armor) => {
+      const backfilled = backfillArmorDef(armor);
+      return [armor.entries.SID, calculateArmorScore(backfilled)] as [string, number];
+    })
+    .sort((a, b) => a[0].localeCompare(b[0])),
+);
 
 const minimumArmorCost = Object.values(allArmorAdjustedCost).reduce((a, b) => Math.min(a, b), Infinity);
 const maximumArmorCost = Object.values(allArmorAdjustedCost).reduce((a, b) => Math.max(a, b), -Infinity);
