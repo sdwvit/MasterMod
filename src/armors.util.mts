@@ -262,22 +262,6 @@ export const newHeadlessArmors = {
       },
     },
   },
-  NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_headless: {
-    refkey: "NPC_HeavyExoskeleton_Mercenaries_Armor",
-    entries: {
-      SID: "NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_headless",
-      LocalizationSID: "NPC_HeavyExoskeleton_Mercenaries_Armor",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Mercenaries_Armor_headless.T_IFI_HeavyExoskeleton_Mercenaries_Armor_headless'`,
-      Weight: 5,
-      Cost: 58000,
-      Protection: {
-        entries: {
-          Radiation: 5,
-          PSY: 0,
-        },
-      },
-    },
-  },
   HeavyExoskeleton_Monolith_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Monolith_Armor",
     entries: {
@@ -361,7 +345,6 @@ export const extraArmorsByFaction = {
     ["Exoskeleton_Mercenaries_Armor", "Exoskeleton_Mercenaries_Armor_MasterMod_NPC"],
     ["Heavy_Mercenaries_Armor", "Heavy_Mercenaries_Armor_MasterMod_NPC"],
     ["NPC_HeavyExoskeleton_Mercenaries_Armor", "NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_headless.refkey, "NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_headless"],
     [newHeadlessArmors.Heavy_Mercenaries_Armor_MasterMod_headless.refkey, "Heavy_Mercenaries_Armor_MasterMod_headless"],
     [newHeadlessArmors.Exoskeleton_Mercenaries_Armor_MasterMod_headless.refkey, "Exoskeleton_Mercenaries_Armor_MasterMod_headless"],
   ],
