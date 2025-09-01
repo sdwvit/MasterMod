@@ -4,6 +4,7 @@ import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newHeadlessArmor
 import path from "node:path";
 import { logger } from "./logger.mjs";
 import dotEnv from "dotenv";
+import { deepMerge } from "./deepMerge.mjs";
 
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const oncePerFile = new Set<string>();
@@ -35,9 +36,11 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
         newArmor.isRoot = true;
         if (newHeadlessArmors[newSID]) {
           backfillArmorDef(newArmor);
-          newArmor.entries.UpgradePrototypeSIDs.entries = Object.fromEntries(
-            Object.entries(newArmor.entries.UpgradePrototypeSIDs).filter(([_, v]) => v !== "FaustPsyResist_Quest_1_1"),
+          deepMerge(newArmor, newHeadlessArmors[newSID]);
+          const keyToDelete = Object.keys(newArmor.entries.UpgradePrototypeSIDs.entries).find(
+            (e) => newArmor.entries.UpgradePrototypeSIDs.entries[e] === "FaustPsyResist_Quest_1_1",
           );
+          delete newArmor.entries.UpgradePrototypeSIDs.entries[keyToDelete];
           newArmor.entries.bBlockHead = false;
         } else {
           newArmor.entries.Invisible = true;

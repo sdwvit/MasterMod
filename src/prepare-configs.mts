@@ -54,7 +54,8 @@ function getCfgFiles() {
   function scanAllDirs(start: string) {
     const files = fs.readdirSync(start);
     for (const file of files) {
-      if (fs.lstatSync(path.join(start, file)).isDirectory()) {
+      // todo exclude DLCGameData until author buys DLCs himself :)
+      if (fs.lstatSync(path.join(start, file)).isDirectory() && !file.includes("DLCGameData")) {
         scanAllDirs(path.join(start, file));
       } else if (file.endsWith(".cfg")) {
         cfgFiles.push(path.join(start, file));

@@ -36,7 +36,7 @@ export const meta: Meta = {
     "StashPrototypes.cfg",
     "TradePrototypes.cfg",
     ...mobs,
-    "SpawnActorPrototypes/WorldMap_WP/", // very expensive
+    // "SpawnActorPrototypes/WorldMap_WP/", // very expensive
     "ALifeDirectorScenarioPrototypes.cfg",
     "ArmorPrototypes.cfg",
     "UpgradePrototypes.cfg",
@@ -80,7 +80,7 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Update armor/weapon configs, add 17 headless armors, and refine attachment mappings",
+  changenote: "Buff pseudogiants",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
       filePath.endsWith("DynamicItemGenerator.cfg") && transformDynamicItemGenerator,

@@ -1,5 +1,6 @@
-import { GetStructType, MutantBase } from "s2cfgtojson";
+import { MutantBase } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mts";
+import Pseudogiant from "../GameLite/GameData/ObjPrototypes/Pseudogiant.cfg";
 
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
@@ -8,8 +9,11 @@ export const transformMobs: Meta["entriesTransformer"] = (entries: MutantBase["e
   if (!entries.Protection || !entries.Protection.entries) {
     return null;
   }
-  entries.Protection.entries = { Strike: 0.0001 } as typeof entries.Protection.entries; // Set Strike protection to 0 for all mobs
-  return { Protection: entries.Protection };
+  if (entries.SID === ("Pseudogiant" as Pseudogiant.Config<MutantBase>["entries"]["SID"])) {
+    entries.VitalParams.entries = { MaxHP: entries.VitalParams.entries.MaxHP * 2 } as any;
+  }
+  entries.Protection.entries = { Strike: 0.0001 } as any; // Set Strike protection to 0 for all mobs
+  return { Protection: entries.Protection, VitalParams: entries.VitalParams };
 };
 export const mobs = [
   "BlindDog.cfg",

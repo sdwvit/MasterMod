@@ -10,7 +10,8 @@ dotEnv.config({ path: path.join(import.meta.dirname, "..", "..", ".env") });
 const nestedDir = path.join("Stalker2", "Content", "GameLite");
 const BASE_CFG_DIR = path.join(process.env.SDK_PATH, nestedDir);
 const defaultEntries = new Set(["_isArray", "_useAsterisk"]);
-
+const rootDir = path.join(import.meta.dirname, "..", "..");
+const modFolderRaw = path.join(rootDir, "raw");
 function get<T extends Struct>(obj: T, path: `${string}.${string}` | string, lookup: Record<string, T>) {
   const p = path.split(".");
   let v: Struct | string = undefined;
@@ -46,7 +47,14 @@ const getDeepKeys = (e: Struct, ignoreProps: Set<string>, parentKey?: string) =>
 };
 
 function processOne(name: string, inflowStr: string[][], ignoreProps: Set<string> = new Set(), replacer = (e: string) => e) {
-  const inflow = inflowStr.map((e) => Struct.fromString<WithSID>(fs.readFileSync(path.join(BASE_CFG_DIR, "GameData", ...e)).toString()));
+  const inflow = inflowStr.map((e) => {
+    if (fs.existsSync(path.join(modFolderRaw, nestedDir, "GameData", ...e))) {
+      // todo path is wrong
+      return Struct.fromString<WithSID>(fs.readFileSync(path.join(modFolderRaw, nestedDir, "GameData", ...e)).toString());
+    }
+
+    return Struct.fromString<WithSID>(fs.readFileSync(path.join(BASE_CFG_DIR, "GameData", ...e)).toString());
+  });
   const inflowBySID = inflow.map((e) => Object.fromEntries(e.map((s) => [s.entries.SID, s])));
   const props = [...new Set(inflow.map((e) => e.map((k) => getDeepKeys(k, ignoreProps))).flat(5))];
 
