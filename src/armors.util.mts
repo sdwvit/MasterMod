@@ -18,7 +18,9 @@ export const allDefaultArmorDefs = Object.fromEntries(
     ) as ArmorPrototype[]
   ).map((e) => [e.entries.SID, e] as const),
 );
+
 const defaultKeys = new Set(["_isArray", "_useAsterisk"]);
+
 export function backfillArmorDef(armor: { refkey?: string | number }): ArmorPrototype {
   const deepWalk = (obj: any, cb, path = []) =>
     Object.entries(obj)
