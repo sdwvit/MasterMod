@@ -24,6 +24,11 @@
 
 Here is a list of extended files (this mod uses new files, so it is compatible with other mods that don't modify the same SIDs):
 
+- `WeaponData`:
+  - `WeaponGeneralSetupPrototypes`
+- `ItemPrototypes`:
+  - `ArmorPrototypes`
+  - `AttachPrototypes`
 - `ALifePrototypes`:
   - `ALifeDirectorScenarioPrototypes`
 - `DialogPrototypes`:
@@ -56,9 +61,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_Reward`
   - `RSQ09_Reward`
   - `RSQ10_Reward`
-- `ItemPrototypes`:
-  - `ArmorPrototypes`
-  - `AttachPrototypes`
 - `ObjPrototypes`:
   - `BlindDog`
   - `Bloodsucker`
@@ -88,8 +90,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ10_C00_HARPY`
 - `CharacterWeaponSettingsPrototypes`:
   - `NPCWeaponSettingsPrototypes`
-- `WeaponData`:
-  - `WeaponGeneralSetupPrototypes`
 
 ## License
 
