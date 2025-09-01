@@ -36,7 +36,7 @@ export const meta: Meta = {
     "StashPrototypes.cfg",
     "TradePrototypes.cfg",
     ...mobs,
-    // "SpawnActorPrototypes/WorldMap_WP/", // very expensive
+    "SpawnActorPrototypes/WorldMap_WP/", // very expensive
     "ALifeDirectorScenarioPrototypes.cfg",
     "ArmorPrototypes.cfg",
     "UpgradePrototypes.cfg",

@@ -3,7 +3,6 @@ import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newHeadlessArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
-import fs from "node:fs";
 
 const precision = (e: number) => Math.round(e * 1e3) / 1e3;
 

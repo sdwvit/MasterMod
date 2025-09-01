@@ -12,4 +12,9 @@ export const transformNPCWeaponSettingsPrototypes: Meta["entriesTransformer"] = 
     entries.BaseDamage = (structsById[struct._refkey]?.entries as Partial<typeof entries>)?.BaseDamage ?? 50;
     return entries;
   }
+  if (entries.SID === "GunAK74_Strelok_ST_NPC") {
+    entries.BaseDamage = 9;
+    entries.ArmorPiercing = 3;
+    return entries;
+  }
 };

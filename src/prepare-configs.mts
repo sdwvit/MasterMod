@@ -3,7 +3,6 @@ import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
 import { logger } from "./logger.mjs";
-import { deepMerge } from "./deepMerge.mjs";
 
 type Context<T> = {
   struct: T;
@@ -92,8 +91,9 @@ const total = getCfgFiles()
     if (!entriesTransformer) {
       return;
     }
-    logger.log(`Processing file: ${filePath}`);
-
+    if (!(filePath.includes("SpawnActorPrototypes/WorldMap_WP/") && !filePath.endsWith("0.cfg"))) {
+      logger.log(`Processing file: ${filePath}`);
+    }
     const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
     const structsById = Struct.fromString<WithSID>(rawContent).reduce(
       (acc, struct) => {
