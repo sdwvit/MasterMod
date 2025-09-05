@@ -1,7 +1,7 @@
 import { ArmorPrototype, DynamicItemGenerator, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
-import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newHeadlessArmors } from "./armors.util.mjs";
+import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
 
 const precision = (e: number) => Math.round(e * 1e3) / 1e3;
@@ -67,28 +67,26 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
               const ab = options.filter((pi) => !adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
               const cd = options.filter((pi) => adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
 
-              if (!cd.length && e.entries?.Category === "EItemGenerationCategory::BodyArmor") {
-                const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]);
-                if (faction) {
-                  const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
-                  extraArmors.forEach(([originalSID, newArmorSID]) => {
-                    const dummyPossibleItem = new (Struct.createDynamicClass(newArmorSID))() as GetStructType<PossibleItem>;
-                    dummyPossibleItem.entries = { ItemPrototypeSID: newArmorSID } as GetStructType<PossibleItem>["entries"];
-                    weights[newArmorSID] = getChanceForSID(allArmorAdjustedCost[newArmorSID] ? newArmorSID : originalSID);
-                    let i = 0;
-                    while (e.entries.PossibleItems.entries[i]) {
-                      i++;
-                    }
-                    e.entries.PossibleItems.entries[i] = dummyPossibleItem;
-                    if (newHeadlessArmors[newArmorSID]) {
-                      ab.push(dummyPossibleItem);
-                    } else {
-                      cd.push(dummyPossibleItem);
-                    }
-                  });
-                }
-              }
+              const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
+              const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
+              extraArmors.forEach(([originalSID, newArmorSID]) => {
+                const dummyPossibleItem = new (Struct.createDynamicClass(newArmorSID))() as GetStructType<PossibleItem>;
+                dummyPossibleItem.entries = { ItemPrototypeSID: newArmorSID } as GetStructType<PossibleItem>["entries"];
+                weights[newArmorSID] = getChanceForSID(allArmorAdjustedCost[newArmorSID] ? newArmorSID : originalSID);
 
+                if (e.entries?.Category === (newArmors[newArmorSID]?.itemCategory || "EItemGenerationCategory::BodyArmor")) {
+                  let i = 0;
+                  while (e.entries.PossibleItems.entries[i]) {
+                    i++;
+                  }
+                  e.entries.PossibleItems.entries[i] = dummyPossibleItem;
+                  if (newArmors[newArmorSID]) {
+                    ab.push(dummyPossibleItem);
+                  } else {
+                    cd.push(dummyPossibleItem);
+                  }
+                }
+              });
               const maxAB = Math.max(0, ...ab.map((pi) => weights[pi.entries.ItemPrototypeSID]));
 
               const abSum = ab.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
@@ -217,7 +215,7 @@ export const allArmorAdjustedCost = Object.fromEntries(
         return [e[1], dummy];
       }),
     ),
-    ...newHeadlessArmors,
+    ...newArmors,
   })
     .filter((armor) => !armor.entries.SID.includes("Template"))
     .map((armor) => {

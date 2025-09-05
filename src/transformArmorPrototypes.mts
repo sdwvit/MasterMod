@@ -1,10 +1,14 @@
 import { ArmorPrototype, Struct } from "s2cfgtojson";
 import { Meta, WithSID } from "./prepare-configs.mjs";
-import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newHeadlessArmors } from "./armors.util.mjs";
+import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newArmors } from "./armors.util.mjs";
 import path from "node:path";
 import { logger } from "./logger.mjs";
 import dotEnv from "dotenv";
 import { deepMerge } from "./deepMerge.mjs";
+
+const get = (obj: any, path: `${string}.${string}` | string) => {
+  return path.split(".").reduce((o, i) => (o || {})[i], obj);
+};
 
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const oncePerFile = new Set<string>();
@@ -34,14 +38,18 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
         }
         newArmor._id = newSID;
         newArmor.isRoot = true;
-        if (newHeadlessArmors[newSID]) {
+        if (newArmors[newSID]) {
           backfillArmorDef(newArmor);
-          deepMerge(newArmor, newHeadlessArmors[newSID]);
-          const keyToDelete = Object.keys(newArmor.entries.UpgradePrototypeSIDs.entries).find(
-            (e) => newArmor.entries.UpgradePrototypeSIDs.entries[e] === "FaustPsyResist_Quest_1_1",
-          );
-          delete newArmor.entries.UpgradePrototypeSIDs.entries[keyToDelete];
-          newArmor.entries.bBlockHead = false;
+          const overrides = newArmors[newSID];
+          if (overrides._keysToDelete) {
+            Object.keys(overrides._keysToDelete).forEach((p) => {
+              const e = get(newArmor, p);
+              const key = Object.keys(e).find((k) => e[k] === overrides._keysToDelete[p]) || overrides._keysToDelete[p];
+              delete e[key];
+            });
+            delete overrides._keysToDelete;
+          }
+          deepMerge(newArmor, overrides);
         } else {
           newArmor.entries.Invisible = true;
           newArmor.entries.ItemGridWidth = 1;

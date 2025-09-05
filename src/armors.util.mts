@@ -1,4 +1,4 @@
-import { ArmorPrototype, Struct } from "s2cfgtojson";
+import { ArmorPrototype, EItemGenerationCategory, Struct } from "s2cfgtojson";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -53,12 +53,16 @@ export function backfillArmorDef(armor: { refkey?: string | number }): ArmorProt
   return armor as ArmorPrototype;
 }
 
-export const newHeadlessArmors = {
+export const newArmors = {
   BattleExoskeleton_Varta_Armor_MasterMod_headless: {
     refkey: "BattleExoskeleton_Varta_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "BattleExoskeleton_Varta_Armor_MasterMod_headless",
       LocalizationSID: "BattleExoskeleton_Varta_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_BattleExoskeleton_Varta_Armor_headless.T_IFI_BattleExoskeleton_Varta_Armor_headless'`,
       Weight: 8.5,
       Cost: 58000,
@@ -72,9 +76,13 @@ export const newHeadlessArmors = {
   },
   Exoskeleton_Mercenaries_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Mercenaries_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Exoskeleton_Mercenaries_Armor_MasterMod_headless",
       LocalizationSID: "Exoskeleton_Mercenaries_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Mercenaries_Armor_headless.T_IFI_Exoskeleton_Mercenaries_Armor_headless'`,
       Weight: 7.5,
       Cost: 50500,
@@ -86,11 +94,33 @@ export const newHeadlessArmors = {
       },
     },
   },
+  Exoskeleton_Mercenaries_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    entries: {
+      SID: "Exoskeleton_Mercenaries_Helmet_MasterMod",
+      LocalizationSID: "Exoskeleton_Mercenaries_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Merc_Helmet.T_IFI_Exoskeleton_Merc_Helmet'`,
+      Weight: 5,
+      Cost: 45000,
+      Protection: {
+        entries: {
+          Radiation: 40.0,
+          PSY: 20.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
   Exoskeleton_Monolith_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Monolith_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Exoskeleton_Monolith_Armor_MasterMod_headless",
       LocalizationSID: "Exoskeleton_Monolith_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Monolith_Armor_headless.T_IFI_Exoskeleton_Monolith_Armor_headless'`,
       Weight: 7.5,
       Cost: 53000,
@@ -102,11 +132,33 @@ export const newHeadlessArmors = {
       },
     },
   },
+  Exoskeleton_Monolith_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    entries: {
+      SID: "Exoskeleton_Monolith_Helmet_MasterMod",
+      LocalizationSID: "Exoskeleton_Monolith_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Monolith_Helmet.T_IFI_Exoskeleton_Monolith_Helmet'`,
+      Weight: 5,
+      Cost: 45000,
+      Protection: {
+        entries: {
+          Radiation: 50.0,
+          PSY: 20.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
   Exoskeleton_Neutral_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Neutral_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Exoskeleton_Neutral_Armor_MasterMod_headless",
       LocalizationSID: "Exoskeleton_Neutral_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Neutral_Armor_headless.T_IFI_Exoskeleton_Neutral_Armor_headless'`,
       Weight: 12,
       Cost: 55500,
@@ -118,11 +170,33 @@ export const newHeadlessArmors = {
       },
     },
   },
+  Exoskeleton_Neutral_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    entries: {
+      SID: "Exoskeleton_Neutral_Helmet_MasterMod",
+      LocalizationSID: "Exoskeleton_Neutral_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Neutral_Helmet.T_IFI_Exoskeleton_Neutral_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 40.0,
+          PSY: 50.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
   Exoskeleton_Svoboda_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Svoboda_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Exoskeleton_Svoboda_Armor_MasterMod_headless",
       LocalizationSID: "Exoskeleton_Svoboda_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Svoboda_Armor_headless.T_IFI_Exoskeleton_Svoboda_Armor_headless'`,
       Weight: 7.5,
       Cost: 80000,
@@ -136,9 +210,13 @@ export const newHeadlessArmors = {
   },
   Heavy_Dolg_Armor_MasterMod_headless: {
     refkey: "Heavy_Dolg_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Heavy_Dolg_Armor_MasterMod_headless",
       LocalizationSID: "Heavy_Dolg_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_DOL_03_headless.T_IFI_FOL_DOL_03_headless'`,
       Weight: 7,
       Cost: 35000,
@@ -152,9 +230,13 @@ export const newHeadlessArmors = {
   },
   Heavy2_Military_Armor_MasterMod_headless: {
     refkey: "Heavy2_Military_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Heavy2_Military_Armor_MasterMod_headless",
       LocalizationSID: "Heavy2_Military_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MIL_04_headless.T_IFI_FOL_MIL_04_headless'`,
       Weight: 6,
       Cost: 32000,
@@ -168,9 +250,13 @@ export const newHeadlessArmors = {
   },
   HeavyAnomaly_Monolith_Armor_MasterMod_headless: {
     refkey: "HeavyAnomaly_Monolith_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "HeavyAnomaly_Monolith_Armor_MasterMod_headless",
       LocalizationSID: "HeavyAnomaly_Monolith_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MON_04_headless.T_IFI_FOL_MON_04_headless'`,
       Weight: 7,
       Cost: 42500,
@@ -184,9 +270,13 @@ export const newHeadlessArmors = {
   },
   Exoskeleton_Dolg_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Dolg_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Exoskeleton_Dolg_Armor_MasterMod_headless",
       LocalizationSID: "Exoskeleton_Dolg_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_STA_05_headless.T_IFI_FOL_STA_05_headless'`,
       Weight: 8.5,
       Cost: 70000,
@@ -200,9 +290,13 @@ export const newHeadlessArmors = {
   },
   Heavy_Svoboda_Armor_MasterMod_headless: {
     refkey: "Heavy_Svoboda_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Heavy_Svoboda_Armor_MasterMod_headless",
       LocalizationSID: "Heavy_Svoboda_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_SVO_02_headless.T_IFI_FOL_SVO_02_headless'`,
       Weight: 7,
       Cost: 37000,
@@ -216,9 +310,20 @@ export const newHeadlessArmors = {
   },
   Heavy_Mercenaries_Armor_MasterMod_headless: {
     refkey: "Heavy_Mercenaries_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "Heavy_Mercenaries_Armor_MasterMod_headless",
       LocalizationSID: "Heavy_Mercenaries_Armor",
+      SectionSetting: {
+        entries: {
+          [0]: {
+            entries: {},
+          },
+        },
+      },
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Heavy_Mercenaries_Armor_headless.T_IFI_Heavy_Mercenaries_Armor_headless'`,
       Weight: 5,
       Cost: 25500,
@@ -232,9 +337,13 @@ export const newHeadlessArmors = {
   },
   HeavyBattle_Spark_Armor_MasterMod_headless: {
     refkey: "HeavyBattle_Spark_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "HeavyBattle_Spark_Armor_MasterMod_headless",
       LocalizationSID: "HeavyBattle_Spark_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Spark_Armor_headless.T_IFI_HeavyBattle_Spark_Armor_headless'`,
       Weight: 7,
       Cost: 40500,
@@ -246,11 +355,33 @@ export const newHeadlessArmors = {
       },
     },
   },
+  Exoskeleton_Spark_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    entries: {
+      SID: "Exoskeleton_Spark_Helmet_MasterMod",
+      LocalizationSID: "HeavyBattle_Spark_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Spark_Helmet.T_IFI_Exoskeleton_Spark_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 35.0,
+          PSY: 40.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
   HeavyExoskeleton_Dolg_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Dolg_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "HeavyExoskeleton_Dolg_Armor_MasterMod_headless",
       LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Dolg_Armor_headless.T_IFI_HeavyExoskeleton_Dolg_Armor_headless'`,
       Weight: 16,
       Cost: 51000,
@@ -262,11 +393,33 @@ export const newHeadlessArmors = {
       },
     },
   },
+  Exoskeleton_Duty_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    entries: {
+      SID: "Exoskeleton_Duty_Helmet_MasterMod",
+      LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Duty_Helmet.T_IFI_Exoskeleton_Duty_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 40.0,
+          PSY: 20.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
   HeavyExoskeleton_Monolith_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Monolith_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "HeavyExoskeleton_Monolith_Armor_MasterMod_headless",
       LocalizationSID: "HeavyExoskeleton_Monolith_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Monolith_Armor_headless.T_IFI_HeavyExoskeleton_Monolith_Armor_headless'`,
       Weight: 16,
       Cost: 55000,
@@ -280,9 +433,13 @@ export const newHeadlessArmors = {
   },
   HeavyExoskeleton_Svoboda_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Svoboda_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "HeavyExoskeleton_Svoboda_Armor_MasterMod_headless",
       LocalizationSID: "HeavyExoskeleton_Svoboda_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Svoboda_Armor_headless.T_IFI_HeavyExoskeleton_Svoboda_Armor_headless'`,
       Weight: 16,
       Cost: 50000,
@@ -294,11 +451,33 @@ export const newHeadlessArmors = {
       },
     },
   },
+  Exoskeleton_Svoboda_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    entries: {
+      SID: "Exoskeleton_Svoboda_Helmet_MasterMod",
+      LocalizationSID: "Heavy_Svoboda_Helmet",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Svoboda_Helmet.T_IFI_Exoskeleton_Svoboda_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 45.0,
+          PSY: 40.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
   HeavyExoskeleton_Varta_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Varta_Armor",
+    _keysToDelete: {
+      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    },
     entries: {
       SID: "HeavyExoskeleton_Varta_Armor_MasterMod_headless",
       LocalizationSID: "HeavyExoskeleton_Varta_Armor",
+      bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Varta_Armor_headless.T_IFI_HeavyExoskeleton_Varta_Armor_headless'`,
       Weight: 12,
       Cost: 45500,
@@ -321,7 +500,8 @@ export const extraArmorsByFaction = {
     ["NPC_HeavyExoskeleton_Spark_Armor", "NPC_HeavyExoskeleton_Spark_Armor_MasterMod_NPC"],
     ["NPC_Spark_Armor", "NPC_Spark_Armor_MasterMod_NPC"],
     ["NPC_Anomaly_Spark_Armor", "NPC_Anomaly_Spark_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.HeavyBattle_Spark_Armor_MasterMod_headless.refkey, "HeavyBattle_Spark_Armor_MasterMod_headless"],
+    [newArmors.HeavyBattle_Spark_Armor_MasterMod_headless.refkey, "HeavyBattle_Spark_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Spark_Helmet_MasterMod.refkey, "Exoskeleton_Spark_Helmet_MasterMod"],
   ],
   neutral: [
     ["Jemmy_Neutral_Armor", "Jemmy_Neutral_Armor_MasterMod_NPC"],
@@ -332,7 +512,8 @@ export const extraArmorsByFaction = {
     ["Exoskeleton_Neutral_Armor", "Exoskeleton_Neutral_Armor_MasterMod_NPC"],
     ["NPC_Sel_Neutral_Armor", "NPC_Sel_Neutral_Armor_MasterMod_NPC"],
     ["NPC_Cloak_Heavy_Neutral_Armor", "NPC_Cloak_Heavy_Neutral_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.Exoskeleton_Neutral_Armor_MasterMod_headless.refkey, "Exoskeleton_Neutral_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Neutral_Armor_MasterMod_headless.refkey, "Exoskeleton_Neutral_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Neutral_Helmet_MasterMod.refkey, "Exoskeleton_Neutral_Helmet_MasterMod"],
   ],
   bandit: [
     ["SkinJacket_Bandit_Armor", "SkinJacket_Bandit_Armor_MasterMod_NPC"],
@@ -345,15 +526,17 @@ export const extraArmorsByFaction = {
     ["Exoskeleton_Mercenaries_Armor", "Exoskeleton_Mercenaries_Armor_MasterMod_NPC"],
     ["Heavy_Mercenaries_Armor", "Heavy_Mercenaries_Armor_MasterMod_NPC"],
     ["NPC_HeavyExoskeleton_Mercenaries_Armor", "NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.Heavy_Mercenaries_Armor_MasterMod_headless.refkey, "Heavy_Mercenaries_Armor_MasterMod_headless"],
-    [newHeadlessArmors.Exoskeleton_Mercenaries_Armor_MasterMod_headless.refkey, "Exoskeleton_Mercenaries_Armor_MasterMod_headless"],
+    [newArmors.Heavy_Mercenaries_Armor_MasterMod_headless.refkey, "Heavy_Mercenaries_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Mercenaries_Armor_MasterMod_headless.refkey, "Exoskeleton_Mercenaries_Armor_MasterMod_headless"],
+
+    [newArmors.Exoskeleton_Mercenaries_Helmet_MasterMod.refkey, "Exoskeleton_Mercenaries_Helmet_MasterMod"],
   ],
   military: [
     ["Default_Military_Armor", "Default_Military_Armor_MasterMod_NPC"],
     ["Heavy2_Military_Armor", "Heavy2_Military_Armor_MasterMod_NPC"],
     ["NPC_Heavy_Military_Armor", "NPC_Heavy_Military_Armor_MasterMod_NPC"],
     ["NPC_Cloak_Heavy_Military_Armor", "NPC_Cloak_Heavy_Military_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.Heavy2_Military_Armor_MasterMod_headless.refkey, "Heavy2_Military_Armor_MasterMod_headless"],
+    [newArmors.Heavy2_Military_Armor_MasterMod_headless.refkey, "Heavy2_Military_Armor_MasterMod_headless"],
   ],
   corpus: [
     ["NPC_Heavy_Corps_Armor", "NPC_Heavy_Corps_Armor_MasterMod_NPC"],
@@ -376,9 +559,10 @@ export const extraArmorsByFaction = {
     ["Heavy_Svoboda_Armor", "Heavy_Svoboda_Armor_MasterMod_NPC"],
     ["HeavyExoskeleton_Svoboda_Armor", "HeavyExoskeleton_Svoboda_Armor_MasterMod_NPC"],
     ["Exoskeleton_Svoboda_Armor", "Exoskeleton_Svoboda_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.Exoskeleton_Svoboda_Armor_MasterMod_headless.refkey, "Exoskeleton_Svoboda_Armor_MasterMod_headless"],
-    [newHeadlessArmors.HeavyExoskeleton_Svoboda_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Svoboda_Armor_MasterMod_headless"],
-    [newHeadlessArmors.Heavy_Svoboda_Armor_MasterMod_headless.refkey, "Heavy_Svoboda_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Svoboda_Armor_MasterMod_headless.refkey, "Exoskeleton_Svoboda_Armor_MasterMod_headless"],
+    [newArmors.HeavyExoskeleton_Svoboda_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Svoboda_Armor_MasterMod_headless"],
+    [newArmors.Heavy_Svoboda_Armor_MasterMod_headless.refkey, "Heavy_Svoboda_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Svoboda_Helmet_MasterMod.refkey, "Exoskeleton_Svoboda_Helmet_MasterMod"],
   ],
   duty: [
     ["Rook_Dolg_Armor", "Rook_Dolg_Armor_MasterMod_NPC"],
@@ -388,9 +572,10 @@ export const extraArmorsByFaction = {
     ["HeavyExoskeleton_Dolg_Armor", "HeavyExoskeleton_Dolg_Armor_MasterMod_NPC"],
     ["Exoskeleton_Dolg_Armor", "Exoskeleton_Dolg_Armor_MasterMod_NPC"],
     ["Battle_Dolg_End_Armor", "Battle_Dolg_End_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.Exoskeleton_Dolg_Armor_MasterMod_headless.refkey, "Exoskeleton_Dolg_Armor_MasterMod_headless"],
-    [newHeadlessArmors.HeavyExoskeleton_Dolg_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Dolg_Armor_MasterMod_headless"],
-    [newHeadlessArmors.Heavy_Dolg_Armor_MasterMod_headless.refkey, "Heavy_Dolg_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Dolg_Armor_MasterMod_headless.refkey, "Exoskeleton_Dolg_Armor_MasterMod_headless"],
+    [newArmors.HeavyExoskeleton_Dolg_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Dolg_Armor_MasterMod_headless"],
+    [newArmors.Heavy_Dolg_Armor_MasterMod_headless.refkey, "Heavy_Dolg_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Duty_Helmet_MasterMod.refkey, "Exoskeleton_Duty_Helmet_MasterMod"],
   ],
   monolith: [
     ["NPC_Battle_Noon_Armor", "NPC_Battle_Noon_Armor_MasterMod_NPC"],
@@ -401,15 +586,16 @@ export const extraArmorsByFaction = {
     ["HeavyAnomaly_Monolith_Armor", "HeavyAnomaly_Monolith_Armor_MasterMod_NPC"],
     ["HeavyExoskeleton_Monolith_Armor", "HeavyExoskeleton_Monolith_Armor_MasterMod_NPC"],
     ["Exoskeleton_Monolith_Armor", "Exoskeleton_Monolith_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.Exoskeleton_Monolith_Armor_MasterMod_headless.refkey, "Exoskeleton_Monolith_Armor_MasterMod_headless"],
-    [newHeadlessArmors.HeavyExoskeleton_Monolith_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Monolith_Armor_MasterMod_headless"],
-    [newHeadlessArmors.HeavyAnomaly_Monolith_Armor_MasterMod_headless.refkey, "HeavyAnomaly_Monolith_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Monolith_Armor_MasterMod_headless.refkey, "Exoskeleton_Monolith_Armor_MasterMod_headless"],
+    [newArmors.HeavyExoskeleton_Monolith_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Monolith_Armor_MasterMod_headless"],
+    [newArmors.HeavyAnomaly_Monolith_Armor_MasterMod_headless.refkey, "HeavyAnomaly_Monolith_Armor_MasterMod_headless"],
+    [newArmors.Exoskeleton_Monolith_Helmet_MasterMod.refkey, "Exoskeleton_Monolith_Helmet_MasterMod"],
   ],
   varta: [
     ["Battle_Varta_Armor", "Battle_Varta_Armor_MasterMod_NPC"],
     ["BattleExoskeleton_Varta_Armor", "BattleExoskeleton_Varta_Armor_MasterMod_NPC"],
-    [newHeadlessArmors.BattleExoskeleton_Varta_Armor_MasterMod_headless.refkey, "BattleExoskeleton_Varta_Armor_MasterMod_headless"],
-    [newHeadlessArmors.HeavyExoskeleton_Varta_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Varta_Armor_MasterMod_headless"],
+    [newArmors.BattleExoskeleton_Varta_Armor_MasterMod_headless.refkey, "BattleExoskeleton_Varta_Armor_MasterMod_headless"],
+    [newArmors.HeavyExoskeleton_Varta_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Varta_Armor_MasterMod_headless"],
   ],
 };
 

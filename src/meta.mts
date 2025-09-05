@@ -69,7 +69,7 @@ All changes have been tested against fresh save file. Some of these changes won'
       filePath.endsWith("/EffectPrototypes.cfg") && transformEffectPrototypes,
       filePath.endsWith("/NPCWeaponSettingsPrototypes.cfg") && transformNPCWeaponSettingsPrototypes,
       mobs.some((m) => filePath.endsWith(`/${m}`)) && transformMobs,
-      filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes, // skip expensive generation
+      false && filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes, // skip expensive generation
       repeatingQuestsQuestNodePrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestNodePrototypes,
       repeatingQuestsQuestRewardsPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestRewardsPrototypes,
       repeatingQuestsDialogPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformDialogPrototypes,
