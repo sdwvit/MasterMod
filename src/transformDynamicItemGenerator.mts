@@ -3,8 +3,191 @@ import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
+import { pseudoRandomBytes } from "node:crypto";
 
 const precision = (e: number) => Math.round(e * 1e3) / 1e3;
+
+const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
+  Object.values(entries.ItemGenerator.entries)
+    .filter((e) => e.entries)
+    .forEach((e) => {
+      switch (e.entries?.Category) {
+        case "EItemGenerationCategory::BodyArmor":
+        case "EItemGenerationCategory::Head":
+        case "EItemGenerationCategory::WeaponPrimary":
+        case "EItemGenerationCategory::WeaponPistol":
+        case "EItemGenerationCategory::WeaponSecondary":
+          e.entries = { ReputationThreshold: 1000000 } as unknown as typeof e.entries;
+          break;
+        case "EItemGenerationCategory::SubItemGenerator":
+          Object.values(e.entries.PossibleItems.entries).forEach((pi) => {
+            if (pi.entries?.ItemGeneratorPrototypeSID?.includes("Gun")) {
+              pi.entries.Chance = 0; // Disable gun sell
+            }
+          });
+          break;
+        default:
+          (e.entries as Entries) = {};
+          break;
+      }
+    });
+};
+
+const createMissingRankGenerators = (entries: DynamicItemGenerator["entries"]) => {
+  const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
+  const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
+  // go through each new armor.
+  // if there is no suitable item generator, create one suitable
+  extraArmors
+    .filter(([_, newSID]) => newArmors[newSID])
+    .forEach(([_, newSID]) => {
+      const hasSuitableGenerator = Object.values(entries.ItemGenerator.entries)
+        .filter((e) => e.entries)
+        .find((e) => {
+          if (!e.entries.PlayerRank) {
+            e.entries.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
+            return true;
+          }
+          if (!newArmors[newSID]._keysToDelete?.ItemGenerator?.PlayerRank) {
+            newArmors[newSID]._keysToDelete ??= {};
+            newArmors[newSID]._keysToDelete.ItemGenerator ??= {};
+            newArmors[newSID]._keysToDelete.ItemGenerator.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
+            return true;
+          }
+          return (
+            !!newArmors[newSID]._keysToDelete.ItemGenerator.PlayerRank.split(",").some((r) => e.entries.PlayerRank.includes(r)) &&
+            e.entries.Category === newArmors[newSID]._keysToDelete?.ItemGenerator?.Category
+          );
+        });
+      if (!hasSuitableGenerator) {
+        const dummyGenerator = new (Struct.createDynamicClass("itemgen"))() as DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number];
+        const possibleItems = new (Struct.createDynamicClass("PossibleItems"))() as GetStructType<PossibleItem[]>;
+        possibleItems.entries = {};
+        dummyGenerator.entries = {
+          Category: newArmors[newSID]._keysToDelete.ItemGenerator.Category,
+          PlayerRank: newArmors[newSID]._keysToDelete.ItemGenerator.PlayerRank,
+          PossibleItems: possibleItems,
+        } as any;
+        let i = 0;
+        while (entries.ItemGenerator.entries[i]) {
+          i++;
+        }
+        entries.ItemGenerator.entries[i] = dummyGenerator;
+      }
+    });
+};
+
+const transformConsumables = (e: DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number], i: number) => {
+  Object.values(e.entries.PossibleItems.entries)
+    .filter((pi) => pi.entries)
+    .forEach((pi, j) => {
+      pi.entries.Chance = semiRandom(i + j); // Randomize
+      while (pi.entries.Chance > 0.02) {
+        pi.entries.Chance /= 2;
+      }
+      pi.entries.Chance = precision(pi.entries.Chance);
+    });
+};
+
+const transformWeapons = (e: DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number], i: number) => {
+  Object.values(e.entries.PossibleItems.entries)
+    .filter((_) => _.entries)
+    .forEach((pi, j) => {
+      pi.entries.AmmoMinCount = 0;
+      pi.entries.AmmoMaxCount = Math.floor(1 + 5 * semiRandom(i + j));
+    });
+};
+
+/**
+ * Allows NPCs to drop armor and helmets.
+ */
+const transformArmor = (
+  entries: DynamicItemGenerator["entries"],
+  e: DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number],
+  i: number,
+) => {
+  const options = Object.values(e.entries.PossibleItems.entries).filter((pi) => pi.entries && allArmorAdjustedCost[pi.entries.ItemPrototypeSID]);
+
+  const weights = Object.fromEntries(
+    options.map((pi) => {
+      const key = pi.entries.ItemPrototypeSID;
+      return [key, getChanceForSID(key)];
+    }),
+  );
+
+  const ab = options.filter((pi) => !adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
+  const cd = options.filter((pi) => adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
+
+  const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
+  const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
+  extraArmors.forEach(([originalSID, newArmorSID]) => {
+    const dummyPossibleItem = new (Struct.createDynamicClass(newArmorSID))() as GetStructType<PossibleItem>;
+    dummyPossibleItem.entries = { ItemPrototypeSID: newArmorSID } as GetStructType<PossibleItem>["entries"];
+    weights[newArmorSID] = getChanceForSID(allArmorAdjustedCost[newArmorSID] ? newArmorSID : originalSID);
+    const maybeNewArmor = newArmors[newArmorSID];
+
+    if (
+      e.entries?.Category === (maybeNewArmor?._keysToDelete?.ItemGenerator?.Category || "EItemGenerationCategory::BodyArmor") &&
+      (e.entries.PlayerRank && maybeNewArmor?._keysToDelete?.ItemGenerator?.PlayerRank
+        ? maybeNewArmor._keysToDelete.ItemGenerator.PlayerRank.split(",").some((r) => e.entries.PlayerRank.includes(r))
+        : true)
+    ) {
+      let i = 0;
+      while (e.entries.PossibleItems.entries[i]) {
+        i++;
+      }
+      e.entries.PossibleItems.entries[i] = dummyPossibleItem as any;
+      if (maybeNewArmor) {
+        ab.push(dummyPossibleItem as any);
+      } else {
+        cd.push(dummyPossibleItem as any);
+      }
+    }
+  });
+  const maxAB = Math.max(0, ...ab.map((pi) => weights[pi.entries.ItemPrototypeSID]));
+
+  const abSum = ab.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
+  const cdSum = cd.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
+
+  const x = cdSum ? abSum / maxAB : abSum;
+  const y = cdSum / (1 - maxAB);
+  ab.forEach((pi) => {
+    pi.entries.Chance = precision(weights[pi.entries.ItemPrototypeSID]);
+    pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / x);
+    pi.entries.MinDurability = precision(semiRandom(i) * 0.1 + 0.01);
+    pi.entries.MaxDurability = precision(pi.entries.MinDurability + (semiRandom(i) * weights[pi.entries.ItemPrototypeSID]) / 0.15);
+  });
+  cd.forEach((pi) => {
+    pi.entries.Chance = 1; // make sure it always spawns on npc
+    pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / y);
+  });
+};
+const transformCombat = (entries: DynamicItemGenerator["entries"]) => {
+  createMissingRankGenerators(entries);
+
+  Object.values(entries.ItemGenerator.entries)
+    .filter((e) => e.entries)
+    .forEach((e, i) => {
+      switch (e.entries?.Category) {
+        case "EItemGenerationCategory::Head":
+        case "EItemGenerationCategory::BodyArmor":
+          return transformArmor(entries, e as any, i);
+        /**
+         * Control how many consumables are dropped.
+         */
+        case "EItemGenerationCategory::Ammo":
+        case "EItemGenerationCategory::Artifact":
+        case "EItemGenerationCategory::Consumable": {
+          return transformConsumables(e as any, i);
+        }
+        case "EItemGenerationCategory::WeaponPrimary":
+        case "EItemGenerationCategory::WeaponPistol":
+        case "EItemGenerationCategory::WeaponSecondary": {
+          return transformWeapons(e as any, i);
+        }
+      }
+    });
+};
 
 /**
  * Does not allow traders to sell gear.
@@ -15,132 +198,9 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
    * Does not allow traders to sell gear.
    */
   if (entries.SID.includes("Trade")) {
-    Object.values(entries.ItemGenerator.entries)
-      .filter((e) => e.entries)
-      .forEach((e) => {
-        switch (e.entries?.Category) {
-          case "EItemGenerationCategory::BodyArmor":
-          case "EItemGenerationCategory::Head":
-          case "EItemGenerationCategory::WeaponPrimary":
-          case "EItemGenerationCategory::WeaponPistol":
-          case "EItemGenerationCategory::WeaponSecondary":
-            e.entries = { ReputationThreshold: 1000000 } as unknown as typeof e.entries;
-            break;
-          case "EItemGenerationCategory::SubItemGenerator":
-            Object.values(e.entries.PossibleItems.entries).forEach((pi) => {
-              if (pi.entries?.ItemGeneratorPrototypeSID?.includes("Gun")) {
-                pi.entries.Chance = 0; // Disable gun sell
-              }
-            });
-            break;
-          default:
-            (e.entries as Entries) = {};
-            break;
-        }
-      });
+    transformTrade(entries);
   } else {
-    Object.values(entries.ItemGenerator.entries)
-      .filter((e) => e.entries)
-      .forEach((e, i) => {
-        /**
-         * Allows NPCs to drop armor and helmets.
-         */
-        // noinspection FallThroughInSwitchStatementJS
-        switch (e.entries?.Category) {
-          case "EItemGenerationCategory::Head":
-            e.entries.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master" as ERank;
-          case "EItemGenerationCategory::BodyArmor":
-            {
-              const options = Object.values(e.entries.PossibleItems.entries).filter(
-                (pi) => pi.entries && allArmorAdjustedCost[pi.entries.ItemPrototypeSID],
-              );
-              if (!options.length) {
-                return;
-              }
-              const weights = Object.fromEntries(
-                options.map((pi) => {
-                  const key = pi.entries.ItemPrototypeSID;
-                  return [key, getChanceForSID(key)];
-                }),
-              );
-
-              const ab = options.filter((pi) => !adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
-              const cd = options.filter((pi) => adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
-
-              const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
-              const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
-              extraArmors.forEach(([originalSID, newArmorSID]) => {
-                const dummyPossibleItem = new (Struct.createDynamicClass(newArmorSID))() as GetStructType<PossibleItem>;
-                dummyPossibleItem.entries = { ItemPrototypeSID: newArmorSID } as GetStructType<PossibleItem>["entries"];
-                weights[newArmorSID] = getChanceForSID(allArmorAdjustedCost[newArmorSID] ? newArmorSID : originalSID);
-
-                if (e.entries?.Category === (newArmors[newArmorSID]?.itemCategory || "EItemGenerationCategory::BodyArmor")) {
-                  let i = 0;
-                  while (e.entries.PossibleItems.entries[i]) {
-                    i++;
-                  }
-                  e.entries.PossibleItems.entries[i] = dummyPossibleItem;
-                  if (newArmors[newArmorSID]) {
-                    ab.push(dummyPossibleItem);
-                  } else {
-                    cd.push(dummyPossibleItem);
-                  }
-                }
-              });
-              const maxAB = Math.max(0, ...ab.map((pi) => weights[pi.entries.ItemPrototypeSID]));
-
-              const abSum = ab.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
-              const cdSum = cd.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
-
-              const x = cdSum ? abSum / maxAB : abSum;
-              const y = cdSum / (1 - maxAB);
-              ab.forEach((pi) => {
-                pi.entries.Chance = precision(weights[pi.entries.ItemPrototypeSID]);
-                pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / x);
-                pi.entries.MinDurability = precision(semiRandom(i) * 0.04 + 0.01);
-                pi.entries.MaxDurability = precision(pi.entries.MinDurability + weights[pi.entries.ItemPrototypeSID] * 0.5);
-              });
-              cd.forEach((pi) => {
-                pi.entries.Chance = 1; // make sure it always spawns on npc
-                pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / y);
-              });
-            }
-            break;
-          /**
-           * Control how many consumables are dropped.
-           */
-          case "EItemGenerationCategory::Ammo":
-          case "EItemGenerationCategory::Artifact":
-          case "EItemGenerationCategory::Consumable": {
-            Object.values(e.entries.PossibleItems.entries)
-              .filter((pi) => pi.entries)
-              .forEach((pi, j) => {
-                pi.entries.Chance = semiRandom(i + j); // Randomize
-                while (pi.entries.Chance > 0.02) {
-                  pi.entries.Chance /= 2;
-                }
-                pi.entries.Chance = precision(pi.entries.Chance);
-              });
-            break;
-          }
-          case "EItemGenerationCategory::WeaponPrimary":
-          case "EItemGenerationCategory::WeaponPistol":
-          case "EItemGenerationCategory::WeaponSecondary": {
-            Object.values(e.entries.PossibleItems.entries)
-              .filter((_) => _.entries)
-              .forEach((pi, j) => {
-                pi.entries.AmmoMinCount = 0;
-                pi.entries.AmmoMaxCount = Math.floor(1 + 5 * semiRandom(i + j));
-              });
-            break;
-          }
-          case "EItemGenerationCategory::SubItemGenerator":
-            break;
-          default:
-            //(e.entries as Entries) = {};
-            break;
-        }
-      });
+    transformCombat(entries);
   }
   if (Object.values(entries.ItemGenerator.entries).every((e) => Object.keys(e.entries || {}).length === 0)) {
     return null;

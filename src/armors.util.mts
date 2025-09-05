@@ -1,4 +1,4 @@
-import { ArmorPrototype, EItemGenerationCategory, Struct } from "s2cfgtojson";
+import { ArmorPrototype, DynamicItemGenerator, EItemGenerationCategory, Struct } from "s2cfgtojson";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -53,11 +53,22 @@ export function backfillArmorDef(armor: { refkey?: string | number }): ArmorProt
   return armor as ArmorPrototype;
 }
 
-export const newArmors = {
+export const newArmors: Record<
+  string,
+  {
+    refkey: string;
+    entries: Partial<Omit<ArmorPrototype["entries"], "Protection">> & { Protection: any };
+    _keysToDelete: {
+      ItemGenerator?: Partial<DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number]["entries"]>;
+      [key: string]: any;
+    };
+  }
+> = {
   BattleExoskeleton_Varta_Armor_MasterMod_headless: {
     refkey: "BattleExoskeleton_Varta_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "BattleExoskeleton_Varta_Armor_MasterMod_headless",
@@ -78,6 +89,7 @@ export const newArmors = {
     refkey: "Exoskeleton_Mercenaries_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Exoskeleton_Mercenaries_Armor_MasterMod_headless",
@@ -96,7 +108,9 @@ export const newArmors = {
   },
   Exoskeleton_Mercenaries_Helmet_MasterMod: {
     refkey: "Heavy_Svoboda_Helmet",
-    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    _keysToDelete: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
     entries: {
       SID: "Exoskeleton_Mercenaries_Helmet_MasterMod",
       LocalizationSID: "Exoskeleton_Mercenaries_Armor",
@@ -116,6 +130,7 @@ export const newArmors = {
     refkey: "Exoskeleton_Monolith_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Exoskeleton_Monolith_Armor_MasterMod_headless",
@@ -134,7 +149,9 @@ export const newArmors = {
   },
   Exoskeleton_Monolith_Helmet_MasterMod: {
     refkey: "Heavy_Svoboda_Helmet",
-    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    _keysToDelete: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
     entries: {
       SID: "Exoskeleton_Monolith_Helmet_MasterMod",
       LocalizationSID: "Exoskeleton_Monolith_Armor",
@@ -154,6 +171,7 @@ export const newArmors = {
     refkey: "Exoskeleton_Neutral_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Exoskeleton_Neutral_Armor_MasterMod_headless",
@@ -172,7 +190,9 @@ export const newArmors = {
   },
   Exoskeleton_Neutral_Helmet_MasterMod: {
     refkey: "Heavy_Svoboda_Helmet",
-    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    _keysToDelete: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
     entries: {
       SID: "Exoskeleton_Neutral_Helmet_MasterMod",
       LocalizationSID: "Exoskeleton_Neutral_Armor",
@@ -192,6 +212,7 @@ export const newArmors = {
     refkey: "Exoskeleton_Svoboda_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Exoskeleton_Svoboda_Armor_MasterMod_headless",
@@ -212,6 +233,7 @@ export const newArmors = {
     refkey: "Heavy_Dolg_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Heavy_Dolg_Armor_MasterMod_headless",
@@ -232,6 +254,7 @@ export const newArmors = {
     refkey: "Heavy2_Military_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Heavy2_Military_Armor_MasterMod_headless",
@@ -252,6 +275,7 @@ export const newArmors = {
     refkey: "HeavyAnomaly_Monolith_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "HeavyAnomaly_Monolith_Armor_MasterMod_headless",
@@ -272,6 +296,7 @@ export const newArmors = {
     refkey: "Exoskeleton_Dolg_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Exoskeleton_Dolg_Armor_MasterMod_headless",
@@ -292,6 +317,7 @@ export const newArmors = {
     refkey: "Heavy_Svoboda_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Heavy_Svoboda_Armor_MasterMod_headless",
@@ -312,17 +338,11 @@ export const newArmors = {
     refkey: "Heavy_Mercenaries_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "Heavy_Mercenaries_Armor_MasterMod_headless",
       LocalizationSID: "Heavy_Mercenaries_Armor",
-      SectionSetting: {
-        entries: {
-          [0]: {
-            entries: {},
-          },
-        },
-      },
       bBlockHead: false,
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Heavy_Mercenaries_Armor_headless.T_IFI_Heavy_Mercenaries_Armor_headless'`,
       Weight: 5,
@@ -339,6 +359,7 @@ export const newArmors = {
     refkey: "HeavyBattle_Spark_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "HeavyBattle_Spark_Armor_MasterMod_headless",
@@ -357,7 +378,9 @@ export const newArmors = {
   },
   Exoskeleton_Spark_Helmet_MasterMod: {
     refkey: "Heavy_Svoboda_Helmet",
-    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    _keysToDelete: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
     entries: {
       SID: "Exoskeleton_Spark_Helmet_MasterMod",
       LocalizationSID: "HeavyBattle_Spark_Armor",
@@ -377,6 +400,7 @@ export const newArmors = {
     refkey: "HeavyExoskeleton_Dolg_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "HeavyExoskeleton_Dolg_Armor_MasterMod_headless",
@@ -395,7 +419,9 @@ export const newArmors = {
   },
   Exoskeleton_Duty_Helmet_MasterMod: {
     refkey: "Heavy_Svoboda_Helmet",
-    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    _keysToDelete: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
     entries: {
       SID: "Exoskeleton_Duty_Helmet_MasterMod",
       LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
@@ -415,6 +441,7 @@ export const newArmors = {
     refkey: "HeavyExoskeleton_Monolith_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "HeavyExoskeleton_Monolith_Armor_MasterMod_headless",
@@ -435,6 +462,7 @@ export const newArmors = {
     refkey: "HeavyExoskeleton_Svoboda_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "HeavyExoskeleton_Svoboda_Armor_MasterMod_headless",
@@ -453,7 +481,12 @@ export const newArmors = {
   },
   Exoskeleton_Svoboda_Helmet_MasterMod: {
     refkey: "Heavy_Svoboda_Helmet",
-    itemCategory: "EItemGenerationCategory::Head" as EItemGenerationCategory,
+    _keysToDelete: {
+      ItemGenerator: {
+        Category: "EItemGenerationCategory::Head",
+        PlayerRank: "ERank::Veteran, ERank::Master",
+      },
+    },
     entries: {
       SID: "Exoskeleton_Svoboda_Helmet_MasterMod",
       LocalizationSID: "Heavy_Svoboda_Helmet",
@@ -473,6 +506,7 @@ export const newArmors = {
     refkey: "HeavyExoskeleton_Varta_Armor",
     _keysToDelete: {
       "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+      ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
       SID: "HeavyExoskeleton_Varta_Armor_MasterMod_headless",

@@ -40,10 +40,10 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
         newArmor.isRoot = true;
         if (newArmors[newSID]) {
           backfillArmorDef(newArmor);
-          const overrides = newArmors[newSID];
+          const overrides = { ...newArmors[newSID] };
           if (overrides._keysToDelete) {
             Object.keys(overrides._keysToDelete).forEach((p) => {
-              const e = get(newArmor, p);
+              const e = get(newArmor, p) || {};
               const key = Object.keys(e).find((k) => e[k] === overrides._keysToDelete[p]) || overrides._keysToDelete[p];
               delete e[key];
             });
