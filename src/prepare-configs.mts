@@ -157,6 +157,6 @@ logger.log(`Total: ${total.length} files processed.`);
 const writtenFiles = total.filter((s) => s?.length > 0);
 logger.log(`Total: ${writtenFiles.flat().length} structs in ${writtenFiles.length} files written.`);
 logger.log("Now packing the mod and injecting into the game...");
-//await import("./packmod.mjs");
+await import("./packmod.mjs");
 await import("./push-to-sdk.mts");
 await import("./update-readme.mjs");

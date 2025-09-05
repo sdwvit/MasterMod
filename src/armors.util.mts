@@ -523,6 +523,30 @@ export const newArmors: Record<
       },
     },
   },
+
+  Sentinel_Neutral_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    _keysToDelete: {
+      ItemGenerator: {
+        Category: "EItemGenerationCategory::Head",
+        PlayerRank: "ERank::Veteran, ERank::Master",
+      },
+    },
+    entries: {
+      SID: "Sentinel_Neutral_Helmet_MasterMod",
+      LocalizationSID: "Heavy_Svoboda_Helmet",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Sentinel_Neutral_Helmet.T_IFI_Sentinel_Neutral_Helmet'`,
+      Weight: 4.5,
+      Cost: 29000,
+      Protection: {
+        entries: {
+          Radiation: 15.0,
+          PSY: 35.0,
+          Strike: 3.3,
+        },
+      },
+    },
+  },
 } as const;
 
 export const extraArmorsByFaction = {

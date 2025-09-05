@@ -1,9 +1,10 @@
-import { ArmorPrototype, DynamicItemGenerator, Entries, GetStructType, Struct } from "s2cfgtojson";
+import { ArmorPrototype, DynamicItemGenerator, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
+import { logger } from "./logger.mjs";
 
 const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
   Object.values(entries.ItemGenerator.entries)
@@ -23,9 +24,6 @@ const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
               pi.entries.Chance = 0; // Disable gun sell
             }
           });
-          break;
-        default:
-          (e.entries as Entries) = {};
           break;
       }
     });
@@ -95,7 +93,7 @@ const transformWeapons = (e: DynamicItemGenerator["entries"]["ItemGenerator"]["e
       pi.entries.AmmoMaxCount = Math.floor(1 + 5 * semiRandom(i + j));
     });
 };
-
+const oncePerSID = new Set<string>();
 /**
  * Allows NPCs to drop armor and helmets.
  */
@@ -105,6 +103,14 @@ const transformArmor = (
   i: number,
 ) => {
   const options = Object.values(e.entries.PossibleItems.entries).filter((pi) => pi.entries && allArmorAdjustedCost[pi.entries.ItemPrototypeSID]);
+  if (!options.length) {
+    logger.warn(`No armor options found for ${entries.SID}`);
+    return;
+  }
+  if (!oncePerSID.has(entries.SID)) {
+    oncePerSID.add(entries.SID);
+    createMissingRankGenerators(entries);
+  }
 
   const weights = Object.fromEntries(
     options.map((pi) => {
@@ -159,10 +165,9 @@ const transformArmor = (
     pi.entries.Chance = 1; // make sure it always spawns on npc
     pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / y);
   });
+  return true;
 };
 const transformCombat = (entries: DynamicItemGenerator["entries"]) => {
-  createMissingRankGenerators(entries);
-
   Object.values(entries.ItemGenerator.entries)
     .filter((e) => e.entries)
     .forEach((e, i) => {
