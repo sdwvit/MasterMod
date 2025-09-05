@@ -1,9 +1,9 @@
-import { EItemGenerationCategory, EUISound, GetStructType, ItemGeneratorPrototype } from "s2cfgtojson";
+import { ItemGeneratorPrototype } from "s2cfgtojson";
 import { Meta, WithSID } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 
-export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorPrototype["entries"], { index }) => {
+export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorPrototype["entries"], context) => {
   let keep = false;
 
   if (prohibitedIds.some((id) => entries.SID.includes(id))) {
@@ -22,7 +22,7 @@ export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (ent
         return;
       }
       keep = true;
-      let chance = semiRandom(i + j + index);
+      let chance = semiRandom(i + j + context.index);
       while (chance > 0.02) {
         chance /= 2;
       }
@@ -32,9 +32,9 @@ export const transformItemGeneratorPrototypes: Meta["entriesTransformer"] = (ent
         if (possibleItem.entries.MaxCount) possibleItem.entries.MaxCount = 1;
       }
       if (isAmmo) {
-        if (possibleItem.entries.MaxCount) possibleItem.entries.MaxCount = Math.floor(semiRandom(index) * 9) + 1;
+        if (possibleItem.entries.MaxCount) possibleItem.entries.MaxCount = Math.floor(semiRandom(context.index) * 9) + 1;
         if (possibleItem.entries.AmmoMinCount) possibleItem.entries.AmmoMinCount = 1;
-        if (possibleItem.entries.AmmoMaxCount) possibleItem.entries.AmmoMaxCount = Math.floor(semiRandom(index) * 9) + 1;
+        if (possibleItem.entries.AmmoMaxCount) possibleItem.entries.AmmoMaxCount = Math.floor(semiRandom(context.index) * 9) + 1;
       }
     });
   });

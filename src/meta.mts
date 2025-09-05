@@ -19,33 +19,12 @@ import { transformWeaponGeneralSetupPrototypes } from "./transformWeaponGeneralS
 import { transformQuestRewardsPrototypes } from "./transformQuestRewardsPrototypes.mjs";
 import { transformDialogPrototypes } from "./transformDialogPrototypes.mjs";
 import { logger } from "./logger.mjs";
+import { transformWeaponPrototypes } from "./transformWeaponPrototypes.mjs";
+import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
+import { transformCharacterWeaponSettingsPrototypes } from "./transformCharacterWeaponSettingsPrototypes.mjs";
+import { transformWeaponAttributesPrototypes } from "./transformWeaponAttributesPrototypes.mjs";
 
 export const meta: Meta = {
-  interestingFiles: [
-    "AttachPrototypes.cfg",
-    "DifficultyPrototypes.cfg",
-    "EffectPrototypes.cfg",
-    "DynamicItemGenerator.cfg",
-    "ItemGeneratorPrototypes.cfg",
-    "Gamepass_ItemGenerators.cfg",
-    "ObjPrototypes/GeneralNPCObjPrototypes.cfg",
-    "GameData/ObjPrototypes.cfg",
-    ...repeatingQuestsQuestNodePrototypes,
-    ...repeatingQuestsQuestRewardsPrototypes,
-    ...repeatingQuestsDialogPrototypes,
-    "StashPrototypes.cfg",
-    "TradePrototypes.cfg",
-    ...mobs,
-    // "SpawnActorPrototypes/WorldMap_WP/", // very expensive
-    "ALifeDirectorScenarioPrototypes.cfg",
-    "ArmorPrototypes.cfg",
-    "UpgradePrototypes.cfg",
-    "NPCWeaponSettingsPrototypes.cfg",
-    "WeaponGeneralSetupPrototypes.cfg",
-  ],
-  interestingContents: [],
-  prohibitedIds: [],
-  interestingIds: [],
   description: `A collection of various configs aimed to increase game difficulty and make it more interesting.[h3][/h3]
 [hr][/hr]
 [h3]All changes to the base game:[/h3]
@@ -80,28 +59,32 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Stability update.",
+  changenote: "Stability update 2.",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
-      filePath.endsWith("DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
-      (filePath.endsWith("GameData/ObjPrototypes.cfg") || filePath.endsWith("ObjPrototypes/GeneralNPCObjPrototypes.cfg")) && transformObjPrototypes,
-      filePath.endsWith("DifficultyPrototypes.cfg") && transformDifficultyPrototypes,
-      filePath.endsWith("AttachPrototypes.cfg") && transformAttachPrototypes,
-      filePath.endsWith("EffectPrototypes.cfg") && transformEffectPrototypes,
-      filePath.endsWith("NPCWeaponSettingsPrototypes.cfg") && transformNPCWeaponSettingsPrototypes,
-      mobs.some((m) => filePath.endsWith(m)) && transformMobs,
-      filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes,
-      repeatingQuestsQuestNodePrototypes.some((q) => filePath.endsWith(q)) && transformQuestNodePrototypes,
-      repeatingQuestsQuestRewardsPrototypes.some((q) => filePath.endsWith(q)) && transformQuestRewardsPrototypes,
-      repeatingQuestsDialogPrototypes.some((q) => filePath.endsWith(q)) && transformDialogPrototypes,
-      filePath.endsWith("TradePrototypes.cfg") && transformTradePrototypes,
+      filePath.endsWith("/DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
+      (filePath.endsWith("/GameData/ObjPrototypes.cfg") || filePath.endsWith("/ObjPrototypes/GeneralNPCObjPrototypes.cfg")) && transformObjPrototypes,
+      filePath.endsWith("/DifficultyPrototypes.cfg") && transformDifficultyPrototypes,
+      filePath.endsWith("/AttachPrototypes.cfg") && transformAttachPrototypes,
+      filePath.endsWith("/EffectPrototypes.cfg") && transformEffectPrototypes,
+      filePath.endsWith("/NPCWeaponSettingsPrototypes.cfg") && transformNPCWeaponSettingsPrototypes,
+      mobs.some((m) => filePath.endsWith(`/${m}`)) && transformMobs,
+      filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes, // skip expensive generation
+      repeatingQuestsQuestNodePrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestNodePrototypes,
+      repeatingQuestsQuestRewardsPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestRewardsPrototypes,
+      repeatingQuestsDialogPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformDialogPrototypes,
+      filePath.endsWith("/TradePrototypes.cfg") && transformTradePrototypes,
       filePath.endsWith("/StashPrototypes.cfg") && transformStashPrototypes,
       (filePath.endsWith("/ItemGeneratorPrototypes.cfg") || filePath.endsWith("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) &&
         transformItemGeneratorPrototypes,
-      filePath.endsWith("ALifeDirectorScenarioPrototypes.cfg") && transformALifeDirectorScenarioPrototypes,
-      filePath.endsWith("ArmorPrototypes.cfg") && transformArmorPrototypes,
-      filePath.endsWith("UpgradePrototypes.cfg") && transformUpgradePrototypes,
-      filePath.endsWith("WeaponGeneralSetupPrototypes.cfg") && transformWeaponGeneralSetupPrototypes,
+      filePath.endsWith("/ALifeDirectorScenarioPrototypes.cfg") && transformALifeDirectorScenarioPrototypes,
+      filePath.endsWith("/ArmorPrototypes.cfg") && transformArmorPrototypes,
+      filePath.endsWith("/UpgradePrototypes.cfg") && transformUpgradePrototypes,
+      filePath.endsWith("/WeaponGeneralSetupPrototypes.cfg") && transformWeaponGeneralSetupPrototypes,
+      filePath.endsWith("/WeaponPrototypes.cfg") && transformWeaponPrototypes,
+      filePath.endsWith("/MeshPrototypes.cfg") && transformMeshPrototypes,
+      filePath.endsWith("/CharacterWeaponSettingsPrototypes.cfg") && transformCharacterWeaponSettingsPrototypes,
+      filePath.endsWith("/WeaponAttributesPrototypes") && transformWeaponAttributesPrototypes,
     ].filter(Boolean) as Meta["entriesTransformer"][];
 
     if (transformers.length === 0) {

@@ -1,11 +1,21 @@
 import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
+import { Meta, WithSIDWithId } from "./prepare-configs.mjs";
 import { uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
+import { perRefUrl919PistolExtensionPack } from "./grabExternalMod.mjs";
 
+const oncePerFile = new Set<string>();
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
-export const transformWeaponGeneralSetupPrototypes: Meta["entriesTransformer"] = (entries: WeaponGeneralSetupPrototype["entries"], context) => {
+export const transformWeaponGeneralSetupPrototypes: Meta<WithSIDWithId>["entriesTransformer"] = (
+  entries: WeaponGeneralSetupPrototype["entries"],
+  context,
+) => {
+  if (!oncePerFile.has(context.filePath)) {
+    oncePerFile.add(context.filePath);
+    context.extraStructs.push(...perRefUrl919PistolExtensionPack.WeaponGeneralSetupPrototypes);
+  }
+
   let keepo = null;
   /*  // add more compatible scopes
   if (entries.CompatibleAttachments?.entries) {

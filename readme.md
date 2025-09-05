@@ -24,13 +24,20 @@
 
 Here is a list of extended files (this mod uses new files, so it is compatible with other mods that don't modify the same SIDs):
 
-- `WeaponData`:
-  - `WeaponGeneralSetupPrototypes`
-- `ItemPrototypes`:
-  - `ArmorPrototypes`
-  - `AttachPrototypes`
 - `ALifePrototypes`:
   - `ALifeDirectorScenarioPrototypes`
+- `BodyMeshPrototypes`:
+  - `AttachMeshPrototypes`
+- `GameData`:
+  - `BodyMeshPrototypes`
+  - `DifficultyPrototypes`
+  - `EffectPrototypes`
+  - `ItemGeneratorPrototypes`
+  - `MeshPrototypes`
+  - `ObjPrototypes`
+  - `StashPrototypes`
+  - `TradePrototypes`
+  - `UpgradePrototypes`
 - `DialogPrototypes`:
   - `RSQ01_Dialog_Warlock_RSQ`
   - `RSQ04_Dialog_Drabadan_RSQ`
@@ -40,14 +47,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_Dialog_Barmen_RSQ`
   - `RSQ09_Dialog_Spica_RSQ`
   - `RSQ10_Dialog_Harpy_RSQ`
-- `GameData`:
-  - `DifficultyPrototypes`
-  - `EffectPrototypes`
-  - `ItemGeneratorPrototypes`
-  - `ObjPrototypes`
-  - `StashPrototypes`
-  - `TradePrototypes`
-  - `UpgradePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`
@@ -61,6 +60,10 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_Reward`
   - `RSQ09_Reward`
   - `RSQ10_Reward`
+- `ItemPrototypes`:
+  - `ArmorPrototypes`
+  - `AttachPrototypes`
+  - `WeaponPrototypes`
 - `ObjPrototypes`:
   - `BlindDog`
   - `Bloodsucker`
@@ -88,6 +91,9 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_C00_ROSTOK`
   - `RSQ09_C00_MALAHIT`
   - `RSQ10_C00_HARPY`
+- `WeaponData`:
+  - `CharacterWeaponSettingsPrototypes`
+  - `WeaponGeneralSetupPrototypes`
 - `CharacterWeaponSettingsPrototypes`:
   - `NPCWeaponSettingsPrototypes`
 
