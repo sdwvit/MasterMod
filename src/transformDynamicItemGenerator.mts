@@ -1,11 +1,9 @@
-import { ArmorPrototype, DynamicItemGenerator, Entries, ERank, GetStructType, Struct } from "s2cfgtojson";
+import { ArmorPrototype, DynamicItemGenerator, Entries, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
-import { pseudoRandomBytes } from "node:crypto";
-
-const precision = (e: number) => Math.round(e * 1e3) / 1e3;
+import { precision } from "./precision.mjs";
 
 const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
   Object.values(entries.ItemGenerator.entries)

@@ -1,33 +1,156 @@
-import { Struct, TradePrototype } from "s2cfgtojson";
+import { EItemType, Struct, TradePrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
+import { precision } from "./precision.mjs";
 
 /**
  * Don't allow traders to buy weapons and armor.
  */
 export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: TradePrototype["entries"]) => {
+  let keepo = null;
   if (entries.TradeGenerators?.entries) {
     Object.values(entries.TradeGenerators.entries)
       .filter((tg) => tg.entries)
       .forEach((tg) => {
         tg.entries.BuyLimitations ||= new BuyLimitations() as any;
-        const existing = Object.values(tg.entries.BuyLimitations.entries);
-        if (existing.includes("EItemType::Weapon") && existing.includes("EItemType::Armor")) {
-          return;
+        let limitations = ["EItemType::Weapon", "EItemType::Armor", "EItemType::Ammo", "EItemType::MutantLoot"];
+
+        if (bartenders.has(entries.SID)) {
+          keepo = entries;
+          limitations.push(
+            ...[
+              "EItemType::Artifact",
+              "EItemType::Attach",
+              "EItemType::Consumable",
+              "EItemType::Detector",
+              "EItemType::Grenade",
+              "EItemType::MutantLoot",
+            ],
+          );
         }
-        ["EItemType::Weapon", "EItemType::Armor"].forEach((itemType) => {
-          let i = parseInt(Object.keys(tg.entries.BuyLimitations.entries)[0]) || 0;
+
+        if (medics.has(entries.SID)) {
+          keepo = entries;
+          limitations.push(...["EItemType::Artifact", "EItemType::Attach", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other"]);
+        }
+
+        if (generalTraders.has(entries.SID)) {
+          keepo = entries;
+          limitations.push(...["EItemType::Consumable", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other"]);
+        }
+
+        if (technicians.has(entries.SID)) {
+          keepo = entries;
+          limitations.push(...["EItemType::Artifact", "EItemType::Consumable", "EItemType::Other"]);
+        }
+
+        limitations.forEach((itemType: EItemType) => {
+          let i = 0;
           while (tg.entries.BuyLimitations.entries[i] && tg.entries.BuyLimitations.entries[i] !== itemType) {
             i++;
           }
-          tg.entries.BuyLimitations.entries[i] = itemType as any;
+          tg.entries.BuyLimitations.entries[i] = itemType;
         });
       });
-    return { TradeGenerators: entries.TradeGenerators };
   }
-  return null;
+  return keepo;
 };
 
 class BuyLimitations extends Struct {
   _id = "BuyLimitations";
   entries: Record<number, string> = { 0: "EItemType::Weapon", 1: "EItemType::Armor" };
 }
+
+const bartenders = new Set([
+  "Bartender_Zalesie_TradePrototype",
+  "Bartender_ChemicalPlant_TradePrototype",
+  "Bartender_Terricon_TradePrototype",
+  "Bartender_Sultansk_TradePrototype",
+  "BartenderBanditSultansk_TradePrototype",
+  "Bartender_Shevchenko_TradePrototype",
+  "Bartender_Malakhit_TradePrototype",
+  "Bartender_CementPlant_TradePrototype",
+  "Bartender_Rostok_TradePrototype",
+  "Bartender_RostokArena_TradePrototype",
+  "Bartender_Yanov_TradePrototype",
+]);
+
+const medics = new Set([
+  "Medic_Zalesie_TradePrototype",
+  "Medic_ChemicalPlant_TradePrototype",
+  "Medic_Terricon_TradePrototype",
+  "Asylum_Medic_TradePrototype",
+  "Ikar_Medic_TradePrototype",
+  "Sultansk_Medic_TradePrototype",
+  "NewbieVillage_Medic_TradePrototype",
+  "Malakhit_Medic_TradePrototype",
+  "CementPlant_Medic_TradePrototype",
+  "Rostok_Medic_TradePrototype",
+  "Yanov_Medic_TradePrototype",
+]);
+
+const technicians = new Set([
+  "Asylum_Technician_TradePrototype",
+  "Ikar_Technician_TradePrototype",
+  "Backwater_Technician_TradePrototype",
+  "ZalesieTechnician_TradePrototype",
+  "TerriconTechnician_TradePrototype",
+  "PowerPlugTechnician_TradePrototype",
+  "VartaTechnician_TradePrototype",
+  "Technician_NewbieVillage_TradePrototype",
+  "Technician_Malakhit_TradePrototype",
+  "Technician_ChemicalPlant_TradePrototype",
+  "TechnicianChemicalPlant_TradeItemGenerator",
+  "AsylumTechnician_TradeItemGenerator",
+  "BackwaterTechnician_TradeItemGenerator",
+  "Technician_Sultansk_TradePrototype",
+  "SultanskTechnician_TradeItemGenerator",
+  "NewbeeVillageTechnician_TradeItemGenerator",
+  "Technician_CementPlant_TradePrototype",
+  "Technician_Rostok_TradePrototype",
+  "RostokTechnician_TradeItemGenerator",
+  "Technician_Yanov_TradePrototype",
+  "YanovTechnician_TradeItemGenerator",
+  "Technician_Pripyat_TradePrototype",
+  "PripyatTechnician_TradeItemGenerator",
+  "ZalesieTechnician_TradeItemGenerator",
+  "TerriconTechnician_TradeItemGenerator",
+  "PowerPlugTechnician_TradeItemGenerator",
+  "VartaTechnician_TradeItemGenerator",
+]);
+
+const generalTraders = new Set([
+  "BaseTraderNPC_Template",
+  "BasicTrader",
+  "TraderNPC",
+  "AllTraderNPC",
+  "RC_TraderNPC",
+  "Trader_Zalesie_TradePrototype",
+  "Trader_ChemicalPlant_TradePrototype",
+  "Trader_Terikon_TradePrototype",
+  "Asylum_Trader_TradePrototype",
+  "Trader_Ikar_TradePrototype",
+  "Trader_Sultansk_TradePrototype",
+  "Trader_Shevchenko_TradePrototype",
+  "Trader_NewbeeVillage_TradePrototype",
+  "Trader_Malakhit_TradePrototype",
+  "Trader_CementPlant_TradePrototype",
+  "Trader_Armor_Rostok_TradePrototype",
+  "Trader_NATO_Rostok_TradePrototype",
+  "Trader_Soviet_Rostok_TradePrototype",
+  "Trader_Yanov_TradePrototype",
+  "Trader_Pripyat_TradePrototype",
+  "Trader_RedForest_TradePrototype",
+  "EgerTrader_TradePrototype",
+  "TraderSuska_TradePrototype",
+  "VartaTrader_TradePrototype",
+]);
+
+const allEtypes = [
+  "EItemType::Artifact",
+  "EItemType::Attach",
+  "EItemType::Consumable",
+  "EItemType::Detector",
+  "EItemType::Grenade",
+  "EItemType::MutantLoot",
+  "EItemType::Other",
+];
