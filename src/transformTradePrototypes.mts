@@ -1,6 +1,5 @@
 import { EItemType, Struct, TradePrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
-import { precision } from "./precision.mjs";
 
 /**
  * Don't allow traders to buy weapons and armor.
@@ -16,16 +15,7 @@ export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: Tr
 
         if (bartenders.has(entries.SID)) {
           keepo = entries;
-          limitations.push(
-            ...[
-              "EItemType::Artifact",
-              "EItemType::Attach",
-              "EItemType::Consumable",
-              "EItemType::Detector",
-              "EItemType::Grenade",
-              "EItemType::MutantLoot",
-            ],
-          );
+          limitations.push(...["EItemType::Artifact", "EItemType::Attach", "EItemType::Detector", "EItemType::Grenade", "EItemType::MutantLoot"]);
         }
 
         if (medics.has(entries.SID)) {
@@ -35,10 +25,10 @@ export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: Tr
 
         if (generalTraders.has(entries.SID)) {
           keepo = entries;
-          limitations.push(...["EItemType::Consumable", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other"]);
+          limitations.push(...["EItemType::Consumable", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other", "EItemType::Attach"]);
         }
 
-        if (technicians.has(entries.SID)) {
+        if (technicianTradePrototypeSIDs.has(entries.SID)) {
           keepo = entries;
           limitations.push(...["EItemType::Artifact", "EItemType::Consumable", "EItemType::Other"]);
         }
@@ -88,7 +78,7 @@ const medics = new Set([
   "Yanov_Medic_TradePrototype",
 ]);
 
-const technicians = new Set([
+export const technicianTradePrototypeSIDs = new Set([
   "Asylum_Technician_TradePrototype",
   "Ikar_Technician_TradePrototype",
   "Backwater_Technician_TradePrototype",
@@ -118,7 +108,7 @@ const technicians = new Set([
   "VartaTechnician_TradeItemGenerator",
 ]);
 
-const generalTraders = new Set([
+export const generalTraders = new Set([
   "BaseTraderNPC_Template",
   "BasicTrader",
   "TraderNPC",

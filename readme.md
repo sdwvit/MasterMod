@@ -74,6 +74,7 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `Poltergeist`
   - `PseudoDog`
   - `Pseudogiant`
+  - `QuestObjPrototypes`
   - `Snork`
   - `Tushkan`
 - `QuestNodePrototypes`:

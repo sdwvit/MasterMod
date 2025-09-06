@@ -23,6 +23,7 @@ import { transformWeaponPrototypes } from "./transformWeaponPrototypes.mjs";
 import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
 import { transformCharacterWeaponSettingsPrototypes } from "./transformCharacterWeaponSettingsPrototypes.mjs";
 import { transformWeaponAttributesPrototypes } from "./transformWeaponAttributesPrototypes.mjs";
+import { transformQuestObjPrototypes } from "./transformQuestObjPrototypes.mjs";
 
 export const meta: Meta = {
   description: `A collection of various configs aimed to increase game difficulty and make it more interesting.[h3][/h3]
@@ -85,6 +86,7 @@ All changes have been tested against fresh save file. Some of these changes won'
       filePath.endsWith("/MeshPrototypes.cfg") && transformMeshPrototypes,
       filePath.endsWith("/CharacterWeaponSettingsPrototypes.cfg") && transformCharacterWeaponSettingsPrototypes,
       filePath.endsWith("/WeaponAttributesPrototypes") && transformWeaponAttributesPrototypes,
+      filePath.endsWith("/QuestObjPrototypes.cfg") && transformQuestObjPrototypes,
     ].filter(Boolean) as Meta["entriesTransformer"][];
 
     if (transformers.length === 0) {

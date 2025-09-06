@@ -562,7 +562,7 @@ export const extraArmorsByFaction = {
     ["NPC_Cloak_Heavy_Neutral_Armor", "NPC_Cloak_Heavy_Neutral_Armor_MasterMod_NPC"],
     [newArmors.Exoskeleton_Neutral_Armor_MasterMod_headless.refkey, "Exoskeleton_Neutral_Armor_MasterMod_headless"],
     [newArmors.Exoskeleton_Neutral_Helmet_MasterMod.refkey, "Exoskeleton_Neutral_Helmet_MasterMod"],
-    [newArmors.Sentinel_Neutral_Helmet_MasterMod.refkey, "Sentinel_Neutral_Helmet_MasterMod"],
+    //   [newArmors.Sentinel_Neutral_Helmet_MasterMod.refkey, "Sentinel_Neutral_Helmet_MasterMod"],
   ],
   bandit: [
     ["SkinJacket_Bandit_Armor", "SkinJacket_Bandit_Armor_MasterMod_NPC"],

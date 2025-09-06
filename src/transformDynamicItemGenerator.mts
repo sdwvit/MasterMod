@@ -5,11 +5,42 @@ import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFac
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
 
+const generalTradersTradeItemGenerators = new Set([
+  "AsylumTrader_TradeItemGenerator",
+  "IkarTrader_TradeItemGenerator",
+  "SultanskTrader_TradeItemGenerator",
+  "ShevchenkoTrader_TradeItemGenerator",
+  "NewbeeVillageTrader_TradeItemGenerator",
+  "MalakhitTrader_TradeItemGenerator",
+  "CementPlantTrader_TradeItemGenerator",
+  "YanovTrader_TradeItemGenerator",
+  "PripyatTrader_TradeItemGenerator",
+  "RedForestTrader_TradeItemGenerator",
+  "EgerTrader_TradeItemGenerator",
+  "VartaTrader_TradeItemGenerator",
+  "TraderZalesie_TradeItemGenerator",
+  "TraderChemicalPlant_TradeItemGenerator",
+  "TraderTerikon_TradeItemGenerator",
+  "TraderSuska_TradeItemGenerator",
+]);
+
+const technicianTradeTradeItemGenerators = new Set([
+  "TechnicianChemicalPlant_TradeItemGenerator",
+  "PowerPlugTechnician_TradeItemGenerator",
+  "AsylumTechnician_TradeItemGenerator",
+]);
+
 const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
   Object.values(entries.ItemGenerator.entries)
     .filter((e) => e.entries)
     .forEach((e) => {
+      // noinspection FallThroughInSwitchStatementJS
       switch (e.entries?.Category) {
+        case "EItemGenerationCategory::Attach":
+          if (generalTradersTradeItemGenerators.has(entries.SID)) {
+            e.entries = { ReputationThreshold: 1000000 } as unknown as typeof e.entries;
+          }
+          break;
         case "EItemGenerationCategory::BodyArmor":
         case "EItemGenerationCategory::Head":
         case "EItemGenerationCategory::WeaponPrimary":
@@ -19,6 +50,12 @@ const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
           break;
         case "EItemGenerationCategory::SubItemGenerator":
           Object.values(e.entries.PossibleItems.entries).forEach((pi) => {
+            if (
+              generalTradersTradeItemGenerators.has(entries.SID) &&
+              (pi.entries?.ItemGeneratorPrototypeSID?.includes("Attach") || pi.entries?.ItemGeneratorPrototypeSID?.includes("Cosnsumables"))
+            ) {
+              pi.entries.Chance = 0; // Disable attachments sell for general traders
+            }
             if (pi.entries?.ItemGeneratorPrototypeSID?.includes("Gun")) {
               pi.entries.Chance = 0; // Disable gun sell
             }
@@ -196,7 +233,6 @@ const transformCombat = (entries: DynamicItemGenerator["entries"]) => {
       switch (e.entries?.Category) {
         case "EItemGenerationCategory::Head":
           e.entries.PlayerRank = "ERank::Veteran, ERank::Master";
-          e.entries.bAllowSameCategoryGeneration = true;
         case "EItemGenerationCategory::BodyArmor":
           return transformArmor(entries, e as any, i);
         /**
@@ -228,6 +264,48 @@ export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entrie
     transformTrade(entries);
   } else {
     transformCombat(entries);
+  }
+  // add technicians extra grenades
+  if (technicianTradeTradeItemGenerators.has(entries.SID)) {
+    let i = Object.keys(entries.ItemGenerator.entries).filter((key) => key !== "_isArray" && key !== "_useAsterisk").length;
+    while (entries.ItemGenerator.entries[i]) {
+      i++;
+    }
+    const itemGen = Struct.fromString(`
+          _ : struct.begin
+             Category = EItemGenerationCategory::Artifact
+             PlayerRank = ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master
+             bAllowSameCategoryGeneration = true
+             PossibleItems : struct.begin
+                [0] : struct.begin
+                   ItemPrototypeSID = AVOG
+                   Chance = 1
+                   MinCount = 1
+                   MaxCount = 2
+                struct.end
+                [1] : struct.begin
+                   ItemPrototypeSID = GrenadeF1
+                   Chance = 0.5
+                   MinCount = 1
+                   MaxCount = 3
+                struct.end
+                [2] : struct.begin
+                   ItemPrototypeSID = GrenadeRGD5
+                   Chance = 1
+                   MinCount = 1
+                   MaxCount = 3
+                struct.end
+                [3] : struct.begin
+                   ItemPrototypeSID = AHEDP
+                   Chance = 0.5
+                   MinCount = 1
+                   MaxCount = 2
+                struct.end
+             struct.end
+          struct.end
+      `)[0];
+    itemGen.isRoot = false;
+    // entries.ItemGenerator.entries[i] = itemGen as any; todo crashes the game
   }
   if (Object.values(entries.ItemGenerator.entries).every((e) => Object.keys(e.entries || {}).length === 0)) {
     return null;
