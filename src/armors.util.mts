@@ -53,17 +53,7 @@ export function backfillArmorDef(armor: { refkey?: string | number }): ArmorProt
   return armor as ArmorPrototype;
 }
 
-export const newArmors: Record<
-  string,
-  {
-    refkey: string;
-    entries: Partial<Omit<ArmorPrototype["entries"], "Protection">> & { Protection: any };
-    _keysToDelete: {
-      ItemGenerator?: Partial<DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number]["entries"]>;
-      [key: string]: any;
-    };
-  }
-> = {
+export const newArmors = {
   BattleExoskeleton_Varta_Armor_MasterMod_headless: {
     refkey: "BattleExoskeleton_Varta_Armor",
     _keysToDelete: {
@@ -572,6 +562,7 @@ export const extraArmorsByFaction = {
     ["NPC_Cloak_Heavy_Neutral_Armor", "NPC_Cloak_Heavy_Neutral_Armor_MasterMod_NPC"],
     [newArmors.Exoskeleton_Neutral_Armor_MasterMod_headless.refkey, "Exoskeleton_Neutral_Armor_MasterMod_headless"],
     [newArmors.Exoskeleton_Neutral_Helmet_MasterMod.refkey, "Exoskeleton_Neutral_Helmet_MasterMod"],
+    [newArmors.Sentinel_Neutral_Helmet_MasterMod.refkey, "Sentinel_Neutral_Helmet_MasterMod"],
   ],
   bandit: [
     ["SkinJacket_Bandit_Armor", "SkinJacket_Bandit_Armor_MasterMod_NPC"],

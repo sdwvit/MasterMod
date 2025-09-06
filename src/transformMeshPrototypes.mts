@@ -12,8 +12,8 @@ export const transformMeshPrototypes: Meta["entriesTransformer"] = (_, context) 
     const extraMeshes = new Map<string, { SID: string; ID: number; MeshPath: string }>();
     Object.values(newArmors).forEach((newArmor) => {
       if ("MeshPath" in newArmor._keysToDelete && "MeshPrototypeSID" in newArmor.entries) {
-        const SID = newArmor.entries.MeshPrototypeSID;
-        const newEntries = { SID, ID: -1, MeshPath: newArmor._keysToDelete.MeshPath };
+        const SID = newArmor.entries.MeshPrototypeSID as string;
+        const newEntries = { SID, ID: -1, MeshPath: newArmor._keysToDelete.MeshPath as string };
         extraMeshes.set(SID, newEntries);
       }
     });

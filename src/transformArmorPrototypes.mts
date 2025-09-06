@@ -22,6 +22,7 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
   }
 
   if (!oncePerFile.has(context.filePath)) {
+    oncePerFile.add(context.filePath);
     allExtraArmors.forEach(([original, newSID]) => {
       if (!context.structsById[original]) {
         return;
@@ -55,9 +56,8 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
           newArmor.entries.ItemGridWidth = 1;
           newArmor.entries.ItemGridHeight = 1;
         }
-        context.extraStructs.push(newArmor);
+        context.extraStructs.push(Struct.fromString(newArmor.toString())[0] as WithSID);
       }
-      oncePerFile.add(context.filePath);
     });
   }
 

@@ -4,7 +4,6 @@ import { semiRandom } from "./semi-random.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
-import { logger } from "./logger.mjs";
 
 const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
   Object.values(entries.ItemGenerator.entries)
@@ -30,6 +29,7 @@ const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
 };
 
 const createMissingRankGenerators = (entries: DynamicItemGenerator["entries"]) => {
+  // todo crashes the game
   const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
   const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()]];
   // go through each new armor.
@@ -41,13 +41,13 @@ const createMissingRankGenerators = (entries: DynamicItemGenerator["entries"]) =
         .filter((e) => e.entries)
         .find((e) => {
           if (!e.entries.PlayerRank) {
-            e.entries.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
+            //e.entries.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
             return true;
           }
           if (!newArmors[newSID]._keysToDelete?.ItemGenerator?.PlayerRank) {
-            newArmors[newSID]._keysToDelete ??= {};
-            newArmors[newSID]._keysToDelete.ItemGenerator ??= {};
-            newArmors[newSID]._keysToDelete.ItemGenerator.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
+            // newArmors[newSID]._keysToDelete ??= {};
+            // newArmors[newSID]._keysToDelete.ItemGenerator ??= {};
+            // newArmors[newSID]._keysToDelete.ItemGenerator.PlayerRank = "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master";
             return true;
           }
           return (
@@ -58,13 +58,16 @@ const createMissingRankGenerators = (entries: DynamicItemGenerator["entries"]) =
       if (!hasSuitableGenerator) {
         const dummyGenerator = new (Struct.createDynamicClass("itemgen"))() as DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number];
         const possibleItems = new (Struct.createDynamicClass("PossibleItems"))() as GetStructType<PossibleItem[]>;
+        //const possibleEmptyItem = new (Struct.createDynamicClass("PossibleItem"))() as GetStructType<PossibleItem>;
+        //possibleEmptyItem.entries = { ItemPrototypeSID: "empty", Chance: 1 } as any;
         possibleItems.entries = {};
+
         dummyGenerator.entries = {
           Category: newArmors[newSID]._keysToDelete.ItemGenerator.Category,
           PlayerRank: newArmors[newSID]._keysToDelete.ItemGenerator.PlayerRank,
           PossibleItems: possibleItems,
         } as any;
-        let i = 0;
+        let i = Object.keys(entries.ItemGenerator.entries).length;
         while (entries.ItemGenerator.entries[i]) {
           i++;
         }
@@ -102,15 +105,17 @@ const transformArmor = (
   e: DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number],
   i: number,
 ) => {
-  const options = Object.values(e.entries.PossibleItems.entries).filter((pi) => pi.entries && allArmorAdjustedCost[pi.entries.ItemPrototypeSID]);
-  if (!options.length) {
-    logger.warn(`No armor options found for ${entries.SID}`);
+  if (
+    entries.SID.includes("WeaponPistol") ||
+    entries.SID.includes("Consumables") ||
+    entries.SID.includes("Attachments") ||
+    entries.SID.includes("Zombie") ||
+    entries.SID.includes("No_Armor") ||
+    entries.SID.includes("DeadBody")
+  ) {
     return;
   }
-  if (!oncePerSID.has(entries.SID)) {
-    oncePerSID.add(entries.SID);
-    createMissingRankGenerators(entries);
-  }
+  const options = Object.values(e.entries.PossibleItems.entries).filter((pi) => pi.entries && allArmorAdjustedCost[pi.entries.ItemPrototypeSID]);
 
   const weights = Object.fromEntries(
     options.map((pi) => {
@@ -168,11 +173,30 @@ const transformArmor = (
   return true;
 };
 const transformCombat = (entries: DynamicItemGenerator["entries"]) => {
+  if (!oncePerSID.has(entries.SID)) {
+    oncePerSID.add(entries.SID);
+
+    if (
+      !(
+        entries.SID.includes("WeaponPistol") ||
+        entries.SID.includes("Consumables") ||
+        entries.SID.includes("Attachments") ||
+        entries.SID.includes("Zombie") ||
+        entries.SID.includes("No_Armor") ||
+        entries.SID.includes("DeadBody")
+      )
+    ) {
+      //createMissingRankGenerators(entries); // this is only for armors todo crashes the game
+    }
+  }
   Object.values(entries.ItemGenerator.entries)
     .filter((e) => e.entries)
     .forEach((e, i) => {
+      // noinspection FallThroughInSwitchStatementJS
       switch (e.entries?.Category) {
         case "EItemGenerationCategory::Head":
+          e.entries.PlayerRank = "ERank::Veteran, ERank::Master";
+          e.entries.bAllowSameCategoryGeneration = true;
         case "EItemGenerationCategory::BodyArmor":
           return transformArmor(entries, e as any, i);
         /**
@@ -282,7 +306,7 @@ export const allArmorAdjustedCost = Object.fromEntries(
   })
     .filter((armor) => !armor.entries.SID.includes("Template"))
     .map((armor) => {
-      const backfilled = backfillArmorDef({ ...armor });
+      const backfilled = backfillArmorDef(JSON.parse(JSON.stringify(armor))) as ArmorPrototype & { entries: { SID: string } };
       return [armor.entries.SID, calculateArmorScore(backfilled)] as [string, number];
     })
     .sort((a, b) => a[0].localeCompare(b[0])),
