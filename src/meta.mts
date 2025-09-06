@@ -60,7 +60,8 @@ export const meta: Meta = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Stability update 2.",
+  changenote:
+    "New, faction-specific armor options with unique stats; also balance the game economy by restricting trader sales and ensuring NPCs drop meaningful gear.",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
       filePath.endsWith("/DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
