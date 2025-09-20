@@ -1,4 +1,4 @@
-import { ArmorPrototype, DynamicItemGenerator, EItemGenerationCategory, Struct } from "s2cfgtojson";
+import { ArmorPrototype, EItemGenerationCategory, ERank, Struct } from "s2cfgtojson";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -56,8 +56,8 @@ export function backfillArmorDef(armor: { refkey?: string | number }): ArmorProt
 export const newArmors = {
   BattleExoskeleton_Varta_Armor_MasterMod_headless: {
     refkey: "BattleExoskeleton_Varta_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -77,8 +77,8 @@ export const newArmors = {
   },
   Exoskeleton_Mercenaries_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Mercenaries_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -96,30 +96,10 @@ export const newArmors = {
       },
     },
   },
-  Exoskeleton_Mercenaries_Helmet_MasterMod: {
-    refkey: "Heavy_Svoboda_Helmet",
-    _keysToDelete: {
-      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
-    },
-    entries: {
-      SID: "Exoskeleton_Mercenaries_Helmet_MasterMod",
-      LocalizationSID: "Exoskeleton_Mercenaries_Armor",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Merc_Helmet.T_IFI_Exoskeleton_Merc_Helmet'`,
-      Weight: 5,
-      Cost: 45000,
-      Protection: {
-        entries: {
-          Radiation: 40.0,
-          PSY: 20.0,
-          Strike: 4,
-        },
-      },
-    },
-  },
   Exoskeleton_Monolith_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Monolith_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -137,30 +117,10 @@ export const newArmors = {
       },
     },
   },
-  Exoskeleton_Monolith_Helmet_MasterMod: {
-    refkey: "Heavy_Svoboda_Helmet",
-    _keysToDelete: {
-      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
-    },
-    entries: {
-      SID: "Exoskeleton_Monolith_Helmet_MasterMod",
-      LocalizationSID: "Exoskeleton_Monolith_Armor",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Monolith_Helmet.T_IFI_Exoskeleton_Monolith_Helmet'`,
-      Weight: 5,
-      Cost: 45000,
-      Protection: {
-        entries: {
-          Radiation: 50.0,
-          PSY: 20.0,
-          Strike: 4,
-        },
-      },
-    },
-  },
   Exoskeleton_Neutral_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Neutral_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -178,30 +138,10 @@ export const newArmors = {
       },
     },
   },
-  Exoskeleton_Neutral_Helmet_MasterMod: {
-    refkey: "Heavy_Svoboda_Helmet",
-    _keysToDelete: {
-      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
-    },
-    entries: {
-      SID: "Exoskeleton_Neutral_Helmet_MasterMod",
-      LocalizationSID: "Exoskeleton_Neutral_Armor",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Neutral_Helmet.T_IFI_Exoskeleton_Neutral_Helmet'`,
-      Weight: 5,
-      Cost: 40000,
-      Protection: {
-        entries: {
-          Radiation: 40.0,
-          PSY: 50.0,
-          Strike: 4,
-        },
-      },
-    },
-  },
   Exoskeleton_Svoboda_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Svoboda_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -221,8 +161,8 @@ export const newArmors = {
   },
   Heavy_Dolg_Armor_MasterMod_headless: {
     refkey: "Heavy_Dolg_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -242,8 +182,8 @@ export const newArmors = {
   },
   Heavy2_Military_Armor_MasterMod_headless: {
     refkey: "Heavy2_Military_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -263,8 +203,8 @@ export const newArmors = {
   },
   HeavyAnomaly_Monolith_Armor_MasterMod_headless: {
     refkey: "HeavyAnomaly_Monolith_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -284,8 +224,8 @@ export const newArmors = {
   },
   Exoskeleton_Dolg_Armor_MasterMod_headless: {
     refkey: "Exoskeleton_Dolg_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -305,8 +245,8 @@ export const newArmors = {
   },
   Heavy_Svoboda_Armor_MasterMod_headless: {
     refkey: "Heavy_Svoboda_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -326,8 +266,8 @@ export const newArmors = {
   },
   Heavy_Mercenaries_Armor_MasterMod_headless: {
     refkey: "Heavy_Mercenaries_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -347,8 +287,8 @@ export const newArmors = {
   },
   HeavyBattle_Spark_Armor_MasterMod_headless: {
     refkey: "HeavyBattle_Spark_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -366,30 +306,10 @@ export const newArmors = {
       },
     },
   },
-  Exoskeleton_Spark_Helmet_MasterMod: {
-    refkey: "Heavy_Svoboda_Helmet",
-    _keysToDelete: {
-      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
-    },
-    entries: {
-      SID: "Exoskeleton_Spark_Helmet_MasterMod",
-      LocalizationSID: "HeavyBattle_Spark_Armor",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Spark_Helmet.T_IFI_Exoskeleton_Spark_Helmet'`,
-      Weight: 5,
-      Cost: 40000,
-      Protection: {
-        entries: {
-          Radiation: 35.0,
-          PSY: 40.0,
-          Strike: 4,
-        },
-      },
-    },
-  },
   HeavyExoskeleton_Dolg_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Dolg_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -407,30 +327,10 @@ export const newArmors = {
       },
     },
   },
-  Exoskeleton_Duty_Helmet_MasterMod: {
-    refkey: "Heavy_Svoboda_Helmet",
-    _keysToDelete: {
-      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
-    },
-    entries: {
-      SID: "Exoskeleton_Duty_Helmet_MasterMod",
-      LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Duty_Helmet.T_IFI_Exoskeleton_Duty_Helmet'`,
-      Weight: 5,
-      Cost: 40000,
-      Protection: {
-        entries: {
-          Radiation: 40.0,
-          PSY: 20.0,
-          Strike: 4,
-        },
-      },
-    },
-  },
   HeavyExoskeleton_Monolith_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Monolith_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -450,8 +350,8 @@ export const newArmors = {
   },
   HeavyExoskeleton_Svoboda_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Svoboda_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -469,33 +369,10 @@ export const newArmors = {
       },
     },
   },
-  Exoskeleton_Svoboda_Helmet_MasterMod: {
-    refkey: "Heavy_Svoboda_Helmet",
-    _keysToDelete: {
-      ItemGenerator: {
-        Category: "EItemGenerationCategory::Head",
-        PlayerRank: "ERank::Veteran, ERank::Master",
-      },
-    },
-    entries: {
-      SID: "Exoskeleton_Svoboda_Helmet_MasterMod",
-      LocalizationSID: "Heavy_Svoboda_Helmet",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Svoboda_Helmet.T_IFI_Exoskeleton_Svoboda_Helmet'`,
-      Weight: 5,
-      Cost: 40000,
-      Protection: {
-        entries: {
-          Radiation: 45.0,
-          PSY: 40.0,
-          Strike: 4,
-        },
-      },
-    },
-  },
   HeavyExoskeleton_Varta_Armor_MasterMod_headless: {
     refkey: "HeavyExoskeleton_Varta_Armor",
-    _keysToDelete: {
-      "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1",
+    _extras: {
+      keysForRemoval: { "entries.UpgradePrototypeSIDs.entries": "FaustPsyResist_Quest_1_1" },
       ItemGenerator: { Category: "EItemGenerationCategory::BodyArmor", PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
@@ -514,137 +391,363 @@ export const newArmors = {
     },
   },
 
-  Sentinel_Neutral_Helmet_MasterMod: {
+  Exoskeleton_Mercenaries_Helmet_MasterMod: {
     refkey: "Heavy_Svoboda_Helmet",
-    _keysToDelete: {
-      ItemGenerator: {
-        Category: "EItemGenerationCategory::Head",
-        PlayerRank: "ERank::Veteran, ERank::Master",
-      },
+    _extras: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
     },
     entries: {
-      SID: "Sentinel_Neutral_Helmet_MasterMod",
-      LocalizationSID: "Heavy_Svoboda_Helmet",
-      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Sentinel_Neutral_Helmet.T_IFI_Sentinel_Neutral_Helmet'`,
-      Weight: 4.5,
-      Cost: 29000,
+      SID: "Exoskeleton_Mercenaries_Helmet_MasterMod",
+      LocalizationSID: "Exoskeleton_Mercenaries_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Merc_Helmet.T_IFI_Exoskeleton_Merc_Helmet'`,
+      Weight: 5,
+      Cost: 45000,
       Protection: {
         entries: {
-          Radiation: 15.0,
-          PSY: 35.0,
-          Strike: 3.3,
+          Radiation: 40.0,
+          PSY: 20.0,
+          Strike: 4,
         },
       },
     },
   },
+  Exoskeleton_Monolith_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    _extras: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
+    entries: {
+      SID: "Exoskeleton_Monolith_Helmet_MasterMod",
+      LocalizationSID: "Exoskeleton_Monolith_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Monolith_Helmet.T_IFI_Exoskeleton_Monolith_Helmet'`,
+      Weight: 5,
+      Cost: 45000,
+      Protection: {
+        entries: {
+          Radiation: 50.0,
+          PSY: 20.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
+  Exoskeleton_Neutral_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    _extras: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
+    entries: {
+      SID: "Exoskeleton_Neutral_Helmet_MasterMod",
+      LocalizationSID: "Exoskeleton_Neutral_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Neutral_Helmet.T_IFI_Exoskeleton_Neutral_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 40.0,
+          PSY: 50.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
+  Exoskeleton_Spark_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    _extras: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
+    entries: {
+      SID: "Exoskeleton_Spark_Helmet_MasterMod",
+      LocalizationSID: "HeavyBattle_Spark_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Spark_Helmet.T_IFI_Exoskeleton_Spark_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 35.0,
+          PSY: 40.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
+  Exoskeleton_Duty_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    _extras: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head" as EItemGenerationCategory, PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
+    entries: {
+      SID: "Exoskeleton_Duty_Helmet_MasterMod",
+      LocalizationSID: "HeavyExoskeleton_Dolg_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Duty_Helmet.T_IFI_Exoskeleton_Duty_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 40.0,
+          PSY: 20.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
+  Exoskeleton_Svoboda_Helmet_MasterMod: {
+    refkey: "Heavy_Svoboda_Helmet",
+    _extras: {
+      ItemGenerator: { Category: "EItemGenerationCategory::Head", PlayerRank: "ERank::Veteran, ERank::Master" },
+    },
+    entries: {
+      SID: "Exoskeleton_Svoboda_Helmet_MasterMod",
+      LocalizationSID: "Heavy_Svoboda_Helmet",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Svoboda_Helmet.T_IFI_Exoskeleton_Svoboda_Helmet'`,
+      Weight: 5,
+      Cost: 40000,
+      Protection: {
+        entries: {
+          Radiation: 45.0,
+          PSY: 40.0,
+          Strike: 4,
+        },
+      },
+    },
+  },
+  HeavyBattle_Spark_Helmet_MasterMod: {
+    refkey: "Battle_Military_Helmet",
+    _extras: { ItemGenerator: { Category: "EItemGenerationCategory::Head", PlayerRank: "ERank::Veteran, ERank::Master" } },
+    entries: {
+      SID: "HeavyBattle_Spark_Helmet_MasterMod",
+      LocalizationSID: "Battle_Military_Helmet",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Spark_Helmet.T_IFI_HeavyBattle_Spark_Helmet'`,
+    },
+  },
+  HeavyBattle_Merc_Helmet_MasterMod: {
+    refkey: "Battle_Military_Helmet",
+    _extras: { ItemGenerator: { Category: "EItemGenerationCategory::Head", PlayerRank: "ERank::Veteran, ERank::Master" } },
+    entries: {
+      SID: "HeavyBattle_Merc_Helmet_MasterMod",
+      LocalizationSID: "Battle_Military_Helmet",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Merc_Helmet.T_IFI_HeavyBattle_Merc_Helmet'`,
+    },
+  },
+  HeavyBattle_Dolg_Helmet_MasterMod: {
+    refkey: "Battle_Military_Helmet",
+    _extras: { ItemGenerator: { Category: "EItemGenerationCategory::Head", PlayerRank: "ERank::Veteran, ERank::Master" } },
+    entries: {
+      SID: "HeavyBattle_Dolg_Helmet_MasterMod",
+      LocalizationSID: "Battle_Military_Helmet",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Dolg_Helmet.T_IFI_HeavyBattle_Dolg_Helmet'`,
+    },
+  },
 } as const;
 
-export const extraArmorsByFaction = {
+type ArmorDescriptor = {
+  refkey: string;
+  _extras?: {
+    keysForRemoval?: { [path: string]: any };
+    [key: string]: any;
+  };
+  PlayerRank?: ERank;
+  entries: any;
+};
+
+export const extraArmorsByFaction: {
+  spark: ArmorDescriptor[];
+  neutral: ArmorDescriptor[];
+  bandit: ArmorDescriptor[];
+  mercenary: ArmorDescriptor[];
+  military: ArmorDescriptor[];
+  corpus: ArmorDescriptor[];
+  scientist: ArmorDescriptor[];
+  freedom: ArmorDescriptor[];
+  duty: ArmorDescriptor[];
+  monolith: ArmorDescriptor[];
+  varta: ArmorDescriptor[];
+} = {
   spark: [
-    ["HeavyBattle_Spark_Armor", "HeavyBattle_Spark_Armor_MasterMod_NPC"],
-    ["Battle_Spark_Armor", "Battle_Spark_Armor_MasterMod_NPC"],
-    ["HeavyAnomaly_Spark_Armor", "HeavyAnomaly_Spark_Armor_MasterMod_NPC"],
-    ["SEVA_Spark_Armor", "SEVA_Spark_Armor_MasterMod_NPC"],
-    ["NPC_HeavyExoskeleton_Spark_Armor", "NPC_HeavyExoskeleton_Spark_Armor_MasterMod_NPC"],
-    ["NPC_Spark_Armor", "NPC_Spark_Armor_MasterMod_NPC"],
-    ["NPC_Anomaly_Spark_Armor", "NPC_Anomaly_Spark_Armor_MasterMod_NPC"],
-    [newArmors.HeavyBattle_Spark_Armor_MasterMod_headless.refkey, "HeavyBattle_Spark_Armor_MasterMod_headless"],
-    [newArmors.Exoskeleton_Spark_Helmet_MasterMod.refkey, "Exoskeleton_Spark_Helmet_MasterMod"],
+    { refkey: "HeavyBattle_Spark_Armor", entries: { SID: "HeavyBattle_Spark_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    { refkey: "Battle_Spark_Armor", entries: { SID: "Battle_Spark_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
+    { refkey: "HeavyAnomaly_Spark_Armor", entries: { SID: "HeavyAnomaly_Spark_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran" },
+    { refkey: "SEVA_Spark_Armor", entries: { SID: "SEVA_Spark_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran" },
+    {
+      refkey: "NPC_HeavyExoskeleton_Spark_Armor",
+      entries: { SID: "NPC_HeavyExoskeleton_Spark_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Master",
+    },
+    {
+      refkey: "NPC_Spark_Armor",
+      entries: { SID: "NPC_Spark_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
+    { refkey: "NPC_Anomaly_Spark_Armor", entries: { SID: "NPC_Anomaly_Spark_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
+    { refkey: newArmors.HeavyBattle_Spark_Armor_MasterMod_headless.refkey, entries: { SID: "HeavyBattle_Spark_Armor_MasterMod_headless" } },
+    { refkey: newArmors.Exoskeleton_Spark_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Spark_Helmet_MasterMod" } },
+    { refkey: newArmors.HeavyBattle_Spark_Helmet_MasterMod.refkey, entries: { SID: "HeavyBattle_Spark_Helmet_MasterMod" } },
   ],
   neutral: [
-    ["Jemmy_Neutral_Armor", "Jemmy_Neutral_Armor_MasterMod_NPC"],
-    ["Newbee_Neutral_Armor", "Newbee_Neutral_Armor_MasterMod_NPC"],
-    ["Nasos_Neutral_Armor", "Nasos_Neutral_Armor_MasterMod_NPC"],
-    ["Zorya_Neutral_Armor", "Zorya_Neutral_Armor_MasterMod_NPC"],
-    ["SEVA_Neutral_Armor", "SEVA_Neutral_Armor_MasterMod_NPC"],
-    ["Exoskeleton_Neutral_Armor", "Exoskeleton_Neutral_Armor_MasterMod_NPC"],
-    ["NPC_Sel_Neutral_Armor", "NPC_Sel_Neutral_Armor_MasterMod_NPC"],
-    ["NPC_Cloak_Heavy_Neutral_Armor", "NPC_Cloak_Heavy_Neutral_Armor_MasterMod_NPC"],
-    [newArmors.Exoskeleton_Neutral_Armor_MasterMod_headless.refkey, "Exoskeleton_Neutral_Armor_MasterMod_headless"],
-    [newArmors.Exoskeleton_Neutral_Helmet_MasterMod.refkey, "Exoskeleton_Neutral_Helmet_MasterMod"],
-    //   [newArmors.Sentinel_Neutral_Helmet_MasterMod.refkey, "Sentinel_Neutral_Helmet_MasterMod"],
+    { refkey: "Jemmy_Neutral_Armor", entries: { SID: "Jemmy_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    { refkey: "Newbee_Neutral_Armor", entries: { SID: "Newbee_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    { refkey: "Nasos_Neutral_Armor", entries: { SID: "Nasos_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Experienced" },
+    { refkey: "Zorya_Neutral_Armor", entries: { SID: "Zorya_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Experienced" },
+    { refkey: "SEVA_Neutral_Armor", entries: { SID: "SEVA_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran" },
+    { refkey: "Exoskeleton_Neutral_Armor", entries: { SID: "Exoskeleton_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: "NPC_Sel_Neutral_Armor", entries: { SID: "NPC_Sel_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    { refkey: "NPC_Cloak_Heavy_Neutral_Armor", entries: { SID: "NPC_Cloak_Heavy_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran" },
+    { refkey: newArmors.Exoskeleton_Neutral_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Neutral_Armor_MasterMod_headless" } },
+    { refkey: newArmors.Exoskeleton_Neutral_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Neutral_Helmet_MasterMod" } },
   ],
   bandit: [
-    ["SkinJacket_Bandit_Armor", "SkinJacket_Bandit_Armor_MasterMod_NPC"],
-    ["Jacket_Bandit_Armor", "Jacket_Bandit_Armor_MasterMod_NPC"],
-    ["Middle_Bandit_Armor", "Middle_Bandit_Armor_MasterMod_NPC"],
-    ["NPC_SkinCloak_Bandit_Armor", "NPC_SkinCloak_Bandit_Armor_MasterMod_NPC"],
+    { refkey: "SkinJacket_Bandit_Armor", entries: { SID: "SkinJacket_Bandit_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    {
+      refkey: "Jacket_Bandit_Armor",
+      entries: { SID: "Jacket_Bandit_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
+    {
+      refkey: "Middle_Bandit_Armor",
+      entries: { SID: "Middle_Bandit_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
+    { refkey: "NPC_SkinCloak_Bandit_Armor", entries: { SID: "NPC_SkinCloak_Bandit_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
   ],
   mercenary: [
-    ["Light_Mercenaries_Armor", "Light_Mercenaries_Armor_MasterMod_NPC"],
-    ["Exoskeleton_Mercenaries_Armor", "Exoskeleton_Mercenaries_Armor_MasterMod_NPC"],
-    ["Heavy_Mercenaries_Armor", "Heavy_Mercenaries_Armor_MasterMod_NPC"],
-    ["NPC_HeavyExoskeleton_Mercenaries_Armor", "NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_NPC"],
-    [newArmors.Heavy_Mercenaries_Armor_MasterMod_headless.refkey, "Heavy_Mercenaries_Armor_MasterMod_headless"],
-    [newArmors.Exoskeleton_Mercenaries_Armor_MasterMod_headless.refkey, "Exoskeleton_Mercenaries_Armor_MasterMod_headless"],
-
-    [newArmors.Exoskeleton_Mercenaries_Helmet_MasterMod.refkey, "Exoskeleton_Mercenaries_Helmet_MasterMod"],
+    { refkey: "Light_Mercenaries_Armor", entries: { SID: "Light_Mercenaries_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    { refkey: "Exoskeleton_Mercenaries_Armor", entries: { SID: "Exoskeleton_Mercenaries_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: "Heavy_Mercenaries_Armor", entries: { SID: "Heavy_Mercenaries_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    {
+      refkey: "NPC_HeavyExoskeleton_Mercenaries_Armor",
+      entries: { SID: "NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Master",
+    },
+    { refkey: newArmors.Heavy_Mercenaries_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy_Mercenaries_Armor_MasterMod_headless" } },
+    {
+      refkey: newArmors.Exoskeleton_Mercenaries_Armor_MasterMod_headless.refkey,
+      entries: { SID: "Exoskeleton_Mercenaries_Armor_MasterMod_headless" },
+    },
+    { refkey: newArmors.Exoskeleton_Mercenaries_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Mercenaries_Helmet_MasterMod" } },
+    { refkey: newArmors.HeavyBattle_Merc_Helmet_MasterMod.refkey, entries: { SID: "HeavyBattle_Merc_Helmet_MasterMod" } },
   ],
   military: [
-    ["Default_Military_Armor", "Default_Military_Armor_MasterMod_NPC"],
-    ["Heavy2_Military_Armor", "Heavy2_Military_Armor_MasterMod_NPC"],
-    ["NPC_Heavy_Military_Armor", "NPC_Heavy_Military_Armor_MasterMod_NPC"],
-    ["NPC_Cloak_Heavy_Military_Armor", "NPC_Cloak_Heavy_Military_Armor_MasterMod_NPC"],
-    [newArmors.Heavy2_Military_Armor_MasterMod_headless.refkey, "Heavy2_Military_Armor_MasterMod_headless"],
+    { refkey: "Default_Military_Armor", entries: { SID: "Default_Military_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
+    { refkey: "Heavy2_Military_Armor", entries: { SID: "Heavy2_Military_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    { refkey: "NPC_Heavy_Military_Armor", entries: { SID: "NPC_Heavy_Military_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    {
+      refkey: "NPC_Cloak_Heavy_Military_Armor",
+      entries: { SID: "NPC_Cloak_Heavy_Military_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Veteran, ERank::Master",
+    },
+    { refkey: newArmors.Heavy2_Military_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy2_Military_Armor_MasterMod_headless" } },
   ],
   corpus: [
-    ["NPC_Heavy_Corps_Armor", "NPC_Heavy_Corps_Armor_MasterMod_NPC"],
-    ["NPC_Heavy3_Corps_Armor", "NPC_Heavy3_Corps_Armor_MasterMod_NPC"],
-    ["NPC_Heavy2_Coprs_Armor", "NPC_Heavy2_Coprs_Armor_MasterMod_NPC"],
-    ["NPC_Heavy3Exoskeleton_Coprs_Armor", "NPC_Heavy3Exoskeleton_Coprs_Armor_MasterMod_NPC"],
-    ["NPC_Exoskeleton_Coprs_Armor", "NPC_Exoskeleton_Coprs_Armor_MasterMod_NPC"],
+    { refkey: "NPC_Heavy_Corps_Armor", entries: { SID: "NPC_Heavy_Corps_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    { refkey: "NPC_Heavy3_Corps_Armor", entries: { SID: "NPC_Heavy3_Corps_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    { refkey: "NPC_Heavy2_Coprs_Armor", entries: { SID: "NPC_Heavy2_Coprs_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    {
+      refkey: "NPC_Heavy3Exoskeleton_Coprs_Armor",
+      entries: { SID: "NPC_Heavy3Exoskeleton_Coprs_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Veteran, ERank::Master",
+    },
+    {
+      refkey: "NPC_Exoskeleton_Coprs_Armor",
+      entries: { SID: "NPC_Exoskeleton_Coprs_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Veteran, ERank::Master",
+    },
+    { refkey: "Battle_Dolg_End_Armor", entries: { SID: "Battle_Dolg_End_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
   ],
   scientist: [
-    ["Anomaly_Scientific_Armor", "Anomaly_Scientific_Armor_MasterMod_NPC"],
-    ["HeavyAnomaly_Scientific_Armor", "HeavyAnomaly_Scientific_Armor_MasterMod_NPC"],
-    ["SciSEVA_Scientific_Armor", "SciSEVA_Scientific_Armor_MasterMod_NPC"],
-    ["Anomaly_Scientific_Armor_PSY_preinstalled", "Anomaly_Scientific_Armor_PSY_preinstalled_MasterMod_NPC"],
-    ["NPC_Sci_Armor", "NPC_Sci_Armor_MasterMod_NPC"],
+    {
+      refkey: "Anomaly_Scientific_Armor",
+      entries: { SID: "Anomaly_Scientific_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Newbie, ERank::Experienced",
+    },
+    {
+      refkey: "HeavyAnomaly_Scientific_Armor",
+      entries: { SID: "HeavyAnomaly_Scientific_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
+    { refkey: "SciSEVA_Scientific_Armor", entries: { SID: "SciSEVA_Scientific_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    {
+      refkey: "NPC_Sci_Armor",
+      entries: { SID: "NPC_Sci_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
   ],
   freedom: [
-    ["Rook_Svoboda_Armor", "Rook_Svoboda_Armor_MasterMod_NPC"],
-    ["Battle_Svoboda_Armor", "Battle_Svoboda_Armor_MasterMod_NPC"],
-    ["SEVA_Svoboda_Armor", "SEVA_Svoboda_Armor_MasterMod_NPC"],
-    ["Heavy_Svoboda_Armor", "Heavy_Svoboda_Armor_MasterMod_NPC"],
-    ["HeavyExoskeleton_Svoboda_Armor", "HeavyExoskeleton_Svoboda_Armor_MasterMod_NPC"],
-    ["Exoskeleton_Svoboda_Armor", "Exoskeleton_Svoboda_Armor_MasterMod_NPC"],
-    [newArmors.Exoskeleton_Svoboda_Armor_MasterMod_headless.refkey, "Exoskeleton_Svoboda_Armor_MasterMod_headless"],
-    [newArmors.HeavyExoskeleton_Svoboda_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Svoboda_Armor_MasterMod_headless"],
-    [newArmors.Heavy_Svoboda_Armor_MasterMod_headless.refkey, "Heavy_Svoboda_Armor_MasterMod_headless"],
-    [newArmors.Exoskeleton_Svoboda_Helmet_MasterMod.refkey, "Exoskeleton_Svoboda_Helmet_MasterMod"],
+    { refkey: "Rook_Svoboda_Armor", entries: { SID: "Rook_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    { refkey: "Battle_Svoboda_Armor", entries: { SID: "Battle_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Experienced" },
+    { refkey: "SEVA_Svoboda_Armor", entries: { SID: "SEVA_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran" },
+    { refkey: "Heavy_Svoboda_Armor", entries: { SID: "Heavy_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    { refkey: "HeavyExoskeleton_Svoboda_Armor", entries: { SID: "HeavyExoskeleton_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: "Exoskeleton_Svoboda_Armor", entries: { SID: "Exoskeleton_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: newArmors.Exoskeleton_Svoboda_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Svoboda_Armor_MasterMod_headless" } },
+    {
+      refkey: newArmors.HeavyExoskeleton_Svoboda_Armor_MasterMod_headless.refkey,
+      entries: { SID: "HeavyExoskeleton_Svoboda_Armor_MasterMod_headless" },
+    },
+    { refkey: newArmors.Heavy_Svoboda_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy_Svoboda_Armor_MasterMod_headless" } },
+    { refkey: newArmors.Exoskeleton_Svoboda_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Svoboda_Helmet_MasterMod" } },
   ],
   duty: [
-    ["Rook_Dolg_Armor", "Rook_Dolg_Armor_MasterMod_NPC"],
-    ["Battle_Dolg_Armor", "Battle_Dolg_Armor_MasterMod_NPC"],
-    ["SEVA_Dolg_Armor", "SEVA_Dolg_Armor_MasterMod_NPC"],
-    ["Heavy_Dolg_Armor", "Heavy_Dolg_Armor_MasterMod_NPC"],
-    ["HeavyExoskeleton_Dolg_Armor", "HeavyExoskeleton_Dolg_Armor_MasterMod_NPC"],
-    ["Exoskeleton_Dolg_Armor", "Exoskeleton_Dolg_Armor_MasterMod_NPC"],
-    ["Battle_Dolg_End_Armor", "Battle_Dolg_End_Armor_MasterMod_NPC"],
-    [newArmors.Exoskeleton_Dolg_Armor_MasterMod_headless.refkey, "Exoskeleton_Dolg_Armor_MasterMod_headless"],
-    [newArmors.HeavyExoskeleton_Dolg_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Dolg_Armor_MasterMod_headless"],
-    [newArmors.Heavy_Dolg_Armor_MasterMod_headless.refkey, "Heavy_Dolg_Armor_MasterMod_headless"],
-    [newArmors.Exoskeleton_Duty_Helmet_MasterMod.refkey, "Exoskeleton_Duty_Helmet_MasterMod"],
+    { refkey: "Rook_Dolg_Armor", entries: { SID: "Rook_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    { refkey: "Battle_Dolg_Armor", entries: { SID: "Battle_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Experienced" },
+    { refkey: "SEVA_Dolg_Armor", entries: { SID: "SEVA_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Experienced" },
+    { refkey: "Heavy_Dolg_Armor", entries: { SID: "Heavy_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
+    { refkey: "HeavyExoskeleton_Dolg_Armor", entries: { SID: "HeavyExoskeleton_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: "Exoskeleton_Dolg_Armor", entries: { SID: "Exoskeleton_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: newArmors.Exoskeleton_Dolg_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Dolg_Armor_MasterMod_headless" } },
+    { refkey: newArmors.HeavyExoskeleton_Dolg_Armor_MasterMod_headless.refkey, entries: { SID: "HeavyExoskeleton_Dolg_Armor_MasterMod_headless" } },
+    { refkey: newArmors.Heavy_Dolg_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy_Dolg_Armor_MasterMod_headless" } },
+    { refkey: newArmors.Exoskeleton_Duty_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Duty_Helmet_MasterMod" } },
+    { refkey: newArmors.HeavyBattle_Dolg_Helmet_MasterMod.refkey, entries: { SID: "HeavyBattle_Dolg_Helmet_MasterMod" } },
   ],
   monolith: [
-    ["NPC_Battle_Noon_Armor", "NPC_Battle_Noon_Armor_MasterMod_NPC"],
-    ["NPC_HeavyAnomaly_Noon_Armor", "NPC_HeavyAnomaly_Noon_Armor_MasterMod_NPC"],
-    ["NPC_HeavyExoskeleton_Noon_Armor", "NPC_HeavyExoskeleton_Noon_Armor_MasterMod_NPC"],
-    ["NPC_Exoskeleton_Noon_Armor", "NPC_Exoskeleton_Noon_Armor_MasterMod_NPC"],
-    ["Battle_Monolith_Armor", "Battle_Monolith_Armor_MasterMod_NPC"],
-    ["HeavyAnomaly_Monolith_Armor", "HeavyAnomaly_Monolith_Armor_MasterMod_NPC"],
-    ["HeavyExoskeleton_Monolith_Armor", "HeavyExoskeleton_Monolith_Armor_MasterMod_NPC"],
-    ["Exoskeleton_Monolith_Armor", "Exoskeleton_Monolith_Armor_MasterMod_NPC"],
-    [newArmors.Exoskeleton_Monolith_Armor_MasterMod_headless.refkey, "Exoskeleton_Monolith_Armor_MasterMod_headless"],
-    [newArmors.HeavyExoskeleton_Monolith_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Monolith_Armor_MasterMod_headless"],
-    [newArmors.HeavyAnomaly_Monolith_Armor_MasterMod_headless.refkey, "HeavyAnomaly_Monolith_Armor_MasterMod_headless"],
-    [newArmors.Exoskeleton_Monolith_Helmet_MasterMod.refkey, "Exoskeleton_Monolith_Helmet_MasterMod"],
+    { refkey: "NPC_Battle_Noon_Armor", entries: { SID: "NPC_Battle_Noon_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
+    {
+      refkey: "NPC_HeavyAnomaly_Noon_Armor",
+      entries: { SID: "NPC_HeavyAnomaly_Noon_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Veteran, ERank::Master",
+    },
+    { refkey: "NPC_HeavyExoskeleton_Noon_Armor", entries: { SID: "NPC_HeavyExoskeleton_Noon_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: "NPC_Exoskeleton_Noon_Armor", entries: { SID: "NPC_Exoskeleton_Noon_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
+    { refkey: "Battle_Monolith_Armor", entries: { SID: "Battle_Monolith_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
+    {
+      refkey: "HeavyAnomaly_Monolith_Armor",
+      entries: { SID: "HeavyAnomaly_Monolith_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
+    {
+      refkey: "HeavyExoskeleton_Monolith_Armor",
+      entries: { SID: "HeavyExoskeleton_Monolith_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Veteran, ERank::Master",
+    },
+    {
+      refkey: "Exoskeleton_Monolith_Armor",
+      entries: { SID: "Exoskeleton_Monolith_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
+    { refkey: newArmors.Exoskeleton_Monolith_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Monolith_Armor_MasterMod_headless" } },
+    {
+      refkey: newArmors.HeavyExoskeleton_Monolith_Armor_MasterMod_headless.refkey,
+      entries: { SID: "HeavyExoskeleton_Monolith_Armor_MasterMod_headless" },
+    },
+    { refkey: newArmors.HeavyAnomaly_Monolith_Armor_MasterMod_headless.refkey, entries: { SID: "HeavyAnomaly_Monolith_Armor_MasterMod_headless" } },
+    { refkey: newArmors.Exoskeleton_Monolith_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Monolith_Helmet_MasterMod" } },
   ],
   varta: [
-    ["Battle_Varta_Armor", "Battle_Varta_Armor_MasterMod_NPC"],
-    ["BattleExoskeleton_Varta_Armor", "BattleExoskeleton_Varta_Armor_MasterMod_NPC"],
-    [newArmors.BattleExoskeleton_Varta_Armor_MasterMod_headless.refkey, "BattleExoskeleton_Varta_Armor_MasterMod_headless"],
-    [newArmors.HeavyExoskeleton_Varta_Armor_MasterMod_headless.refkey, "HeavyExoskeleton_Varta_Armor_MasterMod_headless"],
+    {
+      refkey: "Battle_Varta_Armor",
+      entries: { SID: "Battle_Varta_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
+    },
+    {
+      refkey: "BattleExoskeleton_Varta_Armor",
+      entries: { SID: "BattleExoskeleton_Varta_Armor_MasterMod_NPC" },
+      PlayerRank: "ERank::Veteran, ERank::Master",
+    },
+    {
+      refkey: newArmors.BattleExoskeleton_Varta_Armor_MasterMod_headless.refkey,
+      entries: { SID: "BattleExoskeleton_Varta_Armor_MasterMod_headless" },
+    },
+    { refkey: newArmors.HeavyExoskeleton_Varta_Armor_MasterMod_headless.refkey, entries: { SID: "HeavyExoskeleton_Varta_Armor_MasterMod_headless" } },
   ],
 };
 

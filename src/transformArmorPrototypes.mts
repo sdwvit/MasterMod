@@ -23,41 +23,45 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
 
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
-    allExtraArmors.forEach(([original, newSID]) => {
+    allExtraArmors.forEach((descriptor) => {
+      const original = descriptor.refkey;
+      const newSID = descriptor.entries.SID;
       if (!context.structsById[original]) {
         return;
       }
       const armor = allDefaultArmorDefs[original];
-      if (armor) {
-        const newArmor = new (Struct.createDynamicClass(newSID))() as ArmorPrototype & WithSID;
-        newArmor.entries = { SID: newSID } as ArmorPrototype["entries"];
-        newArmor.refkey = original;
-        newArmor.refurl = context.struct.refurl;
-        if (!newArmor.refurl) {
-          logger.warn(`No refurl for ${context.filePath}`);
-          return;
-        }
-        newArmor._id = newSID;
-        newArmor.isRoot = true;
-        if (newArmors[newSID]) {
-          backfillArmorDef(newArmor);
-          const overrides = { ...newArmors[newSID] };
-          if (overrides._keysToDelete) {
-            Object.keys(overrides._keysToDelete).forEach((p) => {
-              const e = get(newArmor, p) || {};
-              const key = Object.keys(e).find((k) => e[k] === overrides._keysToDelete[p]) || overrides._keysToDelete[p];
-              delete e[key];
-            });
-            delete overrides._keysToDelete;
-          }
-          deepMerge(newArmor, overrides);
-        } else {
-          newArmor.entries.Invisible = true;
-          newArmor.entries.ItemGridWidth = 1;
-          newArmor.entries.ItemGridHeight = 1;
-        }
-        context.extraStructs.push(Struct.fromString(newArmor.toString())[0] as WithSID);
+      if (!armor) {
+        return;
       }
+
+      const newArmor = new (Struct.createDynamicClass(newSID))() as ArmorPrototype & WithSID;
+      newArmor.entries = { SID: newSID } as ArmorPrototype["entries"];
+      newArmor.refkey = original;
+      newArmor.refurl = context.struct.refurl;
+      if (!newArmor.refurl) {
+        logger.warn(`No refurl for ${context.filePath}`);
+        return;
+      }
+      newArmor._id = newSID;
+      newArmor.isRoot = true;
+      if (newArmors[newSID]) {
+        backfillArmorDef(newArmor);
+        const overrides = { ...newArmors[newSID] };
+        if (overrides._extras?.keysForRemoval) {
+          Object.keys(overrides._extras.keysForRemoval).forEach((p) => {
+            const e = get(newArmor, p) || {};
+            const key = Object.keys(e).find((k) => e[k] === overrides._extras.keysForRemoval[p]) || overrides._extras.keysForRemoval[p];
+            delete e[key];
+          });
+          delete overrides._extras;
+        }
+        deepMerge(newArmor, overrides);
+      } else {
+        newArmor.entries.Invisible = true;
+        newArmor.entries.ItemGridWidth = 1;
+        newArmor.entries.ItemGridHeight = 1;
+      }
+      context.extraStructs.push(Struct.fromString(newArmor.toString())[0] as WithSID);
     });
   }
 
