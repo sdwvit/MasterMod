@@ -4,7 +4,7 @@
 
 - Node.js [24 or later](https://nodejs.org/en/download/current) (with *.mts typescript loader support).
 - The official [STALKER2ZoneKit](https://store.epicgames.com/en-US/p/stalker-2-zone-kit).
-- https://github.com/trumank/repak
+- [Optional] https://github.com/trumank/repak if you want to quickly test pre 1.6 mods
 - [Optional] if you fork it and want to publish with own modifications https://developer.valvesoftware.com/wiki/SteamCMD
 
 ## Usage
