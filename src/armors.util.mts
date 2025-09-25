@@ -11,9 +11,9 @@ export const allDefaultArmorDefs = Object.fromEntries(
     Struct.fromString(
       [
         fs.readFileSync(path.join(BASE_CFG_DIR, "GameData", "ItemPrototypes", "ArmorPrototypes.cfg"), "utf8"),
-        fs.readFileSync(path.join(BASE_CFG_DIR, "DLCGameData", "Deluxe", "ItemPrototypes", "ArmorPrototypes.cfg"), "utf8"),
-        fs.readFileSync(path.join(BASE_CFG_DIR, "DLCGameData", "PreOrder", "ItemPrototypes", "ArmorPrototypes.cfg"), "utf8"),
-        fs.readFileSync(path.join(BASE_CFG_DIR, "DLCGameData", "Ultimate", "ItemPrototypes", "ArmorPrototypes.cfg"), "utf8"),
+        //fs.readFileSync(path.join(BASE_CFG_DIR, "DLCGameData", "Deluxe", "ItemPrototypes", "ArmorPrototypes.cfg"), "utf8"),
+        //fs.readFileSync(path.join(BASE_CFG_DIR, "DLCGameData", "PreOrder", "ItemPrototypes", "ArmorPrototypes.cfg"), "utf8"),
+        //fs.readFileSync(path.join(BASE_CFG_DIR, "DLCGameData", "Ultimate", "ItemPrototypes", "ArmorPrototypes.cfg"), "utf8"),
       ].join("\n"),
     ) as ArmorPrototype[]
   ).map((e) => [e.entries.SID, e] as const),
@@ -538,6 +538,56 @@ export const newArmors = {
       Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Dolg_Helmet.T_IFI_HeavyBattle_Dolg_Helmet'`,
     },
   },
+
+  // capes:
+  SkinCloak_Bandit_Armor_MasterMod: {
+    refkey: "SkinJacket_Bandit_Armor",
+    _extras: {
+      ItemGenerator: {
+        Category: "EItemGenerationCategory::BodyArmor",
+        PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
+      },
+    },
+    entries: {
+      SID: "SkinCloak_Bandit_Armor_MasterMod",
+      LocalizationSID: "SkinJacket_Bandit_Armor",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape_Bandit_Armor.T_IFI_Cape_Bandit_Armor'`,
+      MeshGenerator: {
+        entries: {
+          [0]: {
+            entries: {
+              MeshGeneratorPrototypeSID: "BAN_03_a_MeshGenerator",
+              Weight: 1,
+            },
+          },
+        },
+      },
+    },
+  },
+  SkinCloak_Bandit_Armor2_MasterMod: {
+    refkey: "SkinJacket_Bandit_Armor",
+    _extras: {
+      ItemGenerator: {
+        Category: "EItemGenerationCategory::BodyArmor",
+        PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
+      },
+    },
+    entries: {
+      SID: "SkinCloak_Bandit_Armor2_MasterMod",
+      Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape2_Bandit_Armor.T_IFI_Cape2_Bandit_Armor'`,
+      LocalizationSID: "SkinJacket_Bandit_Armor",
+      MeshGenerator: {
+        entries: {
+          [0]: {
+            entries: {
+              MeshGeneratorPrototypeSID: "BAN_04_a_MeshGenerator",
+              Weight: 1,
+            },
+          },
+        },
+      },
+    },
+  },
 } as const;
 
 type ArmorDescriptor = {
@@ -579,9 +629,9 @@ export const extraArmorsByFaction: {
       PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
     },
     { refkey: "NPC_Anomaly_Spark_Armor", entries: { SID: "NPC_Anomaly_Spark_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
-    { refkey: newArmors.HeavyBattle_Spark_Armor_MasterMod_headless.refkey, entries: { SID: "HeavyBattle_Spark_Armor_MasterMod_headless" } },
-    { refkey: newArmors.Exoskeleton_Spark_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Spark_Helmet_MasterMod" } },
-    { refkey: newArmors.HeavyBattle_Spark_Helmet_MasterMod.refkey, entries: { SID: "HeavyBattle_Spark_Helmet_MasterMod" } },
+    newArmors.HeavyBattle_Spark_Armor_MasterMod_headless,
+    newArmors.Exoskeleton_Spark_Helmet_MasterMod,
+    newArmors.HeavyBattle_Spark_Helmet_MasterMod,
   ],
   neutral: [
     { refkey: "Jemmy_Neutral_Armor", entries: { SID: "Jemmy_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
@@ -592,8 +642,8 @@ export const extraArmorsByFaction: {
     { refkey: "Exoskeleton_Neutral_Armor", entries: { SID: "Exoskeleton_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
     { refkey: "NPC_Sel_Neutral_Armor", entries: { SID: "NPC_Sel_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
     { refkey: "NPC_Cloak_Heavy_Neutral_Armor", entries: { SID: "NPC_Cloak_Heavy_Neutral_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran" },
-    { refkey: newArmors.Exoskeleton_Neutral_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Neutral_Armor_MasterMod_headless" } },
-    { refkey: newArmors.Exoskeleton_Neutral_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Neutral_Helmet_MasterMod" } },
+    newArmors.Exoskeleton_Neutral_Armor_MasterMod_headless,
+    newArmors.Exoskeleton_Neutral_Helmet_MasterMod,
   ],
   bandit: [
     { refkey: "SkinJacket_Bandit_Armor", entries: { SID: "SkinJacket_Bandit_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
@@ -608,6 +658,8 @@ export const extraArmorsByFaction: {
       PlayerRank: "ERank::Experienced, ERank::Veteran, ERank::Master",
     },
     { refkey: "NPC_SkinCloak_Bandit_Armor", entries: { SID: "NPC_SkinCloak_Bandit_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
+    newArmors.SkinCloak_Bandit_Armor_MasterMod,
+    newArmors.SkinCloak_Bandit_Armor2_MasterMod,
   ],
   mercenary: [
     { refkey: "Light_Mercenaries_Armor", entries: { SID: "Light_Mercenaries_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
@@ -618,13 +670,13 @@ export const extraArmorsByFaction: {
       entries: { SID: "NPC_HeavyExoskeleton_Mercenaries_Armor_MasterMod_NPC" },
       PlayerRank: "ERank::Master",
     },
-    { refkey: newArmors.Heavy_Mercenaries_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy_Mercenaries_Armor_MasterMod_headless" } },
+    newArmors.Heavy_Mercenaries_Armor_MasterMod_headless,
     {
       refkey: newArmors.Exoskeleton_Mercenaries_Armor_MasterMod_headless.refkey,
       entries: { SID: "Exoskeleton_Mercenaries_Armor_MasterMod_headless" },
     },
-    { refkey: newArmors.Exoskeleton_Mercenaries_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Mercenaries_Helmet_MasterMod" } },
-    { refkey: newArmors.HeavyBattle_Merc_Helmet_MasterMod.refkey, entries: { SID: "HeavyBattle_Merc_Helmet_MasterMod" } },
+    newArmors.Exoskeleton_Mercenaries_Helmet_MasterMod,
+    newArmors.HeavyBattle_Merc_Helmet_MasterMod,
   ],
   military: [
     { refkey: "Default_Military_Armor", entries: { SID: "Default_Military_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
@@ -635,7 +687,7 @@ export const extraArmorsByFaction: {
       entries: { SID: "NPC_Cloak_Heavy_Military_Armor_MasterMod_NPC" },
       PlayerRank: "ERank::Veteran, ERank::Master",
     },
-    { refkey: newArmors.Heavy2_Military_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy2_Military_Armor_MasterMod_headless" } },
+    newArmors.Heavy2_Military_Armor_MasterMod_headless,
   ],
   corpus: [
     { refkey: "NPC_Heavy_Corps_Armor", entries: { SID: "NPC_Heavy_Corps_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
@@ -678,13 +730,10 @@ export const extraArmorsByFaction: {
     { refkey: "Heavy_Svoboda_Armor", entries: { SID: "Heavy_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
     { refkey: "HeavyExoskeleton_Svoboda_Armor", entries: { SID: "HeavyExoskeleton_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
     { refkey: "Exoskeleton_Svoboda_Armor", entries: { SID: "Exoskeleton_Svoboda_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
-    { refkey: newArmors.Exoskeleton_Svoboda_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Svoboda_Armor_MasterMod_headless" } },
-    {
-      refkey: newArmors.HeavyExoskeleton_Svoboda_Armor_MasterMod_headless.refkey,
-      entries: { SID: "HeavyExoskeleton_Svoboda_Armor_MasterMod_headless" },
-    },
-    { refkey: newArmors.Heavy_Svoboda_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy_Svoboda_Armor_MasterMod_headless" } },
-    { refkey: newArmors.Exoskeleton_Svoboda_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Svoboda_Helmet_MasterMod" } },
+    newArmors.Exoskeleton_Svoboda_Armor_MasterMod_headless,
+    newArmors.HeavyExoskeleton_Svoboda_Armor_MasterMod_headless,
+    newArmors.Heavy_Svoboda_Armor_MasterMod_headless,
+    newArmors.Exoskeleton_Svoboda_Helmet_MasterMod,
   ],
   duty: [
     { refkey: "Rook_Dolg_Armor", entries: { SID: "Rook_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie" },
@@ -693,11 +742,11 @@ export const extraArmorsByFaction: {
     { refkey: "Heavy_Dolg_Armor", entries: { SID: "Heavy_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Veteran, ERank::Master" },
     { refkey: "HeavyExoskeleton_Dolg_Armor", entries: { SID: "HeavyExoskeleton_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
     { refkey: "Exoskeleton_Dolg_Armor", entries: { SID: "Exoskeleton_Dolg_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Master" },
-    { refkey: newArmors.Exoskeleton_Dolg_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Dolg_Armor_MasterMod_headless" } },
-    { refkey: newArmors.HeavyExoskeleton_Dolg_Armor_MasterMod_headless.refkey, entries: { SID: "HeavyExoskeleton_Dolg_Armor_MasterMod_headless" } },
-    { refkey: newArmors.Heavy_Dolg_Armor_MasterMod_headless.refkey, entries: { SID: "Heavy_Dolg_Armor_MasterMod_headless" } },
-    { refkey: newArmors.Exoskeleton_Duty_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Duty_Helmet_MasterMod" } },
-    { refkey: newArmors.HeavyBattle_Dolg_Helmet_MasterMod.refkey, entries: { SID: "HeavyBattle_Dolg_Helmet_MasterMod" } },
+    newArmors.Exoskeleton_Dolg_Armor_MasterMod_headless,
+    newArmors.HeavyExoskeleton_Dolg_Armor_MasterMod_headless,
+    newArmors.Heavy_Dolg_Armor_MasterMod_headless,
+    newArmors.Exoskeleton_Duty_Helmet_MasterMod,
+    newArmors.HeavyBattle_Dolg_Helmet_MasterMod,
   ],
   monolith: [
     { refkey: "NPC_Battle_Noon_Armor", entries: { SID: "NPC_Battle_Noon_Armor_MasterMod_NPC" }, PlayerRank: "ERank::Newbie, ERank::Experienced" },
@@ -724,13 +773,10 @@ export const extraArmorsByFaction: {
       entries: { SID: "Exoskeleton_Monolith_Armor_MasterMod_NPC" },
       PlayerRank: "ERank::Newbie, ERank::Experienced, ERank::Veteran, ERank::Master",
     },
-    { refkey: newArmors.Exoskeleton_Monolith_Armor_MasterMod_headless.refkey, entries: { SID: "Exoskeleton_Monolith_Armor_MasterMod_headless" } },
-    {
-      refkey: newArmors.HeavyExoskeleton_Monolith_Armor_MasterMod_headless.refkey,
-      entries: { SID: "HeavyExoskeleton_Monolith_Armor_MasterMod_headless" },
-    },
-    { refkey: newArmors.HeavyAnomaly_Monolith_Armor_MasterMod_headless.refkey, entries: { SID: "HeavyAnomaly_Monolith_Armor_MasterMod_headless" } },
-    { refkey: newArmors.Exoskeleton_Monolith_Helmet_MasterMod.refkey, entries: { SID: "Exoskeleton_Monolith_Helmet_MasterMod" } },
+    newArmors.Exoskeleton_Monolith_Armor_MasterMod_headless,
+    newArmors.HeavyExoskeleton_Monolith_Armor_MasterMod_headless,
+    newArmors.HeavyAnomaly_Monolith_Armor_MasterMod_headless,
+    newArmors.Exoskeleton_Monolith_Helmet_MasterMod,
   ],
   varta: [
     {
