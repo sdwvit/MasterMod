@@ -4,7 +4,7 @@ import { Meta } from "./prepare-configs.mjs";
 /**
  * Unlocks blocking upgrades.
  */
-export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: UpgradePrototype["entries"]) => {
+export const transformUpgradePrototypes: Meta<UpgradePrototype>["entriesTransformer"] = (entries) => {
   let keepo = null;
   if (entries.SID === "empty") {
     return {
@@ -13,9 +13,9 @@ export const transformUpgradePrototypes: Meta["entriesTransformer"] = (entries: 
       RepairCostModifier: `0.02f`,
     };
   }
-  if (entries.BlockingUpgradePrototypeSIDs?.entries) {
-    Object.keys(entries.BlockingUpgradePrototypeSIDs.entries).forEach((key) => {
-      entries.BlockingUpgradePrototypeSIDs.entries[key] = "empty";
+  if (entries.BlockingUpgradePrototypeSIDs) {
+    Object.keys(entries.BlockingUpgradePrototypeSIDs).forEach((key) => {
+      entries.BlockingUpgradePrototypeSIDs[key] = "empty";
       keepo ||= {};
       keepo.BlockingUpgradePrototypeSIDs = entries.BlockingUpgradePrototypeSIDs;
     });

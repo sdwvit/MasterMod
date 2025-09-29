@@ -4,17 +4,14 @@ import { NPCWeaponSettingsPrototype } from "s2cfgtojson";
 /**
  * Transforms NPC Weapon Settings Prototypes to set default BaseDamage for Guard NPCs.
  */
-export const transformNPCWeaponSettingsPrototypes: Meta["entriesTransformer"] = (
-  entries: NPCWeaponSettingsPrototype["entries"],
-  { struct, structsById },
-) => {
-  if (entries.SID.includes("Guard")) {
-    entries.BaseDamage = (structsById[struct._refkey]?.entries as Partial<typeof entries>)?.BaseDamage ?? 50;
-    return entries;
+export const transformNPCWeaponSettingsPrototypes: Meta<NPCWeaponSettingsPrototype>["entriesTransformer"] = (struct, { structsById }) => {
+  if (struct.SID.includes("Guard")) {
+    struct.BaseDamage = (structsById[struct.__internal__.refkey] as Partial<typeof struct>)?.BaseDamage ?? 50;
+    return struct;
   }
-  if (entries.SID === "GunAK74_Strelok_ST_NPC") {
-    entries.BaseDamage = 9;
-    entries.ArmorPiercing = 3;
-    return entries;
+  if (struct.SID === "GunAK74_Strelok_ST_NPC") {
+    struct.BaseDamage = 9;
+    struct.ArmorPiercing = 3;
+    return struct;
   }
 };

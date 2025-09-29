@@ -1,10 +1,9 @@
-import { ArmorPrototype, DynamicItemGenerator, GetStructType, Struct } from "s2cfgtojson";
+import { ArmorPrototype, createDynamicClassInstance, DynamicItemGenerator, GetStructType, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
-import { describe } from "node:test";
 
 const generalTradersTradeItemGenerators = new Set([
   "AsylumTrader_TradeItemGenerator",
@@ -31,15 +30,15 @@ const technicianTradeTradeItemGenerators = new Set([
   "AsylumTechnician_TradeItemGenerator",
 ]);
 
-const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
-  Object.values(entries.ItemGenerator.entries)
-    .filter((e) => e.entries)
+const transformTrade = (struct: DynamicItemGenerator) => {
+  Object.values<(typeof struct.ItemGenerator)[0]>(struct.ItemGenerator as any)
+    .filter((e) => e)
     .forEach((e) => {
       // noinspection FallThroughInSwitchStatementJS
-      switch (e.entries?.Category) {
+      switch (e.Category) {
         case "EItemGenerationCategory::Attach":
-          if (generalTradersTradeItemGenerators.has(entries.SID)) {
-            e.entries = { ReputationThreshold: 1000000 } as unknown as typeof e.entries;
+          if (generalTradersTradeItemGenerators.has(struct.SID)) {
+            e.ReputationThreshold = 1000000;
           }
           break;
         case "EItemGenerationCategory::BodyArmor":
@@ -47,18 +46,18 @@ const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
         case "EItemGenerationCategory::WeaponPrimary":
         case "EItemGenerationCategory::WeaponPistol":
         case "EItemGenerationCategory::WeaponSecondary":
-          e.entries = { ReputationThreshold: 1000000 } as unknown as typeof e.entries;
+          e.ReputationThreshold = 1000000;
           break;
         case "EItemGenerationCategory::SubItemGenerator":
-          Object.values(e.entries.PossibleItems.entries).forEach((pi) => {
+          Object.values(e.PossibleItems).forEach((pi) => {
             if (
-              generalTradersTradeItemGenerators.has(entries.SID) &&
-              (pi.entries?.ItemGeneratorPrototypeSID?.includes("Attach") || pi.entries?.ItemGeneratorPrototypeSID?.includes("Cosnsumables"))
+              generalTradersTradeItemGenerators.has(struct.SID) &&
+              (pi.ItemGeneratorPrototypeSID?.includes("Attach") || pi.ItemGeneratorPrototypeSID?.includes("Cosnsumables"))
             ) {
-              pi.entries.Chance = 0; // Disable attachments sell for general traders
+              pi.Chance = 0; // Disable attachments sell for general traders
             }
-            if (pi.entries?.ItemGeneratorPrototypeSID?.includes("Gun")) {
-              pi.entries.Chance = 0; // Disable gun sell
+            if (pi.ItemGeneratorPrototypeSID?.includes("Gun")) {
+              pi.Chance = 0; // Disable gun sell
             }
           });
           break;
@@ -66,86 +65,80 @@ const transformTrade = (entries: DynamicItemGenerator["entries"]) => {
     });
 };
 
-const transformConsumables = (e: DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number], i: number) => {
-  Object.values(e.entries.PossibleItems.entries)
-    .filter((pi) => pi.entries)
+const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
+  Object.values(e.PossibleItems)
+    .filter((pi) => pi)
     .forEach((pi, j) => {
-      pi.entries.Chance = semiRandom(i + j); // Randomize
-      while (pi.entries.Chance > 0.02) {
-        pi.entries.Chance /= 2;
+      pi.Chance = semiRandom(i + j); // Randomize
+      while (pi.Chance > 0.02) {
+        pi.Chance /= 2;
       }
-      pi.entries.Chance = precision(pi.entries.Chance);
+      pi.Chance = precision(pi.Chance);
     });
 };
 
-const transformWeapons = (e: DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number], i: number) => {
-  Object.values(e.entries.PossibleItems.entries)
-    .filter((_) => _.entries)
+const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
+  Object.values(e.PossibleItems)
+    .filter((_) => _)
     .forEach((pi, j) => {
-      pi.entries.AmmoMinCount = 0;
-      pi.entries.AmmoMaxCount = Math.floor(1 + 5 * semiRandom(i + j));
+      pi.AmmoMinCount = 0;
+      pi.AmmoMaxCount = Math.floor(1 + 5 * semiRandom(i + j));
     });
 };
 
 /**
  * Allows NPCs to drop armor and helmets.
  */
-const transformArmor = (
-  entries: DynamicItemGenerator["entries"],
-  itemGenerator: DynamicItemGenerator["entries"]["ItemGenerator"]["entries"][number],
-  i: number,
-) => {
+const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
   if (
-    entries.SID.includes("WeaponPistol") ||
-    entries.SID.includes("Consumables") ||
-    entries.SID.includes("Attachments") ||
-    entries.SID.includes("Zombie") ||
-    entries.SID.includes("No_Armor") ||
-    entries.SID.includes("DeadBody")
+    struct.SID.includes("WeaponPistol") ||
+    struct.SID.includes("Consumables") ||
+    struct.SID.includes("Attachments") ||
+    struct.SID.includes("Zombie") ||
+    struct.SID.includes("No_Armor") ||
+    struct.SID.includes("DeadBody")
   ) {
     return;
   }
-  const options = Object.values(itemGenerator.entries.PossibleItems.entries).filter(
-    (pi) => pi.entries && allArmorAdjustedCost[pi.entries.ItemPrototypeSID],
-  );
+  const options = Object.values(itemGenerator.PossibleItems).filter((pi) => pi && allArmorAdjustedCost[pi.ItemPrototypeSID]);
 
   const weights = Object.fromEntries(
     options.map((pi) => {
-      const key = pi.entries.ItemPrototypeSID;
+      const key = pi.ItemPrototypeSID;
       return [key, getChanceForSID(key)];
     }),
   );
 
-  const droppableArmors = options.filter((pi) => !adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
-  const invisibleArmors = options.filter((pi) => adjustButDontDrop.has(pi.entries.ItemPrototypeSID));
+  const droppableArmors = options.filter((pi) => !adjustButDontDrop.has(pi.ItemPrototypeSID));
+  const invisibleArmors = options.filter((pi) => adjustButDontDrop.has(pi.ItemPrototypeSID));
 
-  const faction = entries.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
+  const faction = struct.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
   const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()] as keyof typeof extraArmorsByFaction];
   extraArmors
     .filter((descriptor) =>
-      descriptor.PlayerRank && itemGenerator.entries.PlayerRank
-        ? descriptor.PlayerRank.split(",").some((r) => itemGenerator.entries.PlayerRank.includes(r))
+      descriptor.__internal__._extras.PlayerRank && itemGenerator.PlayerRank
+        ? descriptor.__internal__._extras.PlayerRank.split(",").some((r) => itemGenerator.PlayerRank.includes(r))
         : true,
     )
     .forEach((descriptor) => {
-      const originalSID = descriptor.refkey;
-      const newArmorSID = descriptor.entries.SID as string;
-      const dummyPossibleItem = new (Struct.createDynamicClass(newArmorSID))() as GetStructType<PossibleItem>;
-      dummyPossibleItem.entries = { ItemPrototypeSID: newArmorSID } as GetStructType<PossibleItem>["entries"];
+      const originalSID = descriptor.__internal__.refkey;
+      const newArmorSID = descriptor.SID as string;
+      const dummyPossibleItem = new Struct({ ItemPrototypeSID: newArmorSID }) as GetStructType<PossibleItem>;
+
       weights[newArmorSID] = getChanceForSID(allArmorAdjustedCost[newArmorSID] ? newArmorSID : originalSID);
       const maybeNewArmor = newArmors[newArmorSID];
 
       if (
-        itemGenerator.entries?.Category === (maybeNewArmor?._extras?.ItemGenerator?.Category || "EItemGenerationCategory::BodyArmor") &&
-        (itemGenerator.entries.PlayerRank && maybeNewArmor?._extras?.ItemGenerator?.PlayerRank
-          ? maybeNewArmor._extras.ItemGenerator.PlayerRank.split(",").some((r) => itemGenerator.entries.PlayerRank.includes(r))
+        itemGenerator.Category === (maybeNewArmor?._extras?.ItemGenerator?.Category || "EItemGenerationCategory::BodyArmor") &&
+        (itemGenerator.PlayerRank && maybeNewArmor?._extras?.ItemGenerator?.PlayerRank
+          ? maybeNewArmor._extras.ItemGenerator.PlayerRank.split(",").some((r) => itemGenerator.PlayerRank.includes(r))
           : true)
       ) {
         let i = 0;
-        while (itemGenerator.entries.PossibleItems.entries[i]) {
+        while (itemGenerator.PossibleItems[i]) {
           i++;
         }
-        itemGenerator.entries.PossibleItems.entries[i] = dummyPossibleItem as any;
+        itemGenerator.PossibleItems[i] = dummyPossibleItem as any;
         if (maybeNewArmor) {
           droppableArmors.push(dummyPossibleItem as any);
         } else {
@@ -153,35 +146,35 @@ const transformArmor = (
         }
       }
     });
-  const maxAB = Math.max(0, ...droppableArmors.map((pi) => weights[pi.entries.ItemPrototypeSID]));
+  const maxAB = Math.max(0, ...droppableArmors.map((pi) => weights[pi.ItemPrototypeSID]));
 
-  const abSum = droppableArmors.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
-  const cdSum = invisibleArmors.reduce((acc, pi) => acc + weights[pi.entries.ItemPrototypeSID], 0);
+  const abSum = droppableArmors.reduce((acc, pi) => acc + weights[pi.ItemPrototypeSID], 0);
+  const cdSum = invisibleArmors.reduce((acc, pi) => acc + weights[pi.ItemPrototypeSID], 0);
 
   const x = cdSum ? abSum / maxAB : abSum;
   const y = cdSum / (1 - maxAB);
   droppableArmors.forEach((pi) => {
-    pi.entries.Chance = precision(weights[pi.entries.ItemPrototypeSID]);
-    pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / x);
-    pi.entries.MinDurability = precision(semiRandom(i) * 0.1 + 0.01);
-    pi.entries.MaxDurability = precision(pi.entries.MinDurability + (semiRandom(i) * weights[pi.entries.ItemPrototypeSID]) / 0.15);
+    pi.Chance = precision(weights[pi.ItemPrototypeSID]);
+    pi.Weight = precision(weights[pi.ItemPrototypeSID] / x);
+    pi.MinDurability = precision(semiRandom(i) * 0.1 + 0.01);
+    pi.MaxDurability = precision(pi.MinDurability + (semiRandom(i) * weights[pi.ItemPrototypeSID]) / 0.15);
   });
   invisibleArmors.forEach((pi) => {
-    pi.entries.Chance = 1; // make sure it always spawns on npc
-    pi.entries.Weight = precision(weights[pi.entries.ItemPrototypeSID] / y);
+    pi.Chance = 1; // make sure it always spawns on npc
+    pi.Weight = precision(weights[pi.ItemPrototypeSID] / y);
   });
   return true;
 };
-const transformCombat = (entries: DynamicItemGenerator["entries"]) => {
-  Object.values(entries.ItemGenerator.entries)
-    .filter((e) => e.entries)
+const transformCombat = (struct: DynamicItemGenerator) => {
+  Object.values(struct.ItemGenerator)
+    .filter((e) => e)
     .forEach((itemGenerator, i) => {
       // noinspection FallThroughInSwitchStatementJS
-      switch (itemGenerator.entries?.Category) {
+      switch (itemGenerator.Category) {
         case "EItemGenerationCategory::Head":
-          itemGenerator.entries.PlayerRank = "ERank::Veteran, ERank::Master";
+          itemGenerator.PlayerRank = "ERank::Veteran, ERank::Master";
         case "EItemGenerationCategory::BodyArmor":
-          return transformArmor(entries, itemGenerator as any, i);
+          return transformArmor(struct, itemGenerator as any, i);
         /**
          * Control how many consumables are dropped.
          */
@@ -203,20 +196,20 @@ const transformCombat = (entries: DynamicItemGenerator["entries"]) => {
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
  */
-export const transformDynamicItemGenerator: Meta["entriesTransformer"] = (entries: DynamicItemGenerator["entries"]) => {
+export const transformDynamicItemGenerator: Meta<DynamicItemGenerator>["entriesTransformer"] = (struct) => {
   /**
    * Does not allow traders to sell gear.
    */
-  if (entries.SID.includes("Trade")) {
-    transformTrade(entries);
+  if (struct.SID.includes("Trade")) {
+    transformTrade(struct);
   } else {
-    transformCombat(entries);
+    transformCombat(struct);
   }
 
-  if (Object.values(entries.ItemGenerator.entries).every((e) => Object.keys(e.entries || {}).length === 0)) {
+  if (Object.values(struct.ItemGenerator).every((e) => Object.keys(e || {}).length === 0)) {
     return null;
   }
-  return entries;
+  return struct;
 };
 
 type PossibleItem = {
@@ -231,11 +224,11 @@ type PossibleItem = {
 };
 
 function calculateArmorScore(armor: ArmorPrototype): number {
-  const e = armor.entries;
+  const e = armor;
   const protectionNormalization = { Burn: 100, Shock: 100, ChemicalBurn: 100, Radiation: 100, PSY: 100, Strike: 5, Fall: 100 };
   const protectionScales = { Burn: 5, Shock: 7, ChemicalBurn: 5, Radiation: 10, PSY: 10, Strike: 63, Fall: 1 };
   const protectionScore = Object.keys(protectionScales).reduce((sum, key) => {
-    const normalized = (protectionScales[key] * e.Protection.entries[key]) / protectionNormalization[key];
+    const normalized = (protectionScales[key] * e.Protection[key]) / protectionNormalization[key];
     return sum + normalized / 100;
   }, 0);
   const durabilityScore = ((e.BaseDurability || minDurability) - minDurability) / (maxDurability - minDurability);
@@ -245,14 +238,12 @@ function calculateArmorScore(armor: ArmorPrototype): number {
   const noiseScore = e.NoiseCoef ?? 0; // always 1
   const slotsScore =
     ((e.ArtifactSlots ?? 0) +
-      Object.values(e.UpgradePrototypeSIDs?.entries || {})
+      Object.values(e.UpgradePrototypeSIDs || {})
         .filter((u) => typeof u === "string")
         .filter((u) => u.toLowerCase().includes("container") || u.toLowerCase().includes("_artifact")).length) /
     10; // 1 to 2
   const preventLimping =
-    e.bPreventFromLimping && !Object.values(e.UpgradePrototypeSIDs?.entries || {}).find((u) => typeof u === "string" && u.includes("AddRunEffect"))
-      ? 0
-      : 1;
+    e.bPreventFromLimping && !Object.values(e.UpgradePrototypeSIDs || {}).find((u) => typeof u === "string" && u.includes("AddRunEffect")) ? 0 : 1;
 
   const costScore = Math.atan(10e10) - Math.atan((e.Cost + 27025) / 42000);
   const scoreScales = {
@@ -271,29 +262,29 @@ function calculateArmorScore(armor: ArmorPrototype): number {
   return score / 100; // 0 to 1
 }
 
-const maxDurability = Math.max(...Object.values(allDefaultArmorDefs).map((a) => a.entries.BaseDurability ?? 0));
-const minDurability = Math.min(...Object.values(allDefaultArmorDefs).map((a) => a.entries.BaseDurability ?? 10000));
+const maxDurability = Math.max(...Object.values(allDefaultArmorDefs).map((a) => a.BaseDurability ?? 0));
+const minDurability = Math.min(...Object.values(allDefaultArmorDefs).map((a) => a.BaseDurability ?? 10000));
 
 export const allArmorAdjustedCost = Object.fromEntries(
   Object.values({
     ...allDefaultArmorDefs,
     ...Object.fromEntries(
       allExtraArmors.map((e) => {
-        const SID = e.entries.SID;
-        const refkey = e.refkey;
-        const dummy = new (Struct.createDynamicClass(SID))() as ArmorPrototype & { entries: { SID: string } };
-        dummy.entries = { SID } as any;
-        dummy.refkey = refkey;
+        const SID = e.SID;
+        const refkey = e.__internal__.refkey;
+        const dummy = createDynamicClassInstance(SID) as ArmorPrototype;
+        dummy.SID = SID;
+        dummy.__internal__.refkey = refkey;
 
-        return [SID, dummy] as [string, ArmorPrototype & { entries: { SID: string } }];
+        return [SID, dummy] as [string, ArmorPrototype];
       }),
     ),
     ...newArmors,
   })
-    .filter((armor) => !armor.entries.SID.includes("Template"))
+    .filter((armor) => !armor.SID.includes("Template"))
     .map((armor) => {
-      const backfilled = backfillArmorDef(JSON.parse(JSON.stringify(armor))) as ArmorPrototype & { entries: { SID: string } };
-      return [armor.entries.SID, calculateArmorScore(backfilled)] as [string, number];
+      const backfilled = backfillArmorDef(JSON.parse(JSON.stringify(armor))) as ArmorPrototype;
+      return [armor.SID, calculateArmorScore(backfilled)] as [string, number];
     })
     .sort((a, b) => a[0].localeCompare(b[0])),
 );

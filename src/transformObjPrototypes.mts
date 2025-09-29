@@ -6,14 +6,14 @@ import { Meta } from "./prepare-configs.mjs";
  * Also removes Fall damage.
  * @param entries
  */
-export const transformObjPrototypes: Meta["entriesTransformer"] = (entries: ObjPrototype["entries"]) => {
+export const transformObjPrototypes: Meta<ObjPrototype>["entriesTransformer"] = (entries: ObjPrototype) => {
   if (entries.SID === "NPCBase" || entries.SID === "Player") {
-    class Protection extends Struct<{ Fall: number }> {
-      _id: string = "Protection";
-      entries = { Fall: 100 };
-    }
-
-    return { CanBeKnockedDown: false, Protection: new Protection() };
+    return new Struct({ CanBeKnockedDown: false, Protection: new Protection() });
   }
   return null;
 };
+
+class Protection extends Struct {
+  _id: string = "Protection";
+  Fall = 100;
+}

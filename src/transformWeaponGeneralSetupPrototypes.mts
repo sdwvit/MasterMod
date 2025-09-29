@@ -1,48 +1,18 @@
 import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
-import { Meta, WithSIDWithId } from "./prepare-configs.mjs";
+import { Meta } from "./prepare-configs.mjs";
 import { uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
-import { perRefUrl919PistolExtensionPack } from "./grabExternalMod.mjs";
 
-const oncePerFile = new Set<string>();
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
-export const transformWeaponGeneralSetupPrototypes: Meta<WithSIDWithId>["entriesTransformer"] = (
-  entries: WeaponGeneralSetupPrototype["entries"],
-  context,
-) => {
-  if (!oncePerFile.has(context.filePath)) {
-    oncePerFile.add(context.filePath);
-    context.extraStructs.push(...perRefUrl919PistolExtensionPack.WeaponGeneralSetupPrototypes);
-  }
-
+export const transformWeaponGeneralSetupPrototypes: Meta<WeaponGeneralSetupPrototype>["entriesTransformer"] = (entries, context) => {
   let keepo = null;
-  /*  // add more compatible scopes
-  if (entries.CompatibleAttachments?.entries) {
-    const interestingScopes = Object.values(entries.CompatibleAttachments.entries)
-      .filter((e) => basicScopes[e.entries?.AttachPrototypeSID])
-      .map((e) => e.entries.AttachPrototypeSID);
-    const interestingScopesSet = new Set(interestingScopes);
-    const isEN = interestingScopes.some((s) => s.startsWith("EN_"));
 
-    let i = 0;
-    while (entries.CompatibleAttachments.entries[i]) i++;
-    Object.values(scopeDefinitions[isEN ? "EN" : "nEN"]).forEach((def) => {
-      if (!interestingScopesSet.has(def.AttachPrototypeSID)) {
-        const newEntry = new (Struct.createDynamicClass("dummy"))() as (typeof entries.CompatibleAttachments.entries)[number];
-        newEntry.entries = { ...def } as typeof newEntry.entries;
-        entries.CompatibleAttachments.entries[i] = newEntry;
-        i++;
-        keepo = entries;
-      }
-    });
-  }*/
-
-  Object.values(entries.PreinstalledAttachmentsItemPrototypeSIDs?.entries || {}).forEach((e) => {
-    if (e.entries?.bHiddenInInventory && uniqueAttachmentsToAlternatives[e.entries?.AttachSID]) {
+  Object.values(entries.PreinstalledAttachmentsItemPrototypeSIDs).forEach((e) => {
+    if (e?.bHiddenInInventory && uniqueAttachmentsToAlternatives[e?.AttachSID]) {
       keepo = entries;
-      e.entries.AttachSID = uniqueAttachmentsToAlternatives[e.entries?.AttachSID];
-      e.entries.bHiddenInInventory = false;
+      e.AttachSID = uniqueAttachmentsToAlternatives[e.entries?.AttachSID];
+      e.bHiddenInInventory = false;
     }
   });
   if (keepo) {
@@ -95,7 +65,7 @@ export const transformWeaponGeneralSetupPrototypes: Meta<WithSIDWithId>["entries
           if (basicAttachments[ca.entries?.AttachPrototypeSID]) {
             const newSID = entries.SID + "_With_" + ca.entries.AttachPrototypeSID;
             const newWeapon = new (Struct.createDynamicClass(newSID))() as WeaponGeneralSetupPrototypes & WithSID;
-            newWeapon.entries = { SID: newSID } as WeaponGeneralSetupPrototypes["entries"];
+            newWeapon.entries = { SID: newSID } as WeaponGeneralSetupPrototypes;
             newWeapon.refkey = entries.SID;
             newWeapon.refurl = context.struct.refurl;
             newWeapon._id = newSID;

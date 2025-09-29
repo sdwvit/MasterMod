@@ -1,5 +1,5 @@
-import { ArmorPrototype, Struct } from "s2cfgtojson";
-import { Meta, WithSID } from "./prepare-configs.mjs";
+import { ArmorPrototype, createDynamicClassInstance } from "s2cfgtojson";
+import { Meta } from "./prepare-configs.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newArmors } from "./armors.util.mjs";
 import path from "node:path";
 import { logger } from "./logger.mjs";
@@ -16,7 +16,7 @@ const oncePerFile = new Set<string>();
 /**
  * Adds armor that doesn't block head, but also removes any psy protection. Allows player to use helmets.
  */
-export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: ArmorPrototype["entries"], context) => {
+export const transformArmorPrototypes: Meta<ArmorPrototype>["entriesTransformer"] = (entries, context) => {
   if (entries.SID.toLowerCase().includes("helmet") || bannedids.has(entries.SID)) {
     return null;
   }
@@ -24,8 +24,8 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
     allExtraArmors.forEach((descriptor) => {
-      const original = descriptor.refkey;
-      const newSID = descriptor.entries.SID;
+      const original = descriptor.__internal__.refkey;
+      const newSID = descriptor.SID;
       if (!context.structsById[original]) {
         return;
       }
@@ -34,16 +34,15 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
         return;
       }
 
-      const newArmor = new (Struct.createDynamicClass(newSID))() as ArmorPrototype & WithSID;
-      newArmor.entries = { SID: newSID } as ArmorPrototype["entries"];
-      newArmor.refkey = original;
-      newArmor.refurl = context.struct.refurl;
-      if (!newArmor.refurl) {
+      const newArmor = createDynamicClassInstance("_") as ArmorPrototype;
+      newArmor.SID = newSID;
+      newArmor.__internal__.refkey = original;
+      newArmor.__internal__.refurl = entries.__internal__.refurl;
+      if (!newArmor.__internal__.refurl) {
         logger.warn(`No refurl for ${context.filePath}`);
         return;
       }
-      newArmor._id = newSID;
-      newArmor.isRoot = true;
+      newArmor.__internal__.rawName = newSID;
       if (newArmors[newSID]) {
         backfillArmorDef(newArmor);
         const overrides = { ...newArmors[newSID] };
@@ -57,11 +56,11 @@ export const transformArmorPrototypes: Meta["entriesTransformer"] = (entries: Ar
         }
         deepMerge(newArmor, overrides);
       } else {
-        newArmor.entries.Invisible = true;
-        newArmor.entries.ItemGridWidth = 1;
-        newArmor.entries.ItemGridHeight = 1;
+        newArmor.Invisible = true;
+        newArmor.ItemGridWidth = 1;
+        newArmor.ItemGridHeight = 1;
       }
-      context.extraStructs.push(Struct.fromString(newArmor.toString())[0] as WithSID);
+      context.extraStructs.push(newArmor.clone());
     });
   }
 

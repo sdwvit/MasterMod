@@ -1,15 +1,16 @@
-import { Entries, Struct } from "s2cfgtojson";
+import { Struct } from "s2cfgtojson";
 import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
 import { logger } from "./logger.mjs";
+import { meta } from "./meta.mts";
+import { getCfgFiles } from "./get-cfg-files.mjs";
 
 type Context<T> = {
-  struct: T;
   fileIndex: number;
   index: number;
   array: T[];
-  extraStructs: WithSID[];
+  extraStructs: T[];
   filePath: string;
   rawContent: string;
   structsById: Record<string, T>;
@@ -20,50 +21,16 @@ dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const rootDir = path.join(import.meta.dirname, "..");
 const nestedDir = path.join("Stalker2", "Content", "GameLite");
 const BASE_CFG_DIR = path.join(process.env.SDK_PATH, nestedDir);
-export type Meta<T extends WithSID = WithSID> = {
+export type Meta<T> = {
   changenote: string;
   description: string;
-  entriesTransformer?(entries: T["entries"], context: Context<T>): Entries | null; // prefer getEntriesTransformer
-  getEntriesTransformer?(context: { filePath: string }): (entries: T["entries"], context: Context<T>) => Entries | null; // use this to transform entries
+  entriesTransformer?(entries: T, context: Context<T>): Struct | null; // prefer getEntriesTransformer
+  getEntriesTransformer?(context: { filePath: string }): (struct: T, context: Context<T>) => T | null; // use this to transform entries
   interestingContents?: string[];
   interestingIds?: string[];
   prohibitedIds?: string[];
   onFinish?(): void;
 };
-const emptyMeta = `
-  import { Struct, Entries } from "s2cfgtojson";
-  type StructType = Struct<{}>;
-  export const meta = {
-    interestingFiles: [],
-    interestingContents: [],
-    prohibitedIds: [],
-    interestingIds: [],
-    description: "",
-    changenote: "",
-    getEntriesTransformer: () => (entries: Entries) => entries,
-  };
-`.trim();
-
-const readOneFile = (file: string) => {
-  return fs.readFileSync(file, "utf8");
-};
-
-function getCfgFiles() {
-  const cfgFiles = [];
-  function scanAllDirs(start: string) {
-    const files = fs.readdirSync(start);
-    for (const file of files) {
-      if (fs.lstatSync(path.join(start, file)).isDirectory() && !file.includes("DLCGameData")) {
-        scanAllDirs(path.join(start, file));
-      } else if (file.endsWith(".cfg")) {
-        cfgFiles.push(path.join(start, file));
-      }
-    }
-  }
-
-  scanAllDirs(BASE_CFG_DIR);
-  return cfgFiles;
-}
 
 const MOD_NAME = process.env.MOD_NAME;
 const modFolder = rootDir;
@@ -71,19 +38,14 @@ const modFolderRaw = path.join(modFolder, "raw");
 const modFolderSteam = path.join(modFolder, "steamworkshop");
 
 if (!fs.existsSync(modFolderSteam)) fs.mkdirSync(modFolderSteam, { recursive: true });
-
-const metaPath = path.join(modFolder, "src", "meta.mts");
-if (!fs.existsSync(metaPath)) fs.writeFileSync(metaPath, emptyMeta);
-
-const { meta } = (await import(metaPath)) as { meta: Meta };
 const { interestingIds, interestingContents, prohibitedIds, getEntriesTransformer = () => meta.entriesTransformer } = meta;
 
-const total = getCfgFiles().map((filePath, fileIndex) => {
+const total = getCfgFiles(BASE_CFG_DIR).map((filePath, fileIndex) => {
   const entriesTransformer = getEntriesTransformer({ filePath });
   if (!entriesTransformer) {
     return;
   }
-  const rawContent = readOneFile(filePath);
+  const rawContent = fs.readFileSync(filePath, "utf8");
   if (interestingContents?.length && !interestingContents.some((i) => rawContent.includes(i))) {
     return;
   }
@@ -91,67 +53,45 @@ const total = getCfgFiles().map((filePath, fileIndex) => {
     logger.log(`Processing file: ${filePath}`);
   }
   const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
-  const structsById = Struct.fromString<WithSID>(rawContent).reduce(
-    (acc, struct) => {
-      if (struct.entries.SID) {
-        acc[struct.entries.SID] = struct as WithSID;
-      }
-      return acc;
-    },
-    {} as Record<string, WithSID>,
-  );
-  const extraStructs: WithSID[] = [];
-  const structs = Object.values(structsById)
-    .filter((s): s is WithSID =>
-      s.entries.SID && (interestingIds?.length ? interestingIds.some((id) => s.entries.SID.includes(id)) : true) && prohibitedIds?.length
-        ? prohibitedIds.every((id) => !s.entries.SID.includes(id))
-        : true,
-    )
-    .map((s) => Struct.fromString<WithSID>(s.toString())[0])
-    .map<WithSIDWithId>((struct) => {
-      struct.refurl = "../" + pathToSave.base;
-      (struct as WithSIDWithId)._refkey = struct.refkey;
-      struct.refkey = idIsArrayIndex(struct._id) ? struct._id : struct.entries.SID;
-      struct._id = `${MOD_NAME}_${idIsArrayIndex(struct._id) ? Struct.extractKeyFromBrackets(struct._id) : struct._id}`;
-      return struct as WithSIDWithId;
-    })
-    .map<WithSID>((struct, index, array) => {
-      if (entriesTransformer) {
-        (struct as Struct).entries = entriesTransformer(struct.entries, {
-          struct,
-          index,
-          fileIndex,
-          array,
-          filePath,
-          rawContent,
-          structsById,
-          extraStructs,
-        });
-      }
-      if (!struct.entries) {
-        return null;
-      }
-      return struct;
-    })
-    .concat(extraStructs)
-    .filter(Boolean);
+  const array = Struct.fromString(rawContent);
 
-  if (structs.length) {
+  const structsById: Record<string, Struct> = Object.fromEntries(array.map((s) => [s.__internal__.rawName, s]));
+
+  const extraStructs = [];
+  const processedStructs: Struct[] = [];
+
+  for (let index = 0; index < array.length; index++) {
+    const s = array[index];
+    const id = s.__internal__.rawName;
+    if (!id) continue;
+    if (interestingIds?.length && !interestingIds.some((i) => id.includes(i))) continue;
+    if (prohibitedIds?.length && prohibitedIds.some((i) => id.includes(i))) continue;
+
+    const processedStruct = entriesTransformer(s.clone(), {
+      index,
+      fileIndex,
+      array,
+      filePath,
+      rawContent,
+      structsById,
+      extraStructs,
+    });
+
+    if (processedStruct) {
+      processedStructs.push(processedStruct);
+    }
+  }
+  processedStructs.push(...extraStructs.filter(Boolean));
+
+  if (processedStructs.length) {
     const cfgEnclosingFolder = path.join(modFolderRaw, nestedDir, pathToSave.dir, pathToSave.name);
 
     if (!fs.existsSync(cfgEnclosingFolder)) fs.mkdirSync(cfgEnclosingFolder, { recursive: true });
-    fs.writeFileSync(path.join(cfgEnclosingFolder, `${MOD_NAME}${pathToSave.base}`), structs.map((s) => s.toString()).join("\n\n"));
+    fs.writeFileSync(path.join(cfgEnclosingFolder, `${MOD_NAME}${pathToSave.base}`), processedStructs.map((s) => s.toString()).join("\n\n"));
   }
-  return structs;
+  return processedStructs;
 });
 meta.onFinish?.();
-
-function idIsArrayIndex(id: string): boolean {
-  return id && Struct.isNumber(Struct.extractKeyFromBrackets(id));
-}
-
-export type WithSID<T = {}> = Struct<{ SID: string } & T>;
-export type WithSIDWithId<T = {}> = WithSID<T> & { _refkey: Struct["refkey"] };
 
 logger.log(`Total: ${total.length} files processed.`);
 const writtenFiles = total.filter((s) => s?.length > 0);

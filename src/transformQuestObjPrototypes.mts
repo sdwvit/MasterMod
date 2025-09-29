@@ -1,15 +1,15 @@
 import { Meta } from "./prepare-configs.mjs";
-import { ENPCType, GetStructType } from "s2cfgtojson";
+import { ENPCType, GetStructType, Struct } from "s2cfgtojson";
 
-export const transformQuestObjPrototypes: Meta["entriesTransformer"] = (entries: QUestObjPrototype["entries"], context) => {
-  if (techniciansAndTheirTradePrototypes.has(entries.SID)) {
-    entries.TradePrototypeSID = techniciansAndTheirTradePrototypes.get(entries.SID);
-    return { SID: entries.SID, TradePrototypeSID: entries.TradePrototypeSID };
+export const transformQuestObjPrototypes: Meta<QuestObjPrototype>["entriesTransformer"] = (struct) => {
+  if (techniciansAndTheirTradePrototypes.has(struct.SID)) {
+    struct.TradePrototypeSID = techniciansAndTheirTradePrototypes.get(struct.SID);
+    return new Struct({ SID: struct.SID, TradePrototypeSID: struct.TradePrototypeSID });
   }
   return null;
 };
 
-type QUestObjPrototype = GetStructType<{ SID: string; TradePrototypeSID: string; NPCType: ENPCType }>;
+type QuestObjPrototype = GetStructType<{ SID: string; TradePrototypeSID: string; NPCType: ENPCType }>;
 
 const techniciansAndTheirTradePrototypes = new Map([
   ["RostokTechnician", "Technician_ChemicalPlant_TradePrototype"],

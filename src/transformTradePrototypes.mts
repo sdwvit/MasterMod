@@ -4,7 +4,7 @@ import { Meta } from "./prepare-configs.mjs";
 /**
  * Don't allow traders to buy weapons and armor.
  */
-export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: TradePrototype["entries"]) => {
+export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: TradePrototype) => {
   let keepo = null;
   if (entries.TradeGenerators?.entries) {
     Object.values(entries.TradeGenerators.entries)

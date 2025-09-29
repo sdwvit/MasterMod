@@ -12,13 +12,13 @@ export const REWARD_FORMULA = (min: number, max: number) => [
 /**
  * Increase reward for repeatable quests
  */
-export const transformQuestRewardsPrototypes: Meta["entriesTransformer"] = (entries: ItemGeneratorPrototype["entries"]) => {
+export const transformQuestRewardsPrototypes: Meta<ItemGeneratorPrototype>["entriesTransformer"] = (entries: ItemGeneratorPrototype) => {
   if (entries.MoneyGenerator) {
-    const min = entries.MoneyGenerator.entries.MinCount;
-    const max = entries.MoneyGenerator.entries.MaxCount;
-    [entries.MoneyGenerator.entries.MinCount, entries.MoneyGenerator.entries.MaxCount] = REWARD_FORMULA(min, max);
+    const min = entries.MoneyGenerator.MinCount;
+    const max = entries.MoneyGenerator.MaxCount;
+    [entries.MoneyGenerator.MinCount, entries.MoneyGenerator.MaxCount] = REWARD_FORMULA(min, max);
     logger.info(
-      `Increased quest reward for ${entries.SID} from [${min}, ${max}] to [${entries.MoneyGenerator.entries.MinCount}, ${entries.MoneyGenerator.entries.MaxCount}] (x${DIFFICULTY_FACTOR})`,
+      `Increased quest reward for ${entries.SID} from [${min}, ${max}] to [${entries.MoneyGenerator.MinCount}, ${entries.MoneyGenerator.MaxCount}] (x${DIFFICULTY_FACTOR})`,
     );
     return entries;
   }
