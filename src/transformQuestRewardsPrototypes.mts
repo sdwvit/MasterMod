@@ -1,7 +1,6 @@
 import { ItemGeneratorPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
-import { logger } from "./logger.mjs";
 
 const spread = [0.5, 1];
 
@@ -12,16 +11,13 @@ export const REWARD_FORMULA = (min: number, max: number) => [
 /**
  * Increase reward for repeatable quests
  */
-export const transformQuestRewardsPrototypes: Meta<ItemGeneratorPrototype>["entriesTransformer"] = (entries: ItemGeneratorPrototype) => {
-  if (entries.MoneyGenerator) {
-    const min = entries.MoneyGenerator.MinCount;
-    const max = entries.MoneyGenerator.MaxCount;
-    [entries.MoneyGenerator.MinCount, entries.MoneyGenerator.MaxCount] = REWARD_FORMULA(min, max);
-    logger.info(
-      `Increased quest reward for ${entries.SID} from [${min}, ${max}] to [${entries.MoneyGenerator.MinCount}, ${entries.MoneyGenerator.MaxCount}] (x${DIFFICULTY_FACTOR})`,
-    );
-    return entries;
+export const transformQuestRewardsPrototypes: Meta<ItemGeneratorPrototype>["entriesTransformer"] = (struct: ItemGeneratorPrototype) => {
+  if (struct.MoneyGenerator) {
+    return Object.assign(struct.fork(), {
+      MoneyGenerator: Object.assign(struct.MoneyGenerator.fork(), {
+        MinCount: REWARD_FORMULA(struct.MoneyGenerator.MinCount, struct.MoneyGenerator.MaxCount)[0],
+        MaxCount: REWARD_FORMULA(struct.MoneyGenerator.MinCount, struct.MoneyGenerator.MaxCount)[1],
+      }),
+    });
   }
-
-  return null;
 };

@@ -4,14 +4,12 @@ import { semiRandom } from "./semi-random.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 
 export const transformItemGeneratorPrototypes: Meta<ItemGeneratorPrototype>["entriesTransformer"] = (struct, context) => {
-  let keep = false;
-
   if (prohibitedIds.some((id) => struct.SID.includes(id))) {
     return null;
   }
-  const ig = struct.ItemGenerator || {};
-  Object.values<ItemGeneratorPrototype["ItemGenerator"][number]>(ig).forEach((itemGen, i) => {
-    Object.values<(typeof itemGen.PossibleItems)[number]>((itemGen?.PossibleItems || {}) as any).forEach((possibleItem, j) => {
+  const ItemGenerator = struct.ItemGenerator?.map(([_k, itemGen], i) => {
+    const fork = itemGen.fork();
+    const PossibleItems = itemGen.PossibleItems?.map?.(([_k, possibleItem], j) => {
       if (!possibleItem) {
         return;
       }
@@ -21,25 +19,34 @@ export const transformItemGeneratorPrototypes: Meta<ItemGeneratorPrototype>["ent
       if (!isConsumable && !isAmmo && !isGrenade) {
         return;
       }
-      keep = true;
       let chance = semiRandom(i + j + context.index);
       while (chance > 0.02) {
         chance /= 2;
       }
-      possibleItem.Chance = parseFloat(chance.toFixed(4));
-      if (possibleItem.MinCount) possibleItem.MinCount = 1;
+      const fork = possibleItem.fork();
+      fork.Chance = parseFloat(chance.toFixed(4));
+      if (possibleItem.MinCount) fork.MinCount = 1;
       if (isConsumable || isGrenade) {
-        if (possibleItem.MaxCount) possibleItem.MaxCount = 1;
+        if (possibleItem.MaxCount) fork.MaxCount = 1;
       }
       if (isAmmo) {
-        if (possibleItem.MaxCount) possibleItem.MaxCount = Math.floor(semiRandom(context.index) * 9) + 1;
-        if (possibleItem.AmmoMinCount) possibleItem.AmmoMinCount = 1;
-        if (possibleItem.AmmoMaxCount) possibleItem.AmmoMaxCount = Math.floor(semiRandom(context.index) * 9) + 1;
+        if (possibleItem.MaxCount) fork.MaxCount = Math.floor(semiRandom(context.index) * 9) + 1;
+        if (possibleItem.AmmoMinCount) fork.AmmoMinCount = 1;
+        if (possibleItem.AmmoMaxCount) fork.AmmoMaxCount = Math.floor(semiRandom(context.index) * 9) + 1;
       }
+      return fork;
     });
+
+    if (PossibleItems?.entries().length) {
+      return Object.assign(fork, { PossibleItems });
+    }
   });
 
-  return keep ? struct : null;
+  if (!ItemGenerator?.entries().length) {
+    return;
+  }
+
+  return Object.assign(struct.fork(), { ItemGenerator });
 };
 
 const prohibitedIds = ["Arena"];

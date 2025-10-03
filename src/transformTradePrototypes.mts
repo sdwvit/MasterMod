@@ -1,54 +1,46 @@
-import { EItemType, Struct, TradePrototype } from "s2cfgtojson";
+import { Struct, TradePrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 
 /**
  * Don't allow traders to buy weapons and armor.
  */
-export const transformTradePrototypes: Meta["entriesTransformer"] = (entries: TradePrototype) => {
-  let keepo = null;
-  if (entries.TradeGenerators?.entries) {
-    Object.values(entries.TradeGenerators.entries)
-      .filter((tg) => tg.entries)
-      .forEach((tg) => {
-        tg.entries.BuyLimitations ||= new BuyLimitations() as any;
-        let limitations = ["EItemType::Weapon", "EItemType::Armor", "EItemType::Ammo", "EItemType::MutantLoot"];
+export const transformTradePrototypes: Meta<TradePrototype>["entriesTransformer"] = (struct) => {
+  if (!struct.TradeGenerators) {
+    return;
+  } else {
+    return Object.assign(struct.fork(), {
+      TradeGenerators: struct.TradeGenerators.map(([_k, tg]) => {
+        const limitations = ["EItemType::Weapon", "EItemType::Armor", "EItemType::Ammo", "EItemType::MutantLoot"];
 
-        if (bartenders.has(entries.SID)) {
-          keepo = entries;
+        if (bartenders.has(struct.SID)) {
           limitations.push(...["EItemType::Artifact", "EItemType::Attach", "EItemType::Detector", "EItemType::Grenade", "EItemType::MutantLoot"]);
         }
 
-        if (medics.has(entries.SID)) {
-          keepo = entries;
+        if (medics.has(struct.SID)) {
           limitations.push(...["EItemType::Artifact", "EItemType::Attach", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other"]);
         }
 
-        if (generalTraders.has(entries.SID)) {
-          keepo = entries;
+        if (generalTraders.has(struct.SID)) {
           limitations.push(...["EItemType::Consumable", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other", "EItemType::Attach"]);
         }
 
-        if (technicianTradePrototypeSIDs.has(entries.SID)) {
-          keepo = entries;
+        if (technicianTradePrototypeSIDs.has(struct.SID)) {
           limitations.push(...["EItemType::Artifact", "EItemType::Consumable", "EItemType::Other"]);
         }
-
-        limitations.forEach((itemType: EItemType) => {
-          let i = 0;
-          while (tg.entries.BuyLimitations.entries[i] && tg.entries.BuyLimitations.entries[i] !== itemType) {
-            i++;
-          }
-          tg.entries.BuyLimitations.entries[i] = itemType;
+        const fork = tg.fork();
+        if (!tg.BuyLimitations) {
+          tg.BuyLimitations = new Struct({ __internal__: { isArray: true } }) as any;
+        }
+        fork.BuyLimitations = Object.assign(tg.BuyLimitations.fork(), {
+          0: "EItemType::Weapon",
+          1: "EItemType::Armor",
         });
-      });
+        limitations.forEach((l) => fork.BuyLimitations.addNode(l));
+        return fork;
+      }),
+    });
   }
-  return keepo;
 };
-
-class BuyLimitations extends Struct {
-  _id = "BuyLimitations";
-  entries: Record<number, string> = { 0: "EItemType::Weapon", 1: "EItemType::Armor" };
-}
 
 const bartenders = new Set([
   "Bartender_Zalesie_TradePrototype",

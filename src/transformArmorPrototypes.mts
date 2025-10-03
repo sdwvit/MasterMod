@@ -1,4 +1,4 @@
-import { ArmorPrototype, createDynamicClassInstance } from "s2cfgtojson";
+import { ArmorPrototype, Struct } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newArmors } from "./armors.util.mjs";
 import path from "node:path";
@@ -16,8 +16,8 @@ const oncePerFile = new Set<string>();
 /**
  * Adds armor that doesn't block head, but also removes any psy protection. Allows player to use helmets.
  */
-export const transformArmorPrototypes: Meta<ArmorPrototype>["entriesTransformer"] = (entries, context) => {
-  if (entries.SID.toLowerCase().includes("helmet") || bannedids.has(entries.SID)) {
+export const transformArmorPrototypes: Meta<ArmorPrototype>["entriesTransformer"] = (struct, context) => {
+  if (bannedids.has(struct.SID)) {
     return null;
   }
 
@@ -34,31 +34,25 @@ export const transformArmorPrototypes: Meta<ArmorPrototype>["entriesTransformer"
         return;
       }
 
-      const newArmor = createDynamicClassInstance("_") as ArmorPrototype;
-      newArmor.SID = newSID;
-      newArmor.__internal__.refkey = original;
-      newArmor.__internal__.refurl = entries.__internal__.refurl;
-      if (!newArmor.__internal__.refurl) {
-        logger.warn(`No refurl for ${context.filePath}`);
-        return;
-      }
-      newArmor.__internal__.rawName = newSID;
+      const newArmor = new Struct({
+        SID: newSID,
+        __internal__: { rawName: newSID, refkey: original, refurl: struct.__internal__.refurl },
+      }) as ArmorPrototype;
+
       if (newArmors[newSID]) {
         backfillArmorDef(newArmor);
-        const overrides = { ...newArmors[newSID] };
-        if (overrides._extras?.keysForRemoval) {
-          Object.keys(overrides._extras.keysForRemoval).forEach((p) => {
+        const overrides = { ...newArmors[newSID as keyof typeof newArmors] };
+        if ("keysForRemoval" in overrides.__internal__._extras) {
+          Object.entries(overrides.__internal__._extras.keysForRemoval).forEach(([p, v]) => {
             const e = get(newArmor, p) || {};
-            const key = Object.keys(e).find((k) => e[k] === overrides._extras.keysForRemoval[p]) || overrides._extras.keysForRemoval[p];
-            delete e[key];
+            const keyToDelete = Object.keys(e).find((k) => e[k] === v) || v;
+            delete e[keyToDelete];
           });
-          delete overrides._extras;
+          delete overrides.__internal__._extras;
         }
         deepMerge(newArmor, overrides);
       } else {
         newArmor.Invisible = true;
-        newArmor.ItemGridWidth = 1;
-        newArmor.ItemGridHeight = 1;
       }
       context.extraStructs.push(newArmor.clone());
     });

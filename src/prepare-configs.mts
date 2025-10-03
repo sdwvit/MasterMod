@@ -1,10 +1,11 @@
-import { Struct } from "s2cfgtojson";
+import { GetStructType, Struct } from "s2cfgtojson";
 import path from "node:path";
 import * as fs from "node:fs";
 import dotEnv from "dotenv";
 import { logger } from "./logger.mjs";
 import { meta } from "./meta.mts";
 import { getCfgFiles } from "./get-cfg-files.mjs";
+import { deepMerge } from "./deepMerge.mjs";
 
 type Context<T> = {
   fileIndex: number;
@@ -12,7 +13,6 @@ type Context<T> = {
   array: T[];
   extraStructs: T[];
   filePath: string;
-  rawContent: string;
   structsById: Record<string, T>;
 };
 dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
@@ -36,7 +36,6 @@ const MOD_NAME = process.env.MOD_NAME;
 const modFolder = rootDir;
 const modFolderRaw = path.join(modFolder, "raw");
 const modFolderSteam = path.join(modFolder, "steamworkshop");
-
 if (!fs.existsSync(modFolderSteam)) fs.mkdirSync(modFolderSteam, { recursive: true });
 const { interestingIds, interestingContents, prohibitedIds, getEntriesTransformer = () => meta.entriesTransformer } = meta;
 
@@ -45,6 +44,7 @@ const total = getCfgFiles(BASE_CFG_DIR).map((filePath, fileIndex) => {
   if (!entriesTransformer) {
     return;
   }
+  const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
   const rawContent = fs.readFileSync(filePath, "utf8");
   if (interestingContents?.length && !interestingContents.some((i) => rawContent.includes(i))) {
     return;
@@ -52,8 +52,7 @@ const total = getCfgFiles(BASE_CFG_DIR).map((filePath, fileIndex) => {
   if (!(filePath.includes("SpawnActorPrototypes/WorldMap_WP/") && !filePath.endsWith("0.cfg"))) {
     logger.log(`Processing file: ${filePath}`);
   }
-  const pathToSave = path.parse(filePath.slice(BASE_CFG_DIR.length + 1));
-  const array = Struct.fromString(rawContent);
+  const array = Struct.fromString(rawContent) as GetStructType<{}>[];
 
   const structsById: Record<string, Struct> = Object.fromEntries(array.map((s) => [s.__internal__.rawName, s]));
 
@@ -66,28 +65,38 @@ const total = getCfgFiles(BASE_CFG_DIR).map((filePath, fileIndex) => {
     if (!id) continue;
     if (interestingIds?.length && !interestingIds.some((i) => id.includes(i))) continue;
     if (prohibitedIds?.length && prohibitedIds.some((i) => id.includes(i))) continue;
-
-    const processedStruct = entriesTransformer(s.clone(), {
+    const clone = s.fork(true);
+    clone.__internal__.rawName = id;
+    clone.__internal__.refkey = id;
+    clone.__internal__.refurl = "../" + pathToSave.base;
+    const processedStruct = entriesTransformer(clone, {
       index,
       fileIndex,
       array,
       filePath,
-      rawContent,
       structsById,
       extraStructs,
     });
 
     if (processedStruct) {
+      delete processedStruct.__internal__.refkey;
+      delete processedStruct.__internal__.refurl;
+
       processedStructs.push(processedStruct);
     }
   }
-  processedStructs.push(...extraStructs.filter(Boolean));
+  processedStructs.push(
+    ...extraStructs.filter(Boolean).map((s) => {
+      return s;
+    }),
+  );
 
   if (processedStructs.length) {
     const cfgEnclosingFolder = path.join(modFolderRaw, nestedDir, pathToSave.dir, pathToSave.name);
 
     if (!fs.existsSync(cfgEnclosingFolder)) fs.mkdirSync(cfgEnclosingFolder, { recursive: true });
-    fs.writeFileSync(path.join(cfgEnclosingFolder, `${MOD_NAME}${pathToSave.base}`), processedStructs.map((s) => s.toString()).join("\n\n"));
+    const resultingFilename = path.join(cfgEnclosingFolder, `${pathToSave.name}_patch_${MOD_NAME}.cfg`);
+    fs.writeFileSync(resultingFilename, processedStructs.map((s) => s.toString()).join("\n\n"));
   }
   return processedStructs;
 });

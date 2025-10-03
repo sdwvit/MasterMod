@@ -1,50 +1,63 @@
 import { Meta } from "./prepare-configs.mjs";
-import { ALifeDirectorScenarioPrototype, createDynamicClassInstance } from "s2cfgtojson";
+import { ALifeDirectorScenarioPrototype, Struct } from "s2cfgtojson";
 
+const MOD_NAME = process.env.MOD_NAME;
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
  */
 export const transformALifeDirectorScenarioPrototypes: Meta<ALifeDirectorScenarioPrototype>["entriesTransformer"] = (struct, {}) => {
-  Object.values<(typeof struct.ALifeScenarioNPCArchetypesLimitsPerPlayerRank)[number]>(
-    (struct.ALifeScenarioNPCArchetypesLimitsPerPlayerRank || {}) as any,
-  )
-    .filter((e) => e)
-    .forEach((e) => {
-      const pseudogiant = createDynamicClassInstance("_") as (typeof e.Restrictions)[number];
-      pseudogiant.AgentType = "EAgentType::Pseudogiant";
-      pseudogiant.MaxCount = 1.5; // going to be doubled later in code
+  const newStruct = struct.fork();
 
+  Object.assign(newStruct, {
+    ALifeScenarioNPCArchetypesLimitsPerPlayerRank: struct.ALifeScenarioNPCArchetypesLimitsPerPlayerRank.map(([_k, e]) => {
       const restrictionsRef = e.Restrictions;
-      const nextIndex =
-        parseInt(
-          Object.keys(restrictionsRef)
-            .filter((e) => parseInt(e))
-            .pop() || "-1",
-        ) + 1;
-      restrictionsRef[nextIndex] = pseudogiant;
-      Object.values(restrictionsRef)
-        .filter((e) => e)
-        .forEach((e) => {
-          e.MaxCount *= 2;
-        });
-    });
-  Object.entries(struct.RestrictedObjPrototypeSIDs).forEach((e) => {
-    if (e[1].startsWith && e[1].startsWith("GeneralNPC")) {
-      struct.RestrictedObjPrototypeSIDs[e[0]] = "GuardNPC_Duty_CloseCombat";
-    }
+      restrictionsRef.addNode(
+        new Struct({ AgentType: "EAgentType::Pseudogiant", MaxCount: 1.5, __internal__: { rawName: "_" } }),
+        `${MOD_NAME}_Pseudogiant`,
+      );
+      restrictionsRef.forEach(([_k, e]) => (e.MaxCount *= 2));
+      return e;
+    }),
+    RestrictedObjPrototypeSIDs: struct.RestrictedObjPrototypeSIDs.map(([k, v]) => {
+      if (v.startsWith("GeneralNPC_Spark") || v.startsWith("GeneralNPC_Scientists")) {
+        struct.RestrictedObjPrototypeSIDs[k] = "GuardNPC_Duty_CloseCombat";
+      }
+      return v;
+    }),
+    ProhibitedAgentTypes: struct.ProhibitedAgentTypes.map(([key, v]) => {
+      struct.ProhibitedAgentTypes[key] = "EAgentType::RatSwarm";
+      return v;
+    }),
+    Scenarios: struct.Scenarios.map(([_, v]) => {
+      if (!v.ExpansionSquadNumMin && !v.ExpansionSquadNumMax) {
+        return null;
+      }
+      const fork = v.fork();
+      if (v.ExpansionSquadNumMin) v.ExpansionSquadNumMin *= 2;
+      if (v.ExpansionSquadNumMax) v.ExpansionSquadNumMax *= 2;
+      return Object.assign(fork, {
+        ExpansionSquadNumMin: v.ExpansionSquadNumMin,
+        ExpansionSquadNumMax: v.ExpansionSquadNumMax,
+      });
+    }),
+    ScenarioGroups: struct.ScenarioGroups.map(([_, v]) => {
+      if (!v.SpawnDelayMin && !v.SpawnDelayMax && !v.PostSpawnDirectorTimeoutMin && !v.PostSpawnDirectorTimeoutMax) {
+        return null;
+      }
+      const fork = v.fork();
+
+      if (v.SpawnDelayMin) v.SpawnDelayMin = Math.ceil(v.SpawnDelayMin / 5);
+      if (v.SpawnDelayMax) v.SpawnDelayMax = Math.ceil(v.SpawnDelayMax / 5);
+      if (v.PostSpawnDirectorTimeoutMin) v.PostSpawnDirectorTimeoutMin = Math.ceil(v.PostSpawnDirectorTimeoutMin / 5);
+      if (v.PostSpawnDirectorTimeoutMax) v.PostSpawnDirectorTimeoutMax = Math.ceil(v.PostSpawnDirectorTimeoutMax / 5);
+      return Object.assign(fork, {
+        SpawnDelayMin: v.SpawnDelayMin,
+        SpawnDelayMax: v.SpawnDelayMax,
+        PostSpawnDirectorTimeoutMin: v.PostSpawnDirectorTimeoutMin,
+        PostSpawnDirectorTimeoutMax: v.PostSpawnDirectorTimeoutMax,
+      });
+    }),
   });
-  Object.entries(struct.ProhibitedAgentTypes).forEach((e) => {
-    struct.ProhibitedAgentTypes[e[0]] = "EAgentType::RatSwarm";
-  });
-  Object.values(struct.Scenarios.entries || {}).forEach((e) => {
-    if (e.entries.ExpansionSquadNumMin) e.entries.ExpansionSquadNumMin *= 2;
-    if (e.entries.ExpansionSquadNumMax) e.entries.ExpansionSquadNumMax *= 2;
-  });
-  Object.values(struct.ScenarioGroups.entries || {}).forEach((e) => {
-    if (e.entries.SpawnDelayMin) e.entries.SpawnDelayMin = Math.ceil(e.entries.SpawnDelayMin / 5);
-    if (e.entries.SpawnDelayMax) e.entries.SpawnDelayMax = Math.ceil(e.entries.SpawnDelayMax / 5);
-    if (e.entries.PostSpawnDirectorTimeoutMin) e.entries.PostSpawnDirectorTimeoutMin = Math.ceil(e.entries.PostSpawnDirectorTimeoutMin / 5);
-    if (e.entries.PostSpawnDirectorTimeoutMax) e.entries.PostSpawnDirectorTimeoutMax = Math.ceil(e.entries.PostSpawnDirectorTimeoutMax / 5);
-  });
-  return struct;
+
+  return newStruct;
 };

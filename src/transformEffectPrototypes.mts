@@ -4,19 +4,19 @@ import { EffectPrototype, Struct } from "s2cfgtojson";
 /**
  * Makes some consumables last longer.
  * Also negates KillVolumeEffect (borderguard instakill)
- * @param entries
+ * @param struct
  */
-export const transformEffectPrototypes: Meta<EffectPrototype>["entriesTransformer"] = (entries) => {
-  if (entries.SID === "KillVolumeEffect") {
-    Object.keys(entries.ApplyExtraEffectPrototypeSIDs).forEach((k) => {
-      entries.ApplyExtraEffectPrototypeSIDs[k] = "empty";
+export const transformEffectPrototypes: Meta<EffectPrototype>["entriesTransformer"] = (struct) => {
+  if (struct.SID === "KillVolumeEffect") {
+    return Object.assign(struct.fork(), {
+      ApplyExtraEffectPrototypeSIDs: struct.ApplyExtraEffectPrototypeSIDs.map(() => "empty"),
     });
-    return entries;
   }
-  if (!consumables.has(entries.SID)) {
+  if (!consumables.has(struct.SID)) {
     return null;
   }
-  return new Struct({ Duration: entries.Duration * 10 });
+
+  return Object.assign(struct.fork(), { Duration: struct.Duration * 10 });
 };
 const consumables = new Set([
   "EnergeticStamina",

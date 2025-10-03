@@ -60,25 +60,26 @@ All changes have been tested against fresh save file. Some of these changes won'
   changenote: "Compatibility fix for 1.6.",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
-      transformDynamicItemGenerator, // filePath.endsWith("/DynamicItemGenerator.cfg") &&
-      transformObjPrototypes, // (filePath.endsWith("/GameData/ObjPrototypes.cfg") || filePath.endsWith("/ObjPrototypes/GeneralNPCObjPrototypes.cfg")) &&
-      transformDifficultyPrototypes, // filePath.endsWith("/DifficultyPrototypes.cfg") &&
-      transformAttachPrototypes, // filePath.endsWith("/AttachPrototypes.cfg") &&
-      transformEffectPrototypes, // filePath.endsWith("/EffectPrototypes.cfg") &&
-      transformNPCWeaponSettingsPrototypes, // filePath.endsWith("/NPCWeaponSettingsPrototypes.cfg") &&
-      transformMobs, // mobs.some((m) => filePath.endsWith(`/${m}`)) &&
-      transformSpawnActorPrototypes, // skip expensive generation         // false && filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") &&
-      transformQuestNodePrototypes, // repeatingQuestsQuestNodePrototypes.some((q) => filePath.endsWith(`/${q}`)) &&
-      transformQuestRewardsPrototypes, // repeatingQuestsQuestRewardsPrototypes.some((q) => filePath.endsWith(`/${q}`)) &&
-      transformDialogPrototypes, // repeatingQuestsDialogPrototypes.some((q) => filePath.endsWith(`/${q}`)) &&
-      transformTradePrototypes, // filePath.endsWith("/TradePrototypes.cfg") &&
-      transformStashPrototypes, // filePath.endsWith("/StashPrototypes.cfg") &&
-      transformItemGeneratorPrototypes, // (filePath.endsWith("/ItemGeneratorPrototypes.cfg") || filePath.endsWith("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) &&
-      transformALifeDirectorScenarioPrototypes, // filePath.endsWith("/ALifeDirectorScenarioPrototypes.cfg") &&
-      transformArmorPrototypes, // filePath.endsWith("/ArmorPrototypes.cfg") &&
-      transformUpgradePrototypes, // filePath.endsWith("/UpgradePrototypes.cfg") &&
-      transformWeaponGeneralSetupPrototypes, // filePath.endsWith("/WeaponGeneralSetupPrototypes.cfg") &&
-      transformQuestObjPrototypes, // filePath.endsWith("/QuestObjPrototypes.cfg") &&
+      filePath.endsWith("/DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
+      (filePath.endsWith("/GameData/ObjPrototypes.cfg") || filePath.endsWith("/ObjPrototypes/GeneralNPCObjPrototypes.cfg")) && transformObjPrototypes,
+      filePath.endsWith("/DifficultyPrototypes.cfg") && transformDifficultyPrototypes,
+      filePath.endsWith("/AttachPrototypes.cfg") && transformAttachPrototypes,
+      filePath.endsWith("/EffectPrototypes.cfg") && transformEffectPrototypes,
+      filePath.endsWith("/NPCWeaponSettingsPrototypes.cfg") && transformNPCWeaponSettingsPrototypes,
+      mobs.some((m) => filePath.endsWith(`/${m}`)) && transformMobs,
+      false && filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes, // skip expensive generation
+      repeatingQuestsQuestNodePrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestNodePrototypes,
+      repeatingQuestsQuestRewardsPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestRewardsPrototypes,
+      repeatingQuestsDialogPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformDialogPrototypes,
+      filePath.endsWith("/TradePrototypes.cfg") && transformTradePrototypes,
+      filePath.endsWith("/StashPrototypes.cfg") && transformStashPrototypes,
+      (filePath.endsWith("/ItemGeneratorPrototypes.cfg") || filePath.endsWith("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) &&
+        transformItemGeneratorPrototypes,
+      filePath.endsWith("/ALifeDirectorScenarioPrototypes.cfg") && transformALifeDirectorScenarioPrototypes,
+      filePath.endsWith("/ArmorPrototypes.cfg") && transformArmorPrototypes,
+      filePath.endsWith("/UpgradePrototypes.cfg") && transformUpgradePrototypes,
+      filePath.endsWith("/WeaponGeneralSetupPrototypes.cfg") && transformWeaponGeneralSetupPrototypes,
+      filePath.endsWith("/QuestObjPrototypes.cfg") && transformQuestObjPrototypes,
     ].filter(Boolean) as Meta<Struct>["entriesTransformer"][];
 
     if (transformers.length === 0) {

@@ -1,15 +1,11 @@
 import { Meta } from "./prepare-configs.mjs";
-import { ENPCType, GetStructType, Struct } from "s2cfgtojson";
+import { ObjPrototype } from "s2cfgtojson";
 
-export const transformQuestObjPrototypes: Meta<QuestObjPrototype>["entriesTransformer"] = (struct) => {
+export const transformQuestObjPrototypes: Meta<ObjPrototype>["entriesTransformer"] = (struct) => {
   if (techniciansAndTheirTradePrototypes.has(struct.SID)) {
-    struct.TradePrototypeSID = techniciansAndTheirTradePrototypes.get(struct.SID);
-    return new Struct({ SID: struct.SID, TradePrototypeSID: struct.TradePrototypeSID });
+    return Object.assign(struct.fork(), { TradePrototypeSID: techniciansAndTheirTradePrototypes.get(struct.SID) });
   }
-  return null;
 };
-
-type QuestObjPrototype = GetStructType<{ SID: string; TradePrototypeSID: string; NPCType: ENPCType }>;
 
 const techniciansAndTheirTradePrototypes = new Map([
   ["RostokTechnician", "Technician_ChemicalPlant_TradePrototype"],

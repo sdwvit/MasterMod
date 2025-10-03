@@ -1,84 +1,82 @@
-import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
+import { WeaponGeneralSetupPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 import { uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
 
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
-export const transformWeaponGeneralSetupPrototypes: Meta<WeaponGeneralSetupPrototype>["entriesTransformer"] = (entries, context) => {
-  let keepo = null;
+export const transformWeaponGeneralSetupPrototypes: Meta<WeaponGeneralSetupPrototype>["entriesTransformer"] = (struct, context) => {
+  if (
+    !struct.PreinstalledAttachmentsItemPrototypeSIDs?.filter((kv): kv is any => {
+      const [_k, e] = kv;
+      return !!(e?.bHiddenInInventory && uniqueAttachmentsToAlternatives[e?.AttachSID]);
+    }).entries().length
+  ) {
+    return;
+  }
 
-  Object.values(entries.PreinstalledAttachmentsItemPrototypeSIDs).forEach((e) => {
-    if (e?.bHiddenInInventory && uniqueAttachmentsToAlternatives[e?.AttachSID]) {
-      keepo = entries;
-      e.AttachSID = uniqueAttachmentsToAlternatives[e.entries?.AttachSID];
-      e.bHiddenInInventory = false;
+  const fork = struct.fork();
+  const PreinstalledAttachmentsItemPrototypeSIDs = struct.PreinstalledAttachmentsItemPrototypeSIDs.map(([_k, e]) => {
+    if (!uniqueAttachmentsToAlternatives[e.AttachSID]) {
+      return;
     }
-  });
-  if (keepo) {
-    if (entries.CompatibleAttachments) {
-      const extraCompatibleAttachments = {};
+    return Object.assign(e.fork(), {
+      AttachSID: uniqueAttachmentsToAlternatives[e.AttachSID],
+      bHiddenInInventory: false,
+    });
+  }).fork(true);
 
-      const currentCompatibleAttachments = Object.fromEntries(
-        Object.entries(entries.CompatibleAttachments.entries)
-          .filter((e) => e[1].entries)
-          .map(([_, v]) => {
-            if (uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]) {
-              const dummy = new (Struct.createDynamicClass("dummy"))() as typeof v;
-              dummy.entries = { ...v.entries };
-              dummy.entries.AttachPrototypeSID = uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID];
-              extraCompatibleAttachments[uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]] = dummy;
-            }
-            return [v.entries.AttachPrototypeSID, v];
-          }),
-      );
-      const refCompatibleAttachments = Object.fromEntries(
-        Object.entries(
-          (context.structsById[context.struct._refkey] as unknown as WeaponGeneralSetupPrototype)?.entries.CompatibleAttachments?.entries || {},
-        ) // todo this only scans within the current file, so DLC weapons's ref would be undefined. manually read the base file and add it here if dlc stuff is needed
-          .filter((e) => e[1].entries)
-          .map(([_, v]) => {
-            if (uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]) {
-              const dummy = new (Struct.createDynamicClass("dummy"))() as typeof v;
-              dummy.entries = { ...v.entries };
-              dummy.entries.AttachPrototypeSID = uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID];
-              extraCompatibleAttachments[uniqueAttachmentsToAlternatives[v.entries.AttachPrototypeSID]] = dummy;
-            }
-            return [v.entries.AttachPrototypeSID, v];
-          }),
-      );
+  if (PreinstalledAttachmentsItemPrototypeSIDs.entries().length) {
+    fork.PreinstalledAttachmentsItemPrototypeSIDs = PreinstalledAttachmentsItemPrototypeSIDs;
+  }
 
-      const dedup = {
-        ...refCompatibleAttachments,
-        ...currentCompatibleAttachments,
-        ...(extraCompatibleAttachments as typeof currentCompatibleAttachments),
-      };
+  if (struct.CompatibleAttachments) {
+    const extraCompatibleAttachments = {};
+    const existing = grabAttachments(struct, extraCompatibleAttachments);
+    const refCompatibleAttachments = grabAttachments(context.structsById[struct.SID], extraCompatibleAttachments);
 
-      entries.CompatibleAttachments.entries = Object.fromEntries(Object.values(dedup).map((e, i) => [i, e]));
+    const dedup = {
+      ...refCompatibleAttachments,
+      ...extraCompatibleAttachments,
+    };
+
+    const existingKeys = new Set(Object.keys(existing));
+    for (const k of Object.keys(dedup)) {
+      if (existingKeys.has(k)) {
+        delete dedup[k];
+      }
+    }
+    fork.CompatibleAttachments = struct.CompatibleAttachments.fork(true);
+    Object.values(dedup).forEach((e) => {
+      fork.CompatibleAttachments.addNode(e);
+    });
+    const CompatibleAttachments = fork.CompatibleAttachments.filter((e): e is any => !!dedup[e[1].AttachPrototypeSID]);
+    if (CompatibleAttachments.entries().length) {
+      fork.CompatibleAttachments = CompatibleAttachments;
     }
   }
 
-  /* if (!oncePerFile.has(context.filePath)) { // todo this adds a bunch of weapons that are supposed to have attachments on them, as a rarer occasion.
-    (context.array as WeaponGeneralSetupPrototypes[]).forEach(({ entries }) => {
-      if (entries.CompatibleAttachments) {
-        Object.values(entries.CompatibleAttachments.entries).forEach((ca) => {
-          if (basicAttachments[ca.entries?.AttachPrototypeSID]) {
-            const newSID = entries.SID + "_With_" + ca.entries.AttachPrototypeSID;
-            const newWeapon = new (Struct.createDynamicClass(newSID))() as WeaponGeneralSetupPrototypes & WithSID;
-            newWeapon.entries = { SID: newSID } as WeaponGeneralSetupPrototypes;
-            newWeapon.refkey = entries.SID;
-            newWeapon.refurl = context.struct.refurl;
-            newWeapon._id = newSID;
-            newWeapon.isRoot = true;
-            newWeapon.entries.PreinstalledAttachmentsItemPrototypeSIDs = entries.PreinstalledAttachmentsItemPrototypeSIDs;
-            //context.extraStructs.push(newWeapon);
-            oncePerFile.add(context.filePath);
-          }
-        });
-      }
-    });
-const oncePerFile = new Set<string>(); // put outside the function so it runs only once per file
-  }*/
+  if (!fork.PreinstalledAttachmentsItemPrototypeSIDs && !fork.CompatibleAttachments) {
+    return;
+  }
 
-  return keepo;
+  return fork;
+};
+
+const grabAttachments = (
+  struct: WeaponGeneralSetupPrototype,
+  extraCompatibleAttachments: Record<string, WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"]>,
+) => {
+  return Object.fromEntries(
+    struct.CompatibleAttachments.entries().map(([_, v]) => {
+      if (uniqueAttachmentsToAlternatives[v.AttachPrototypeSID]) {
+        const dummy = v.clone();
+        dummy.__internal__.isRoot = false;
+        const key = uniqueAttachmentsToAlternatives[v.AttachPrototypeSID];
+        dummy.AttachPrototypeSID = key;
+        extraCompatibleAttachments[key] = dummy;
+      }
+      return [v.AttachPrototypeSID, v];
+    }),
+  );
 };

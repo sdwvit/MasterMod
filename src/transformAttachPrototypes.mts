@@ -6,7 +6,7 @@ import { AttachPrototype, Struct } from "s2cfgtojson";
  */
 export const transformAttachPrototypes: Meta<AttachPrototype>["entriesTransformer"] = (entries) => {
   if (entries.Cost) {
-    return new Struct({ Cost: entries.Cost * 10 }) as AttachPrototype;
+    return Object.assign(entries.fork(), { Cost: entries.Cost * 10 });
   }
   return null;
 };

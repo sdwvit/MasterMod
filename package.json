@@ -5,7 +5,6 @@
   "scripts": {
     "prepare-configs": "node --loader ts-node/esm ./src/prepare-configs.mts",
     "publish-steam": "node --loader ts-node/esm ./src/publish-steam.mts",
-    "_packmod": "node --loader ts-node/esm ./src/packmod.mts",
     "_pull-staged": "node --loader ts-node/esm ./src/pull-staged.mts"
   },
   "type": "module",
@@ -14,7 +13,7 @@
     "@types/node": "^20.11.17",
     "dotenv": "^17.2.0",
     "prettier": "^3.6.2",
-    "s2cfgtojson": "3.0.5",
+    "s2cfgtojson": "3.2.12",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }

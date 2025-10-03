@@ -18,62 +18,53 @@ export const transformSpawnActorPrototypes: Meta<GearEntries>["entriesTransforme
   }
   let newEntries: GearEntries | null = null;
   switch (struct.SpawnType) {
-    case "ESpawnType::DestructibleObject":
-      if (preplacedDestructibleItems.some((i) => struct.SpawnedPrototypeSID?.includes(i)) && struct.ItemGeneratorSettings) {
-        Object.values<(typeof struct.ItemGeneratorSettings)[number]>(struct.ItemGeneratorSettings as any).forEach((e) => {
-          Object.values<(typeof e.ItemGenerators)[number]>((e?.ItemGenerators || {}) as any).forEach((ie) => {
-            if (ie?.PrototypeSID) {
-              newEntries = struct;
-              logger.info(`Found preplaced destructible object: ${ie?.PrototypeSID}. Hiding it.`);
-              totals.DestructibleObject++;
-              ie.PrototypeSID = "Milk";
-            }
-          });
+    case "ESpawnType::DestructibleObject": {
+      if (!(preplacedDestructibleItems.some((i) => struct.SpawnedPrototypeSID?.includes(i)) && struct.ItemGeneratorSettings)) {
+        return;
+      }
+      const fork = struct.fork();
+
+      const igs = struct.ItemGeneratorSettings.map(([_k, e]) => {
+        const fork = e.fork();
+        const igs = e.ItemGenerators.map(([_k, ie]) => {
+          if (!ie?.PrototypeSID) {
+            return;
+          }
+
+          logger.info(`Found preplaced destructible object: ${ie?.PrototypeSID}. Hiding it.`);
+          totals.DestructibleObject++;
+
+          return Object.assign(ie.fork(), { PrototypeSID: "Milk" });
         });
+
+        if (!igs.entries().length) {
+          return;
+        }
+
+        fork.ItemGenerators = igs;
+        return fork;
+      });
+      if (!igs.entries().length) {
+        return;
       }
-      break;
-    /*case "ESpawnType::ItemContainer":
-      if (entries.ItemGeneratorSettings?.entries && lootSIDs.has(entries.SpawnedPrototypeSID)) {
-        totals.ItemContainer++;
-        logger.info(`Found preplaced ItemContainer: ${entries.SpawnedPrototypeSID}. Hiding it.`);
-        const res: Partial<GearEntries> = {
-          SpawnOnStart: false,
-          SpawnType: entries.SpawnType,
-          SID: entries.SID,
-          ItemGeneratorSettings: entries.ItemGeneratorSettings,
-        };
-
-        if (entries.ItemSID) res.ItemSID = entries.ItemSID;
-        if (entries.PackOfItemsPrototypeSID) res.PackOfItemsPrototypeSID = entries.PackOfItemsPrototypeSID;
-
-        newEntries = res as GearEntries;
-      }
-
-      break;*/
-    case "ESpawnType::Item":
+      fork.ItemGeneratorSettings = igs;
+      return fork;
+    }
+    case "ESpawnType::Item": {
       const isMedkitReplacement = struct.ItemSID?.includes("Medkit") || struct.PackOfItemsPrototypeSID?.includes("Medkit");
       const isGearReplacement = preplacedGear.some((i) => struct.ItemSID?.includes(i)) && !attachmentsOrQuestItems.has(struct.ItemSID);
-      if (isGearReplacement || isMedkitReplacement) {
-        logger.info(`Found preplaced Item: ${struct.ItemSID || struct.PackOfItemsPrototypeSID}. Hiding it.`);
-        if (isMedkitReplacement) {
-          totals.Medkit++;
-        }
-        if (isGearReplacement) {
-          totals.Gear++;
-        }
-        const res: Partial<GearEntries> = {
-          SpawnOnStart: false,
-          SpawnType: struct.SpawnType,
-          SID: struct.SID,
-        };
-
-        if (struct.ItemSID) res.ItemSID = struct.ItemSID;
-        if (struct.PackOfItemsPrototypeSID) res.PackOfItemsPrototypeSID = struct.PackOfItemsPrototypeSID;
-
-        newEntries = res as GearEntries;
+      if (!(isGearReplacement || isMedkitReplacement)) {
+        return;
       }
-      break;
-    default:
+      logger.info(`Found preplaced Item: ${struct.ItemSID || struct.PackOfItemsPrototypeSID}. Hiding it.`);
+      if (isMedkitReplacement) {
+        totals.Medkit++;
+      }
+      if (isGearReplacement) {
+        totals.Gear++;
+      }
+      return Object.assign(struct.fork(), { SpawnOnStart: false }) as GearEntries;
+    }
   }
 
   return newEntries;
@@ -108,8 +99,7 @@ const attachmentsOrQuestItems = new Set(
   [].concat(
     readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/AttachPrototypes.cfg").map((e) => e?.SID),
     [
-      "Gun_Partner_SR",
-      "Gun_Sotnyk_AR_GS",
+      "GunGonta_SP",
       "GunNightStalker_HG",
       "Gun_ProjectY_HG",
       "Gun_Deadeye_HG",
@@ -144,6 +134,8 @@ const attachmentsOrQuestItems = new Set(
       "Gun_SkifGun_HG",
       "GunSVU_Sniper_Duga_SP",
       "GunGauss_Scar_SP",
+
+      "GunGonta_SP_GS",
       "GunGauss_Scar_SP",
       "GunNightStalker_HG",
       "GunUDP_Deadeye_HG",

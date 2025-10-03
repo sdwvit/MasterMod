@@ -1,4 +1,4 @@
-export const deepMerge = (target, source, preferLeft = true) => {
+export const deepMerge = (target: unknown, source: unknown, preferLeft = true): typeof target & typeof source => {
   if (typeof target !== "object" || typeof source !== "object") {
     return source;
   }

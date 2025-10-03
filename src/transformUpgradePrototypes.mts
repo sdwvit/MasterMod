@@ -4,23 +4,17 @@ import { Meta } from "./prepare-configs.mjs";
 /**
  * Unlocks blocking upgrades.
  */
-export const transformUpgradePrototypes: Meta<UpgradePrototype>["entriesTransformer"] = (entries) => {
-  let keepo = null;
-  if (entries.SID === "empty") {
-    return {
-      SID: entries.SID,
-      ID: entries.ID,
+export const transformUpgradePrototypes: Meta<UpgradePrototype>["entriesTransformer"] = (struct) => {
+  if (struct.SID === "empty") {
+    return Object.assign(struct.fork(), {
       RepairCostModifier: `0.02f`,
-    };
-  }
-  if (entries.BlockingUpgradePrototypeSIDs) {
-    Object.keys(entries.BlockingUpgradePrototypeSIDs).forEach((key) => {
-      entries.BlockingUpgradePrototypeSIDs[key] = "empty";
-      keepo ||= {};
-      keepo.BlockingUpgradePrototypeSIDs = entries.BlockingUpgradePrototypeSIDs;
     });
   }
-  return keepo;
+  if (struct.BlockingUpgradePrototypeSIDs) {
+    return Object.assign(struct.fork(), {
+      BlockingUpgradePrototypeSIDs: struct.BlockingUpgradePrototypeSIDs.map(([_k, e]) => "empty"),
+    });
+  }
 };
 
 const prices = {
@@ -146,4 +140,3 @@ const prices = {
   D12: 24000,
   Ram2: 29000,
 };
-const items = Object.keys(prices);

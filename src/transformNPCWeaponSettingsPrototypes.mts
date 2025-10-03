@@ -6,12 +6,15 @@ import { NPCWeaponSettingsPrototype } from "s2cfgtojson";
  */
 export const transformNPCWeaponSettingsPrototypes: Meta<NPCWeaponSettingsPrototype>["entriesTransformer"] = (struct, { structsById }) => {
   if (struct.SID.includes("Guard")) {
-    struct.BaseDamage = (structsById[struct.__internal__.refkey] as Partial<typeof struct>)?.BaseDamage ?? 50;
-    return struct;
+    let ref = structsById[struct.__internal__.refkey];
+
+    while (ref?.BaseDamage >= 500) {
+      ref = structsById[ref.__internal__.refkey];
+    }
+
+    return Object.assign(struct.fork(), { BaseDamage: ref?.BaseDamage ?? 50 });
   }
   if (struct.SID === "GunAK74_Strelok_ST_NPC") {
-    struct.BaseDamage = 9;
-    struct.ArmorPiercing = 3;
-    return struct;
+    return Object.assign(struct.fork(), { BaseDamage: 9, ArmorPiercing: 3 });
   }
 };
