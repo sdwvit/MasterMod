@@ -30,8 +30,8 @@ const technicianTradeTradeItemGenerators = new Set([
   "AsylumTechnician_TradeItemGenerator",
 ]);
 
-const minDropProbability = 0.01; // 1%
-const maxDropProbability = 0.15; // 15%
+const minDropDurability = 0.01; // 1%
+const maxDropDurability = 0.5; // 50%
 const allRanks = new Set<ERank>(["ERank::Newbie", "ERank::Experienced", "ERank::Veteran", "ERank::Master"]);
 
 const transformTrade = (struct: DynamicItemGenerator) => {
@@ -176,10 +176,10 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
   const x = cdSum ? abSum / maxAB : abSum;
   const y = cdSum / (1 - maxAB);
   droppableArmors.forEach((pi) => {
-    pi.Chance = 1;
+    pi.Chance = precision(weights[pi.ItemPrototypeSID]);
     pi.Weight = precision(weights[pi.ItemPrototypeSID] / x);
-    pi.MinDurability = precision(semiRandom(i) * 0.1 + minDropProbability);
-    pi.MaxDurability = precision(pi.MinDurability + (semiRandom(i) * weights[pi.ItemPrototypeSID]) / maxDropProbability);
+    pi.MinDurability = precision(semiRandom(i) * 0.1 + minDropDurability);
+    pi.MaxDurability = precision(pi.MinDurability + semiRandom(i) * maxDropDurability);
   });
   invisibleArmors.forEach((pi) => {
     pi.Chance = 1; // make sure it always spawns on npc

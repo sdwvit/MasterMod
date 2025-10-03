@@ -38,20 +38,18 @@ export const transformArmorPrototypes: Meta<ArmorPrototype>["entriesTransformer"
         SID: newSID,
         __internal__: { rawName: newSID, refkey: original, refurl: struct.__internal__.refurl },
       }) as ArmorPrototype;
-
-      if (newArmors[newSID]) {
-        backfillArmorDef(newArmor);
-        const overrides = { ...newArmors[newSID as keyof typeof newArmors] };
-        if ("keysForRemoval" in overrides.__internal__._extras) {
-          Object.entries(overrides.__internal__._extras.keysForRemoval).forEach(([p, v]) => {
-            const e = get(newArmor, p) || {};
-            const keyToDelete = Object.keys(e).find((k) => e[k] === v) || v;
-            delete e[keyToDelete];
-          });
-          delete overrides.__internal__._extras;
-        }
-        deepMerge(newArmor, overrides);
-      } else {
+      backfillArmorDef(newArmor);
+      const overrides = { ...newArmors[newSID as keyof typeof newArmors] };
+      if (overrides.__internal__?._extras && "keysForRemoval" in overrides.__internal__._extras) {
+        Object.entries(overrides.__internal__._extras.keysForRemoval).forEach(([p, v]) => {
+          const e = get(newArmor, p) || {};
+          const keyToDelete = Object.keys(e).find((k) => e[k] === v) || v;
+          delete e[keyToDelete];
+        });
+        delete overrides.__internal__._extras;
+      }
+      deepMerge(newArmor, overrides);
+      if (!newArmors[newSID]) {
         newArmor.Invisible = true;
       }
       context.extraStructs.push(newArmor.clone());

@@ -5,7 +5,7 @@ import dotEnv from "dotenv";
 import { logger } from "./logger.mjs";
 import { meta } from "./meta.mts";
 import { getCfgFiles } from "./get-cfg-files.mjs";
-import { deepMerge } from "./deepMerge.mjs";
+import { spawnSync } from "child_process";
 
 type Context<T> = {
   fileIndex: number;
@@ -109,3 +109,4 @@ logger.log("Now packing the mod and injecting into the game...");
 //await import("./packmod.mjs");
 await import("./push-to-sdk.mts");
 await import("./update-readme.mjs");
+spawnSync("paplay", ["./pop.wav"]);

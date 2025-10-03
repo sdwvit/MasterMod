@@ -9,6 +9,7 @@ dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const MODS_PATH = path.join(import.meta.dirname, "..");
 const STALKER_STEAM_ID = "1643320";
 import { meta } from "./meta.mjs";
+import { spawnSync } from "child_process";
 
 const sanitize = (str: string) => str.replace(/\n/g, "").replace(/"/g, '\\"');
 
@@ -43,3 +44,5 @@ childProcess.execSync(cmd(), {
   shell: "/usr/bin/bash",
   env: process.env,
 });
+
+spawnSync("paplay", ["./pop.wav"]);

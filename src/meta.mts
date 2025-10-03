@@ -57,7 +57,7 @@ export const meta: Meta<Struct> = {
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Compatibility fix for 1.6.",
+  changenote: "Armors drop again",
   getEntriesTransformer: ({ filePath }) => {
     const transformers = [
       filePath.endsWith("/DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
