@@ -1,4 +1,4 @@
-import { DifficultyPrototype, Struct } from "s2cfgtojson";
+import { DifficultyPrototype } from "s2cfgtojson";
 import { Meta } from "./prepare-configs.mjs";
 export const DIFFICULTY_FACTOR = 4;
 /**

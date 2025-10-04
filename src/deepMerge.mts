@@ -1,6 +1,6 @@
-export const deepMerge = (target: unknown, source: unknown, preferLeft = true): typeof target & typeof source => {
+export const deepMerge = <T, S>(target: T, source: S, preferLeft = true): T & S => {
   if (typeof target !== "object" || typeof source !== "object") {
-    return source;
+    return source as T & S;
   }
   for (const key of Object.keys(source)) {
     if (key in target) {
@@ -13,5 +13,5 @@ export const deepMerge = (target: unknown, source: unknown, preferLeft = true): 
       }
     }
   }
-  return target;
+  return target as T & S;
 };

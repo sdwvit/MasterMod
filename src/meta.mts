@@ -21,6 +21,7 @@ import { transformDialogPrototypes } from "./transformDialogPrototypes.mjs";
 import { logger } from "./logger.mjs";
 import { transformQuestObjPrototypes } from "./transformQuestObjPrototypes.mjs";
 import { Struct } from "s2cfgtojson";
+import { transformMeshGenerators } from "./transformMeshGenerators.mjs";
 
 export const meta: Meta<Struct> = {
   description: `A collection of various configs aimed to increase game difficulty and make it more interesting.[h3][/h3]
@@ -80,6 +81,7 @@ All changes have been tested against fresh save file. Some of these changes won'
       filePath.endsWith("/UpgradePrototypes.cfg") && transformUpgradePrototypes,
       filePath.endsWith("/WeaponGeneralSetupPrototypes.cfg") && transformWeaponGeneralSetupPrototypes,
       filePath.endsWith("/QuestObjPrototypes.cfg") && transformQuestObjPrototypes,
+      filePath.endsWith("/MeshGeneratorPrototypes.cfg") && transformMeshGenerators,
     ].filter(Boolean) as Meta<Struct>["entriesTransformer"][];
 
     if (transformers.length === 0) {

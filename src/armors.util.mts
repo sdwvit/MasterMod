@@ -438,7 +438,7 @@ export const newArmors = {
     SID: "SkinCloak_Bandit_Armor_MasterMod",
     LocalizationSID: "SkinJacket_Bandit_Armor",
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape_Bandit_Armor.T_IFI_Cape_Bandit_Armor'",
-    MeshGenerator: { "0": { MeshGeneratorPrototypeSID: "BAN_03_a_MeshGenerator", Weight: 1 } },
+    MeshGenerator: new Struct({ "0": new Struct({ MeshGeneratorPrototypeSID: "BAN_03_a_MeshGenerator_Player", Weight: 1 }) }) as any,
     bBlockHead: true,
   } satisfies ArmorDescriptor,
   SkinCloak_Bandit_Armor2_MasterMod_headless: {
@@ -455,7 +455,7 @@ export const newArmors = {
     SID: "SkinCloak_Bandit_Armor2_MasterMod_headless",
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape2_Bandit_Armor.T_IFI_Cape2_Bandit_Armor'",
     LocalizationSID: "SkinJacket_Bandit_Armor",
-    MeshGenerator: { "0": { MeshGeneratorPrototypeSID: "BAN_04_a_MeshGenerator", Weight: 1 } },
+    MeshGenerator: new Struct({ "0": new Struct({ MeshGeneratorPrototypeSID: "BAN_04_a_MeshGenerator_Player", Weight: 1 }) }) as any,
   } satisfies ArmorDescriptor,
 };
 
