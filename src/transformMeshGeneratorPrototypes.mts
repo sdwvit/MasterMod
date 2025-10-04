@@ -1,8 +1,9 @@
 import { GetStructType } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mts";
 import { deepMerge } from "./deepMerge.mjs";
 
-type S = GetStructType<{
+import { EntriesTransformer } from "./metaType.mjs";
+
+type MeshGeneratorPrototype = GetStructType<{
   SID: string;
   Attachments: Record<string, {}>;
   QualityPresetsMeshGenerators: {};
@@ -13,7 +14,7 @@ type S = GetStructType<{
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
  */
-export const transformMeshGenerators: Meta<S>["entriesTransformer"] = (struct, c) => {
+export const transformMeshGeneratorPrototypes: EntriesTransformer<MeshGeneratorPrototype> = (struct, c) => {
   if (struct.SID === "BAN_03_a_MeshGenerator" || struct.SID === "BAN_04_a_MeshGenerator") {
     const fork = struct.fork();
     const newMesh = deepMerge(fork, {
@@ -32,3 +33,6 @@ export const transformMeshGenerators: Meta<S>["entriesTransformer"] = (struct, c
   }
   return null;
 };
+
+transformMeshGeneratorPrototypes._name = "Add player versions of bandit meshes";
+transformMeshGeneratorPrototypes.files = ["/MeshGeneratorPrototypes.cfg"];

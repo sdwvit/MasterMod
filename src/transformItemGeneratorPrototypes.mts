@@ -1,9 +1,10 @@
 import { ItemGeneratorPrototype, Struct } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 
-export const transformItemGeneratorPrototypes: Meta<ItemGeneratorPrototype>["entriesTransformer"] = (struct, context) => {
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
+
+export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorPrototype> = (struct, context) => {
   if (prohibitedIds.some((id) => struct.SID.includes(id))) {
     return null;
   }
@@ -48,7 +49,8 @@ export const transformItemGeneratorPrototypes: Meta<ItemGeneratorPrototype>["ent
 
   return Object.assign(struct.fork(), { ItemGenerator });
 };
-
+transformItemGeneratorPrototypes.files = ["/ItemGeneratorPrototypes.cfg", "/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg"];
+transformItemGeneratorPrototypes._name = "Reduce consumable and ammo spawns";
 const prohibitedIds = ["Arena"];
 
 const ammoPrototypes = new Set(readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/AmmoPrototypes.cfg").map((e) => e.SID));

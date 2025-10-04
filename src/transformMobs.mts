@@ -1,10 +1,11 @@
 import { MutantBase } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mts";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
  */
-export const transformMobs: Meta<MutantBase>["entriesTransformer"] = (struct) => {
+export const transformMobs: EntriesTransformer<MutantBase> = (struct) => {
   if (!struct.Protection) {
     return null;
   }
@@ -16,20 +17,21 @@ export const transformMobs: Meta<MutantBase>["entriesTransformer"] = (struct) =>
   return fork;
 };
 
-export const mobs = [
-  "BlindDog.cfg",
-  "Bloodsucker.cfg",
-  "Boar.cfg",
-  "Burer.cfg",
-  "Cat.cfg",
-  "Chimera.cfg",
-  "Controller.cfg",
-  "Deer.cfg",
-  "Flesh.cfg",
-  "MutantBase.cfg",
-  "Poltergeist.cfg",
-  "PseudoDog.cfg",
-  "Pseudogiant.cfg",
-  "Snork.cfg",
-  "Tushkan.cfg",
+transformMobs.files = [
+  "/BlindDog.cfg",
+  "/Bloodsucker.cfg",
+  "/Boar.cfg",
+  "/Burer.cfg",
+  "/Cat.cfg",
+  "/Chimera.cfg",
+  "/Controller.cfg",
+  "/Deer.cfg",
+  "/Flesh.cfg",
+  "/MutantBase.cfg",
+  "/Poltergeist.cfg",
+  "/PseudoDog.cfg",
+  "/Pseudogiant.cfg",
+  "/Snork.cfg",
+  "/Tushkan.cfg",
 ];
+transformMobs._name = "Set bullet (Strike) protection to 0 for all mobs";

@@ -1,10 +1,11 @@
 import { Struct, TradePrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 /**
  * Don't allow traders to buy weapons and armor.
  */
-export const transformTradePrototypes: Meta<TradePrototype>["entriesTransformer"] = (struct) => {
+export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (struct) => {
   if (!struct.TradeGenerators) {
     return;
   } else {
@@ -41,6 +42,9 @@ export const transformTradePrototypes: Meta<TradePrototype>["entriesTransformer"
     });
   }
 };
+
+transformTradePrototypes._name = "Restrict trader buy limitations";
+transformTradePrototypes.files = ["/TradePrototypes.cfg"];
 
 const bartenders = new Set([
   "Bartender_Zalesie_TradePrototype",

@@ -1,11 +1,12 @@
 import { DialogPrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { REWARD_FORMULA } from "./transformQuestRewardsPrototypes.mjs";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 /**
  * Show the correct money reward for repeatable quests
  */
-export const transformDialogPrototypes: Meta<DialogPrototype>["entriesTransformer"] = (struct) => {
+export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = (struct) => {
   let keepo = false;
 
   const fork = struct.fork();
@@ -29,3 +30,14 @@ export const transformDialogPrototypes: Meta<DialogPrototype>["entriesTransforme
     });
   }
 };
+transformDialogPrototypes.files = [
+  "/DialogPrototypes/RSQ10_Dialog_Harpy_RSQ.cfg",
+  "/DialogPrototypes/RSQ09_Dialog_Spica_RSQ.cfg",
+  "/DialogPrototypes/RSQ08_Dialog_Barmen_RSQ.cfg",
+  "/DialogPrototypes/RSQ07_Dialog_Barmen_RSQ.cfg",
+  "/DialogPrototypes/RSQ06_Dialog_Sidorovich_RSQ.cfg",
+  "/DialogPrototypes/RSQ05_Dialog_Sich_RSQ.cfg",
+  "/DialogPrototypes/RSQ04_Dialog_Drabadan_RSQ.cfg",
+  "/DialogPrototypes/RSQ01_Dialog_Warlock_RSQ.cfg",
+];
+transformDialogPrototypes._name = "Show the correct money reward for repeatable quests";

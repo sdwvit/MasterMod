@@ -1,11 +1,12 @@
-import { Meta } from "./prepare-configs.mjs";
 import { ALifeDirectorScenarioPrototype, Struct } from "s2cfgtojson";
+
+import { EntriesTransformer } from "./metaType.mjs";
 
 const MOD_NAME = process.env.MOD_NAME;
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
  */
-export const transformALifeDirectorScenarioPrototypes: Meta<ALifeDirectorScenarioPrototype>["entriesTransformer"] = (struct, {}) => {
+export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeDirectorScenarioPrototype> = (struct, {}) => {
   const newStruct = struct.fork();
 
   Object.assign(newStruct, {
@@ -61,3 +62,5 @@ export const transformALifeDirectorScenarioPrototypes: Meta<ALifeDirectorScenari
 
   return newStruct;
 };
+transformALifeDirectorScenarioPrototypes._name = "Transform ALifeDirectorScenarioPrototypes";
+transformALifeDirectorScenarioPrototypes.files = ["/ALifeDirectorScenarioPrototypes.cfg"];

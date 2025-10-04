@@ -1,6 +1,7 @@
 import { ItemGeneratorPrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 const spread = [0.5, 1];
 
@@ -11,7 +12,7 @@ export const REWARD_FORMULA = (min: number, max: number) => [
 /**
  * Increase reward for repeatable quests
  */
-export const transformQuestRewardsPrototypes: Meta<ItemGeneratorPrototype>["entriesTransformer"] = (struct: ItemGeneratorPrototype) => {
+export const transformQuestRewardsPrototypes: EntriesTransformer<ItemGeneratorPrototype> = (struct: ItemGeneratorPrototype) => {
   if (struct.MoneyGenerator) {
     return Object.assign(struct.fork(), {
       MoneyGenerator: Object.assign(struct.MoneyGenerator.fork(), {
@@ -21,3 +22,15 @@ export const transformQuestRewardsPrototypes: Meta<ItemGeneratorPrototype>["entr
     });
   }
 };
+transformQuestRewardsPrototypes.files = [
+  "/QuestRewardsPrototypes/RSQ00_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ01_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ04_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ05_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ06_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ07_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ08_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ09_Reward.cfg",
+  "/QuestRewardsPrototypes/RSQ10_Reward.cfg",
+];
+transformQuestRewardsPrototypes._name = "Increase reward for repeatable quests";

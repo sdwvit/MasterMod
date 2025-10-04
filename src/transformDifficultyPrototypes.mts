@@ -1,10 +1,12 @@
 import { DifficultyPrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
+
+import { EntriesTransformer } from "./metaType.mjs";
+import { transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
 export const DIFFICULTY_FACTOR = 4;
 /**
  * Increases cost of everything and damage on Hard difficulty.
  */
-export const transformDifficultyPrototypes: Meta<DifficultyPrototype>["entriesTransformer"] = (struct) => {
+export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototype> = (struct) => {
   if (struct.SID !== "Hard") {
     return null;
   }
@@ -22,3 +24,5 @@ export const transformDifficultyPrototypes: Meta<DifficultyPrototype>["entriesTr
     Mutant_BaseDamage: DIFFICULTY_FACTOR,
   } as DifficultyPrototype);
 };
+transformDifficultyPrototypes.files = ["/DifficultyPrototypes.cfg"];
+transformDifficultyPrototypes._name = "Increase cost and damage on Hard difficulty";

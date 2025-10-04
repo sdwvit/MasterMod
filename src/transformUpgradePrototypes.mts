@@ -1,10 +1,11 @@
 import { UpgradePrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 /**
  * Unlocks blocking upgrades.
  */
-export const transformUpgradePrototypes: Meta<UpgradePrototype>["entriesTransformer"] = (struct) => {
+export const transformUpgradePrototypes: EntriesTransformer<UpgradePrototype> = (struct) => {
   if (struct.SID === "empty") {
     return Object.assign(struct.fork(), {
       RepairCostModifier: `0.02f`,
@@ -16,7 +17,8 @@ export const transformUpgradePrototypes: Meta<UpgradePrototype>["entriesTransfor
     });
   }
 };
-
+transformUpgradePrototypes._name = "Unlock blocking upgrades";
+transformUpgradePrototypes.files = ["/UpgradePrototypes.cfg"];
 const prices = {
   PM: 950,
   UDP: 1425,

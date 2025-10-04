@@ -1,8 +1,9 @@
 import { StashPrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 
-export const transformStashPrototypes: Meta<StashPrototype>["entriesTransformer"] = (struct, { index }) => {
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
+
+export const transformStashPrototypes: EntriesTransformer<StashPrototype> = (struct, { index }) => {
   if (struct.SID === "empty") {
     return;
   }
@@ -48,3 +49,6 @@ export const transformStashPrototypes: Meta<StashPrototype>["entriesTransformer"
 
   return Object.assign(struct.fork(), { ItemGenerators });
 };
+
+transformStashPrototypes._name = "Reduce stash consumables";
+transformStashPrototypes.files = ["/StashPrototypes.cfg"];

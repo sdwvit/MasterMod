@@ -1,29 +1,28 @@
-import { Meta } from "./prepare-configs.mjs";
-import { transformTradePrototypes } from "./transformTradePrototypes.mjs";
-import { transformQuestNodePrototypes } from "./transformQuestNodePrototypes.mjs";
 import { totals as spawnTotals, transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
-import { mobs, transformMobs } from "./transformMobs.mjs";
-import { transformEffectPrototypes } from "./transformEffectPrototypes.mjs";
-import { transformDifficultyPrototypes } from "./transformDifficultyPrototypes.mjs";
+import { logger } from "./logger.mjs";
+import { Struct } from "s2cfgtojson";
+import { MetaType } from "./metaType.mjs";
 import { transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
 import { transformObjPrototypes } from "./transformObjPrototypes.mjs";
+import { transformDifficultyPrototypes } from "./transformDifficultyPrototypes.mjs";
 import { transformAttachPrototypes } from "./transformAttachPrototypes.mjs";
-import { transformStashPrototypes } from "./transformStashPrototypes.mjs";
-import { transformItemGeneratorPrototypes } from "./transformItemGeneratorPrototypes.mjs";
-import { transformALifeDirectorScenarioPrototypes } from "./transformALifeDirectorScenarioPrototypes.mjs";
-import { transformArmorPrototypes } from "./transformArmorPrototypes.mjs";
-import { transformUpgradePrototypes } from "./transformUpgradePrototypes.mjs";
-import { repeatingQuestsDialogPrototypes, repeatingQuestsQuestNodePrototypes, repeatingQuestsQuestRewardsPrototypes } from "./repeatingQuests.mjs";
+import { transformEffectPrototypes } from "./transformEffectPrototypes.mjs";
 import { transformNPCWeaponSettingsPrototypes } from "./transformNPCWeaponSettingsPrototypes.mjs";
+import { transformMobs } from "./transformMobs.mjs";
+import { transformQuestRewardsPrototypes } from "./transformQuestRewardsPrototypes.mts";
+import { transformQuestNodePrototypes } from "./transformQuestNodePrototypes.mts";
+import { transformTradePrototypes } from "./transformTradePrototypes.mts";
+import { transformItemGeneratorPrototypes } from "./transformItemGeneratorPrototypes.mts";
+import { transformStashPrototypes } from "./transformStashPrototypes.mts";
+import { transformALifeDirectorScenarioPrototypes } from "./transformALifeDirectorScenarioPrototypes.mts";
+import { transformArmorPrototypes } from "./transformArmorPrototypes.mts";
+import { transformUpgradePrototypes } from "./transformUpgradePrototypes.mts";
 import { transformWeaponGeneralSetupPrototypes } from "./transformWeaponGeneralSetupPrototypes.mts";
-import { transformQuestRewardsPrototypes } from "./transformQuestRewardsPrototypes.mjs";
-import { transformDialogPrototypes } from "./transformDialogPrototypes.mjs";
-import { logger } from "./logger.mjs";
-import { transformQuestObjPrototypes } from "./transformQuestObjPrototypes.mjs";
-import { Struct } from "s2cfgtojson";
-import { transformMeshGenerators } from "./transformMeshGenerators.mjs";
+import { transformQuestObjPrototypes } from "./transformQuestObjPrototypes.mts";
+import { transformMeshGeneratorPrototypes } from "./transformMeshGeneratorPrototypes.mts";
+import { transformDialogPrototypes } from "./transformDialogPrototypes.mts";
 
-export const meta: Meta<Struct> = {
+export const meta: MetaType<Struct> = {
   description: `A collection of various configs aimed to increase game difficulty and make it more interesting.[h3][/h3]
 [hr][/hr]
 [h3]All changes to the base game:[/h3]
@@ -59,38 +58,28 @@ This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]g
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
   changenote: "Armors drop again",
-  getEntriesTransformer: ({ filePath }) => {
-    const transformers = [
-      filePath.endsWith("/DynamicItemGenerator.cfg") && transformDynamicItemGenerator,
-      (filePath.endsWith("/GameData/ObjPrototypes.cfg") || filePath.endsWith("/ObjPrototypes/GeneralNPCObjPrototypes.cfg")) && transformObjPrototypes,
-      filePath.endsWith("/DifficultyPrototypes.cfg") && transformDifficultyPrototypes,
-      filePath.endsWith("/AttachPrototypes.cfg") && transformAttachPrototypes,
-      filePath.endsWith("/EffectPrototypes.cfg") && transformEffectPrototypes,
-      filePath.endsWith("/NPCWeaponSettingsPrototypes.cfg") && transformNPCWeaponSettingsPrototypes,
-      mobs.some((m) => filePath.endsWith(`/${m}`)) && transformMobs,
-      false && filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/") && transformSpawnActorPrototypes, // skip expensive generation
-      repeatingQuestsQuestNodePrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestNodePrototypes,
-      repeatingQuestsQuestRewardsPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformQuestRewardsPrototypes,
-      repeatingQuestsDialogPrototypes.some((q) => filePath.endsWith(`/${q}`)) && transformDialogPrototypes,
-      filePath.endsWith("/TradePrototypes.cfg") && transformTradePrototypes,
-      filePath.endsWith("/StashPrototypes.cfg") && transformStashPrototypes,
-      (filePath.endsWith("/ItemGeneratorPrototypes.cfg") || filePath.endsWith("/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg")) &&
-        transformItemGeneratorPrototypes,
-      filePath.endsWith("/ALifeDirectorScenarioPrototypes.cfg") && transformALifeDirectorScenarioPrototypes,
-      filePath.endsWith("/ArmorPrototypes.cfg") && transformArmorPrototypes,
-      filePath.endsWith("/UpgradePrototypes.cfg") && transformUpgradePrototypes,
-      filePath.endsWith("/WeaponGeneralSetupPrototypes.cfg") && transformWeaponGeneralSetupPrototypes,
-      filePath.endsWith("/QuestObjPrototypes.cfg") && transformQuestObjPrototypes,
-      filePath.endsWith("/MeshGeneratorPrototypes.cfg") && transformMeshGenerators,
-    ].filter(Boolean) as Meta<Struct>["entriesTransformer"][];
-
-    if (transformers.length === 0) {
-      return null;
-    }
-    return (entries, context) => {
-      return transformers.reduce((acc, f) => f(acc, context) as typeof entries, entries);
-    };
-  },
+  structTransformers: [
+    transformDynamicItemGenerator,
+    transformObjPrototypes,
+    transformDifficultyPrototypes,
+    transformAttachPrototypes,
+    transformEffectPrototypes,
+    transformNPCWeaponSettingsPrototypes,
+    transformMobs,
+    transformSpawnActorPrototypes,
+    transformQuestNodePrototypes,
+    transformQuestRewardsPrototypes,
+    transformDialogPrototypes,
+    transformTradePrototypes,
+    transformStashPrototypes,
+    transformItemGeneratorPrototypes,
+    transformALifeDirectorScenarioPrototypes,
+    transformArmorPrototypes,
+    transformUpgradePrototypes,
+    transformWeaponGeneralSetupPrototypes,
+    transformQuestObjPrototypes,
+    transformMeshGeneratorPrototypes,
+  ],
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);
   },

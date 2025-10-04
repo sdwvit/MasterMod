@@ -1,7 +1,8 @@
 import { ERank, ESpawnType, GetStructType, Struct } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { logger } from "./logger.mts";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 export const totals = {
   DestructibleObject: 0,
   Gear: 0,
@@ -12,10 +13,7 @@ export const totals = {
 /**
  * Removes preplaced items from the map. Like medkits, destructible items contents, and gear.
  */
-export const transformSpawnActorPrototypes: Meta<GearEntries>["entriesTransformer"] = (struct, { filePath }) => {
-  if (!filePath.includes("GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/")) {
-    return null;
-  }
+export const transformSpawnActorPrototypes: EntriesTransformer<GearEntries> = (struct, { filePath }) => {
   let newEntries: GearEntries | null = null;
   switch (struct.SpawnType) {
     case "ESpawnType::DestructibleObject": {
@@ -69,6 +67,9 @@ export const transformSpawnActorPrototypes: Meta<GearEntries>["entriesTransforme
 
   return newEntries;
 };
+transformSpawnActorPrototypes.files = ["GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/"];
+transformSpawnActorPrototypes.contains = true;
+transformSpawnActorPrototypes._name = "Remove preplaced items from the map";
 
 export type GearEntries = GetStructType<{
   SpawnType: ESpawnType;

@@ -1,10 +1,11 @@
 import { ArmorPrototype, Struct } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newArmors } from "./armors.util.mjs";
 import path from "node:path";
 import { logger } from "./logger.mjs";
 import dotEnv from "dotenv";
 import { deepMerge } from "./deepMerge.mjs";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 const get = (obj: any, path: `${string}.${string}` | string) => {
   return path.split(".").reduce((o, i) => (o || {})[i], obj);
@@ -16,7 +17,7 @@ const oncePerFile = new Set<string>();
 /**
  * Adds armor that doesn't block head, but also removes any psy protection. Allows player to use helmets.
  */
-export const transformArmorPrototypes: Meta<ArmorPrototype>["entriesTransformer"] = (struct, context) => {
+export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = (struct, context) => {
   if (bannedids.has(struct.SID)) {
     return null;
   }
@@ -58,6 +59,8 @@ export const transformArmorPrototypes: Meta<ArmorPrototype>["entriesTransformer"
 
   return null;
 };
+transformArmorPrototypes.files = ["/ArmorPrototypes.cfg"];
+transformArmorPrototypes._name = "transformArmorPrototypes";
 
 const bannedids = new Set([
   "NPC_Richter_Armor",

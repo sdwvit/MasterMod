@@ -1,11 +1,12 @@
 import { WeaponGeneralSetupPrototype } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
-export const transformWeaponGeneralSetupPrototypes: Meta<WeaponGeneralSetupPrototype>["entriesTransformer"] = (struct, context) => {
+export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGeneralSetupPrototype> = (struct, context) => {
   if (
     !struct.PreinstalledAttachmentsItemPrototypeSIDs?.filter((kv): kv is any => {
       const [_k, e] = kv;
@@ -62,6 +63,8 @@ export const transformWeaponGeneralSetupPrototypes: Meta<WeaponGeneralSetupProto
 
   return fork;
 };
+transformWeaponGeneralSetupPrototypes.files = ["/WeaponGeneralSetupPrototypes.cfg"];
+transformWeaponGeneralSetupPrototypes._name = "Make unique weapons moddable";
 
 const grabAttachments = (
   struct: WeaponGeneralSetupPrototype,

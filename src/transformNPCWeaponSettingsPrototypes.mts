@@ -1,10 +1,11 @@
-import { Meta } from "./prepare-configs.mjs";
 import { NPCWeaponSettingsPrototype } from "s2cfgtojson";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 /**
  * Transforms NPC Weapon Settings Prototypes to set default BaseDamage for Guard NPCs.
  */
-export const transformNPCWeaponSettingsPrototypes: Meta<NPCWeaponSettingsPrototype>["entriesTransformer"] = (struct, { structsById }) => {
+export const transformNPCWeaponSettingsPrototypes: EntriesTransformer<NPCWeaponSettingsPrototype> = (struct, { structsById }) => {
   if (struct.SID.includes("Guard")) {
     let ref = structsById[struct.__internal__.refkey];
 
@@ -18,3 +19,5 @@ export const transformNPCWeaponSettingsPrototypes: Meta<NPCWeaponSettingsPrototy
     return Object.assign(struct.fork(), { BaseDamage: 9, ArmorPiercing: 3 });
   }
 };
+transformNPCWeaponSettingsPrototypes.files = ["/NPCWeaponSettingsPrototypes.cfg"];
+transformNPCWeaponSettingsPrototypes._name = "Set default BaseDamage for Guard NPCs";

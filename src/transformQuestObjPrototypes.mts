@@ -1,11 +1,14 @@
-import { Meta } from "./prepare-configs.mjs";
 import { ObjPrototype } from "s2cfgtojson";
 
-export const transformQuestObjPrototypes: Meta<ObjPrototype>["entriesTransformer"] = (struct) => {
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
+
+export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = (struct) => {
   if (techniciansAndTheirTradePrototypes.has(struct.SID)) {
     return Object.assign(struct.fork(), { TradePrototypeSID: techniciansAndTheirTradePrototypes.get(struct.SID) });
   }
 };
+transformQuestObjPrototypes.files = ["/QuestObjPrototypes.cfg"];
+transformQuestObjPrototypes._name = "Make all technicians sell better attachments";
 
 const techniciansAndTheirTradePrototypes = new Map([
   ["RostokTechnician", "Technician_ChemicalPlant_TradePrototype"],

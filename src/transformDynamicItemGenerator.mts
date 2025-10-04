@@ -1,9 +1,10 @@
 import { ArmorPrototype, createDynamicClassInstance, DynamicItemGenerator, ERank, GetStructType, Struct } from "s2cfgtojson";
-import { Meta } from "./prepare-configs.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFaction, newArmors } from "./armors.util.mjs";
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
+
+import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
 const generalTradersTradeItemGenerators = new Set([
   "AsylumTrader_TradeItemGenerator",
@@ -251,7 +252,7 @@ const transformCombat = (struct: DynamicItemGenerator) => {
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
  */
-export const transformDynamicItemGenerator: Meta<DynamicItemGenerator>["entriesTransformer"] = (struct) => {
+export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = (struct) => {
   /**
    * Does not allow traders to sell gear.
    */
@@ -260,7 +261,8 @@ export const transformDynamicItemGenerator: Meta<DynamicItemGenerator>["entriesT
   }
   return transformCombat(struct);
 };
-
+transformDynamicItemGenerator.files = ["/DynamicItemGenerator.cfg"];
+transformDynamicItemGenerator._name = "Transform DynamicItemGenerator prototypes";
 type PossibleItem = {
   ItemGeneratorPrototypeSID?: string;
   ItemPrototypeSID: string;
