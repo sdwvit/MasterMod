@@ -10,6 +10,7 @@ export type MetaContext<T> = {
 };
 export type EntriesTransformer<T> = ((entries: T, context: MetaContext<T>) => Struct | null) & {
   contains?: true;
+  contents?: string[];
   _name: string;
   files: string[];
 };

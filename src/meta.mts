@@ -22,7 +22,30 @@ import { transformQuestObjPrototypes } from "./transformQuestObjPrototypes.mts";
 import { transformMeshGeneratorPrototypes } from "./transformMeshGeneratorPrototypes.mts";
 import { transformDialogPrototypes } from "./transformDialogPrototypes.mts";
 
-export const meta: MetaType<Struct> = {
+const structTransformers = [
+  // transformDynamicItemGenerator,
+  // transformObjPrototypes,
+  // transformDifficultyPrototypes,
+  // transformAttachPrototypes,
+  // transformEffectPrototypes,
+  // transformNPCWeaponSettingsPrototypes,
+  // transformMobs,
+  // transformSpawnActorPrototypes,
+  // transformQuestNodePrototypes,
+  // transformQuestRewardsPrototypes,
+  // transformDialogPrototypes,
+  // transformTradePrototypes,
+  // transformStashPrototypes,
+  // transformItemGeneratorPrototypes,
+  // transformALifeDirectorScenarioPrototypes,
+  // transformArmorPrototypes,
+  // transformUpgradePrototypes,
+  // transformWeaponGeneralSetupPrototypes,
+  // transformQuestObjPrototypes,
+  // transformMeshGeneratorPrototypes,
+] as const;
+
+export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> = {
   description: `A collection of various configs aimed to increase game difficulty and make it more interesting.[h3][/h3]
 [hr][/hr]
 [h3]All changes to the base game:[/h3]
@@ -58,28 +81,7 @@ This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]g
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
   changenote: "Armors drop again",
-  structTransformers: [
-    transformDynamicItemGenerator,
-    transformObjPrototypes,
-    transformDifficultyPrototypes,
-    transformAttachPrototypes,
-    transformEffectPrototypes,
-    transformNPCWeaponSettingsPrototypes,
-    transformMobs,
-    // transformSpawnActorPrototypes,
-    transformQuestNodePrototypes,
-    transformQuestRewardsPrototypes,
-    transformDialogPrototypes,
-    transformTradePrototypes,
-    transformStashPrototypes,
-    transformItemGeneratorPrototypes,
-    transformALifeDirectorScenarioPrototypes,
-    transformArmorPrototypes,
-    transformUpgradePrototypes,
-    transformWeaponGeneralSetupPrototypes,
-    transformQuestObjPrototypes,
-    transformMeshGeneratorPrototypes,
-  ],
+  structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);
   },

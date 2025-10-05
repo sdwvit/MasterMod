@@ -2,13 +2,25 @@ import { ERank, ESpawnType, GetStructType, Struct } from "s2cfgtojson";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { logger } from "./logger.mts";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 export const totals = {
   DestructibleObject: 0,
   Gear: 0,
   Medkit: 0,
   ItemContainer: 0,
 };
+const preplacedGear = ["Gun", "Armor", "Helmet"];
+const preplacedDestructibleItems = [
+  "D_WoodenBox_01",
+  "D_WoodenBox_02",
+  "D_WoodenBox_03",
+  "D_WoodenBox_04",
+  "D_MetallCrate_01",
+  "D_WoodenAmmoCrate_01",
+  "D_WoodenDSPCrate_01",
+  "D_WoodenDSPCrate_02",
+  "D_WoodenDSPCrate_03",
+];
 
 /**
  * Removes preplaced items from the map. Like medkits, destructible items contents, and gear.
@@ -69,6 +81,7 @@ export const transformSpawnActorPrototypes: EntriesTransformer<GearEntries> = (s
 };
 transformSpawnActorPrototypes.files = ["GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/"];
 transformSpawnActorPrototypes.contains = true;
+transformSpawnActorPrototypes.contents = [...preplacedDestructibleItems, "Medkit", ...preplacedGear];
 transformSpawnActorPrototypes._name = "Remove preplaced items from the map";
 
 export type GearEntries = GetStructType<{
@@ -84,18 +97,6 @@ export type GearEntries = GetStructType<{
   PackOfItemsPrototypeSID: string;
 }>;
 
-const preplacedGear = ["Gun", "Armor", "Helmet"];
-const preplacedDestructibleItems = [
-  "D_WoodenBox_01",
-  "D_WoodenBox_02",
-  "D_WoodenBox_03",
-  "D_WoodenBox_04",
-  "D_MetallCrate_01",
-  "D_WoodenAmmoCrate_01",
-  "D_WoodenDSPCrate_01",
-  "D_WoodenDSPCrate_02",
-  "D_WoodenDSPCrate_03",
-];
 const attachmentsOrQuestItems = new Set(
   [].concat(
     readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/AttachPrototypes.cfg").map((e) => e?.SID),

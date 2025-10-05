@@ -17,10 +17,14 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
     const pathToSave = path.parse(filePath.slice(baseCfgDir.length + 1));
     const rawContent = await readFile(filePath, "utf8");
 
+    if (transformer.contents?.length && !transformer.contents.some((c) => rawContent.includes(c))) {
+      return [];
+    }
+
     if (!(filePath.includes("SpawnActorPrototypes/WorldMap_WP/") && !filePath.endsWith("0.cfg"))) {
       logger.log(`Processing file: ${filePath}`);
     }
-    if (!L1Cache[filePath].length) {
+    if (!L1Cache[filePath]?.length) {
       L1CacheState.needsUpdate = true;
       L1Cache[filePath] = Struct.fromString(rawContent) as T[];
     }
