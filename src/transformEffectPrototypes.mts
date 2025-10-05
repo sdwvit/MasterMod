@@ -13,11 +13,9 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = (s
       ApplyExtraEffectPrototypeSIDs: struct.ApplyExtraEffectPrototypeSIDs.map(() => "empty"),
     });
   }
-  if (!consumables.has(struct.SID)) {
-    return null;
+  if (consumables.has(struct.SID)) {
+    return Object.assign(struct.fork(), { Duration: struct.Duration * 10 });
   }
-
-  return Object.assign(struct.fork(), { Duration: struct.Duration * 10 });
 };
 transformEffectPrototypes.files = ["/EffectPrototypes.cfg"];
 transformEffectPrototypes._name = "Make some consumables last longer";
