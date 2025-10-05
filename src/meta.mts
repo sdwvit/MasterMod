@@ -54,6 +54,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [Challenge] Armors don't take head slot (except for SEVA's), but also don't protect from PSY damage, so you need to use helmets.
  [*] [QoL] Prevents Player and NPCs from being knocked down.
  [*] [QoL] Removes Fall damage for Player and NPCs.
+ [*] [QoL] Water no longer slows you down or drains your stamina.
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
  [*] [QoL/Balance] There is now no cooldown between repeatable quests.
@@ -80,7 +81,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Armors drop again",
+  changenote: "Water no longer slows you down or drains your stamina",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);
