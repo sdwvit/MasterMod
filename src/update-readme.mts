@@ -1,11 +1,9 @@
 import path from "node:path";
-import dotEnv from "dotenv";
 import * as fs from "node:fs";
 import { logger } from "./logger.mjs";
+import { projectRoot } from "./base-paths.mjs";
 
-dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
-const root = path.join(import.meta.dirname, "..");
-const readmePath = path.join(root, "readme.md");
+const readmePath = path.join(projectRoot, "readme.md");
 
 const modifiedFiles = new Set<string>();
 const findModifiedFiles = (p: string, parent: string) => {
@@ -25,7 +23,7 @@ const findModifiedFiles = (p: string, parent: string) => {
     }
   }
 };
-findModifiedFiles(path.join(root, "raw"), root);
+findModifiedFiles(path.join(projectRoot, "raw"), projectRoot);
 const modifiedFilesByFolder = [...modifiedFiles].reduce(
   (acc, file) => {
     const [folder, name] = file.split("/");

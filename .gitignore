@@ -9,5 +9,6 @@ steamworkshop/
 /src/workshopitem.vdf
 /stats/
 GameLite
-/src/.cache.json
-/src/.transformer.cache.json
+/src/.l1.cache.json
+/src/.l2.cache.json
+/src/.l3.cache.json

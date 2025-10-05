@@ -1,8 +1,8 @@
 import { ALifeDirectorScenarioPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
+import { modName } from "./base-paths.mjs";
 
-const MOD_NAME = process.env.MOD_NAME;
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
  */
@@ -14,9 +14,12 @@ export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeD
       const restrictionsRef = e.Restrictions;
       restrictionsRef.addNode(
         new Struct({ AgentType: "EAgentType::Pseudogiant", MaxCount: 1.5, __internal__: { rawName: "_" } }),
-        `${MOD_NAME}_Pseudogiant`,
+        `${modName}_Pseudogiant`,
       );
-      restrictionsRef.forEach(([_k, e]) => (e.MaxCount *= 2));
+      restrictionsRef.forEach(([_k, e]) => {
+        e.MaxCount ||= 1;
+        e.MaxCount *= 2;
+      });
       return e;
     }),
     RestrictedObjPrototypeSIDs: struct.RestrictedObjPrototypeSIDs.map(([k, v]) => {

@@ -66,7 +66,7 @@ All changes have been tested against fresh save file. Some of these changes won'
     transformEffectPrototypes,
     transformNPCWeaponSettingsPrototypes,
     transformMobs,
-    transformSpawnActorPrototypes,
+    // transformSpawnActorPrototypes,
     transformQuestNodePrototypes,
     transformQuestRewardsPrototypes,
     transformDialogPrototypes,

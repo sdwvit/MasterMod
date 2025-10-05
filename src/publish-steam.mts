@@ -10,6 +10,7 @@ const MODS_PATH = path.join(import.meta.dirname, "..");
 const STALKER_STEAM_ID = "1643320";
 import { meta } from "./meta.mjs";
 import { spawnSync } from "child_process";
+import { modName } from "./base-paths.mjs";
 
 const sanitize = (str: string) => str.replace(/\n/g, "").replace(/"/g, '\\"');
 
@@ -21,7 +22,7 @@ const cmd = () => {
   vdfData.workshopitem.publishedfileid ||= "0"; // This will be set by SteamCMD
   vdfData.workshopitem.contentfolder = path.join(MODS_PATH, "steamworkshop");
   vdfData.workshopitem.previewfile = path.join(MODS_PATH, "512.png");
-  vdfData.workshopitem.title = sanitize(`${process.env.MOD_NAME.replace(/([A-Z])/g, " $1").trim()} by sdwvit`);
+  vdfData.workshopitem.title = sanitize(`${modName.replace(/([A-Z])/g, " $1").trim()} by sdwvit`);
   vdfData.workshopitem.description = sanitize(meta.description);
   vdfData.workshopitem.changenote = sanitize(meta.changenote);
 

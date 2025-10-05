@@ -1,17 +1,13 @@
 import { ArmorPrototype, Struct } from "s2cfgtojson";
 import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newArmors } from "./armors.util.mjs";
-import path from "node:path";
-import { logger } from "./logger.mjs";
-import dotEnv from "dotenv";
 import { deepMerge } from "./deepMerge.mjs";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 
 const get = (obj: any, path: `${string}.${string}` | string) => {
   return path.split(".").reduce((o, i) => (o || {})[i], obj);
 };
 
-dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
 const oncePerFile = new Set<string>();
 
 /**
@@ -47,7 +43,6 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = (str
           const keyToDelete = Object.keys(e).find((k) => e[k] === v) || v;
           delete e[keyToDelete];
         });
-        delete overrides.__internal__._extras;
       }
       deepMerge(newArmor, overrides);
       if (!newArmors[newSID]) {

@@ -1,18 +1,14 @@
 import path from "node:path";
 import childProcess from "node:child_process";
 
-import dotEnv from "dotenv";
 import * as fs from "node:fs";
 import { logger } from "./logger.mjs";
+import { projectRoot, modName, sdkStagedFolder } from "./base-paths.mjs";
 
-dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
-const MOD_PATH = path.join(import.meta.dirname, "..");
-const STAGED_PATH = path.join(process.env.SDK_PATH, "Stalker2", "SavedMods", "Staged");
-
-const cmd = (name: string) => {
-  const folderStructure = path.join("Stalker2", "Mods", name, "Content", "Paks", "Windows");
-  const sourcePath = path.join(STAGED_PATH, name, "Windows", folderStructure);
-  const destinationPath = path.join(MOD_PATH, "steamworkshop", folderStructure);
+const cmd = () => {
+  const folderStructure = path.join("Stalker2", "Mods", modName, "Content", "Paks", "Windows");
+  const sourcePath = path.join(sdkStagedFolder, modName, "Windows", folderStructure);
+  const destinationPath = path.join(projectRoot, "steamworkshop", folderStructure);
   logger.log(`Pulling staged mod from ${sourcePath}...`);
   if (fs.readdirSync(sourcePath).length === 0) {
     console.error(`No files found in source path: ${sourcePath}`);
@@ -21,8 +17,8 @@ const cmd = (name: string) => {
   return ["mkdir", "-p", destinationPath, "&&", "cp", path.join(sourcePath, "*"), destinationPath].join(" ");
 };
 
-childProcess.execSync(cmd(process.env.MOD_NAME), {
+childProcess.execSync(cmd(), {
   stdio: "inherit",
-  cwd: MOD_PATH,
+  cwd: projectRoot,
   shell: "/usr/bin/bash",
 });
