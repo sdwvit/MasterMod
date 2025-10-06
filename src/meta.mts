@@ -23,14 +23,14 @@ import { transformMeshGeneratorPrototypes } from "./transformMeshGeneratorProtot
 import { transformDialogPrototypes } from "./transformDialogPrototypes.mts";
 
 const structTransformers = [
-  transformDynamicItemGenerator,
+  //transformDynamicItemGenerator,
   transformObjPrototypes,
   transformDifficultyPrototypes,
   transformAttachPrototypes,
   transformEffectPrototypes,
   transformNPCWeaponSettingsPrototypes,
   transformMobs,
-  transformSpawnActorPrototypes,
+  //transformSpawnActorPrototypes,
   transformQuestNodePrototypes,
   transformQuestRewardsPrototypes,
   transformDialogPrototypes,

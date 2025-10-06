@@ -2,6 +2,7 @@ import { DialogPrototype } from "s2cfgtojson";
 import { REWARD_FORMULA } from "./transformQuestRewardsPrototypes.mjs";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { logger } from "./logger.mjs";
 
 /**
  * Show the correct money reward for repeatable quests
@@ -23,12 +24,11 @@ export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = (s
     }
   };
 
-  if (keepo) {
-    return Object.assign(fork, {
-      DialogActions: struct.DialogActions.map(mapper),
-      DialogAnswerActions: struct.DialogAnswerActions.map(mapper),
-    });
-  }
+  const overrides = {
+    DialogActions: struct.DialogActions?.map?.(mapper),
+    DialogAnswerActions: struct.DialogAnswerActions?.map?.(mapper),
+  };
+  if (keepo) return Object.assign(fork, overrides);
 };
 transformDialogPrototypes.files = [
   "/DialogPrototypes/RSQ10_Dialog_Harpy_RSQ.cfg",
