@@ -1,8 +1,8 @@
 import { DialogPrototype } from "s2cfgtojson";
-import { REWARD_FORMULA } from "./transformQuestRewardsPrototypes.mjs";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
 import { logger } from "./logger.mjs";
+import { DialogRewardMap, rewardFormula } from "./rewardFormula.mjs";
 
 /**
  * Show the correct money reward for repeatable quests
@@ -14,11 +14,11 @@ export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = (s
 
   const mapper = ([_k, v]) => {
     if (v.DialogAction === "EDialogAction::ShowMoney" && typeof v.DialogActionParam === "object") {
-      const minmax = v.DialogActionParam.VariableValue as number;
+      const minmax = DialogRewardMap[struct.SID] as number;
       keepo = true;
       return Object.assign(v.fork(), {
         DialogActionParam: Object.assign(v.DialogActionParam.fork(), {
-          VariableValue: REWARD_FORMULA(minmax, minmax).reduce((a, b) => a + b, 0) / 2,
+          VariableValue: rewardFormula(minmax, minmax).reduce((a, b) => a + b, 0) / 2,
         }),
       });
     }

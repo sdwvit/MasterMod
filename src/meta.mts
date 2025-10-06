@@ -1,6 +1,5 @@
 import { totals as spawnTotals, transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
 import { logger } from "./logger.mjs";
-import { Struct } from "s2cfgtojson";
 import { MetaType } from "./metaType.mjs";
 import { transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
 import { transformObjPrototypes } from "./transformObjPrototypes.mjs";
@@ -23,14 +22,14 @@ import { transformMeshGeneratorPrototypes } from "./transformMeshGeneratorProtot
 import { transformDialogPrototypes } from "./transformDialogPrototypes.mts";
 
 const structTransformers = [
-  //transformDynamicItemGenerator,
+  transformDynamicItemGenerator,
   transformObjPrototypes,
   transformDifficultyPrototypes,
   transformAttachPrototypes,
   transformEffectPrototypes,
   transformNPCWeaponSettingsPrototypes,
   transformMobs,
-  //transformSpawnActorPrototypes,
+  transformSpawnActorPrototypes,
   transformQuestNodePrototypes,
   transformQuestRewardsPrototypes,
   transformDialogPrototypes,
