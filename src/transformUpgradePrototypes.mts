@@ -11,10 +11,19 @@ export const transformUpgradePrototypes: EntriesTransformer<UpgradePrototype> = 
       RepairCostModifier: `0.02f`,
     });
   }
-  if (struct.BlockingUpgradePrototypeSIDs) {
-    return Object.assign(struct.fork(), {
+  const fork = struct.fork();
+  if (struct.BlockingUpgradePrototypeSIDs?.entries().length) {
+    Object.assign(fork, {
       BlockingUpgradePrototypeSIDs: struct.BlockingUpgradePrototypeSIDs.map(([_k, e]) => "empty"),
     });
+  }
+  if (struct.InterchangeableUpgradePrototypeSIDs?.entries().length /*&& !struct.AttachPrototypeSIDs?.entries().length*/) {
+    Object.assign(fork, {
+      InterchangeableUpgradePrototypeSIDs: struct.InterchangeableUpgradePrototypeSIDs.map(([_k, e]) => "empty"),
+    });
+  }
+  if (fork.entries().length) {
+    return fork;
   }
 };
 transformUpgradePrototypes._name = "Unlock blocking upgrades";

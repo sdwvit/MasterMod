@@ -1,10 +1,15 @@
 import { ObjPrototype } from "s2cfgtojson";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { logger } from "./logger.mjs";
 
 export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = (struct) => {
   if (techniciansAndTheirTradePrototypes.has(struct.SID)) {
     return Object.assign(struct.fork(), { TradePrototypeSID: techniciansAndTheirTradePrototypes.get(struct.SID) });
+  }
+  if (guidesAndTheirTradePrototypes[struct.SID]) {
+    // todo doesn't work
+    return Object.assign(struct.fork(), { TradePrototypeSID: guidesAndTheirTradePrototypes[struct.SID] });
   }
 };
 transformQuestObjPrototypes.files = ["/QuestObjPrototypes.cfg"];
@@ -41,6 +46,20 @@ const techniciansAndTheirTradePrototypes = new Map([
   ["CorpusGarpia", "PowerPlugTechnician_TradeItemGenerator"],
   ["CorpusMedlak", "PowerPlugTechnician_TradeItemGenerator"],
 ]);
+
+const guidesAndTheirTradePrototypes = {
+  ZalesieGuider: "Guide_TradePrototype",
+  ShevchenkoGuider: "Guide_TradePrototype",
+  HimzavodGuider: "Guide_TradePrototype",
+  MalachitGuider: "Guide_TradePrototype",
+  RostokGuider: "Guide_TradePrototype",
+  ConcretePlantGuider: "Guide_TradePrototype",
+  MagnetMemoryPlantGuider: "Guide_TradePrototype",
+  KorogodCampGuider: "Guide_TradePrototype",
+  HoghouseGuider: "Guide_TradePrototype",
+  RookieVillageGuider: "Guide_TradePrototype",
+  LesnikBaseGuider: "Guide_TradePrototype",
+};
 
 /**
  * Technician_ChemicalPlant_TradePrototype // sells T2-T3 attachments

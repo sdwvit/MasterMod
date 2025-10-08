@@ -1,50 +1,167 @@
 import { Struct, TradePrototype } from "s2cfgtojson";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { semiRandom } from "./semi-random.mjs";
+import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
+import { precision } from "./precision.mjs";
 
+const oncePerFile = new Set<string>();
 /**
  * Don't allow traders to buy weapons and armor.
  */
-export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (struct) => {
+export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (struct, context) => {
+  if (!oncePerFile.has(context.filePath)) {
+    oncePerFile.add(context.filePath);
+    context.extraStructs.push(
+      new Struct({
+        __internal__: {
+          rawName: "Guide_TradePrototype",
+          refkey: "[0]",
+          isRoot: true,
+        },
+        SID: "Guide_TradePrototype",
+        TradeTimeLength: 24,
+        TradeGenerators: {
+          __internal__: { isArray: true },
+          0: {
+            ConditionSID: "ConstTrue",
+            ItemGeneratorPrototypeSID: "empty",
+            BuyModifier: 10,
+            SellModifier: 10,
+            BuyLimitations: {
+              __internal__: { isArray: true },
+              0: "EItemType::Weapon",
+              1: "EItemType::Armor",
+              2: "EItemType::Artifact",
+              3: "EItemType::Attach",
+              4: "EItemType::Consumable",
+              5: "EItemType::Detector",
+              6: "EItemType::Grenade",
+              7: "EItemType::MutantLoot",
+            },
+          },
+        },
+        BuyDiscounts: {
+          __internal__: { isArray: true },
+          0: {
+            ConditionSID: "PlayerRankExperienced",
+            Modifier: 1.15,
+          },
+          1: {
+            ConditionSID: "PlayerRankVeteran",
+            Modifier: 1.2,
+          },
+          2: {
+            ConditionSID: "PlayerRankMaster",
+            Modifier: 1.25,
+          },
+        },
+        bInfiniteMoney: true,
+        RefreshConditionSID: "TradeRegenHoursPassed8",
+      }) as TradePrototype,
+    );
+  }
+
   if (!struct.TradeGenerators) {
     return;
-  } else {
-    return Object.assign(struct.fork(), {
-      TradeGenerators: struct.TradeGenerators.map(([_k, tg]) => {
-        const limitations = ["EItemType::Weapon", "EItemType::Armor", "EItemType::Ammo", "EItemType::MutantLoot"];
-
-        if (bartenders.has(struct.SID)) {
-          limitations.push(...["EItemType::Artifact", "EItemType::Attach", "EItemType::Detector", "EItemType::Grenade", "EItemType::MutantLoot"]);
-        }
-
-        if (medics.has(struct.SID)) {
-          limitations.push(...["EItemType::Artifact", "EItemType::Attach", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other"]);
-        }
-
-        if (generalTraders.has(struct.SID)) {
-          limitations.push(...["EItemType::Consumable", "EItemType::Detector", "EItemType::Grenade", "EItemType::Other", "EItemType::Attach"]);
-        }
-
-        if (technicianTradePrototypeSIDs.has(struct.SID)) {
-          limitations.push(...["EItemType::Artifact", "EItemType::Consumable", "EItemType::Other"]);
-        }
-        const fork = tg.fork();
-        if (!tg.BuyLimitations) {
-          tg.BuyLimitations = new Struct({ __internal__: { isArray: true } }) as any;
-        }
-        fork.BuyLimitations = Object.assign(tg.BuyLimitations.fork(), {
-          0: "EItemType::Weapon",
-          1: "EItemType::Armor",
-        });
-        limitations.forEach((l) => fork.BuyLimitations.addNode(l));
-        return fork;
-      }),
-    });
   }
+  const fork = struct.fork();
+  if (GeneralNPCTradePrototypesMoneyMult.has(struct.SID)) {
+    fork.Money = precision(
+      GeneralNPCTradePrototypesMoneyMult.get(struct.SID) * DIFFICULTY_FACTOR * (struct.Money ?? 1000) * (semiRandom(context.index) + 1),
+      1,
+    );
+  }
+  const TradeGenerators = struct.TradeGenerators.map(([_k, tg]) => {
+    const fork = tg.fork();
+    fork.BuyLimitations = tg.BuyLimitations?.fork?.() || (new Struct({ __internal__: { isArray: true } }) as any);
+
+    const limitations = ["EItemType::MutantLoot"];
+
+    if (bartenders.has(struct.SID)) {
+      limitations.push(
+        ...[
+          "EItemType::Armor",
+          "EItemType::Artifact",
+          "EItemType::Weapon",
+          "EItemType::Ammo",
+          "EItemType::Attach",
+          "EItemType::Detector",
+          "EItemType::Grenade",
+          "EItemType::MutantLoot",
+        ],
+      );
+    }
+
+    if (medics.has(struct.SID)) {
+      fork.BuyModifier = 0.7;
+      limitations.push(
+        ...[
+          "EItemType::Armor",
+          "EItemType::Artifact",
+          "EItemType::Weapon",
+          "EItemType::Ammo",
+          "EItemType::Attach",
+          "EItemType::Detector",
+          "EItemType::Grenade",
+          "EItemType::Other",
+        ],
+      );
+    }
+
+    if (generalTraders.has(struct.SID)) {
+      limitations.push(
+        ...[
+          "EItemType::Armor",
+          "EItemType::Consumable",
+          "EItemType::Weapon",
+          "EItemType::Ammo",
+          "EItemType::Detector",
+          "EItemType::Grenade",
+          "EItemType::Other",
+          "EItemType::Attach",
+        ],
+      );
+    }
+
+    if (technicianTradePrototypeSIDs.has(struct.SID)) {
+      limitations.push(
+        ...["EItemType::Artifact", "EItemType::Armor", "EItemType::Weapon", "EItemType::Ammo", "EItemType::Consumable", "EItemType::Other"],
+      );
+    }
+    while (limitations.length < allBuyLimitations.size) {
+      limitations.push("EItemType::None");
+    }
+    limitations.forEach((l) => fork.BuyLimitations.addNode(l));
+
+    if (GeneralNPCTradePrototypesMoneyMult.has(struct.SID)) {
+      fork.ArmorSellMinDurability = 1;
+      fork.WeaponSellMinDurability = 1;
+    }
+    if (tg.BuyModifier !== 0.3) {
+      fork.BuyModifier = 0.3;
+    }
+    return fork;
+  });
+
+  return Object.assign(fork, { TradeGenerators });
 };
 
 transformTradePrototypes._name = "Restrict trader buy limitations";
 transformTradePrototypes.files = ["/TradePrototypes.cfg"];
+
+const allBuyLimitations = new Set([
+  "EItemType::Ammo",
+  "EItemType::Armor",
+  "EItemType::Artifact",
+  "EItemType::Attach",
+  "EItemType::Consumable",
+  "EItemType::Detector",
+  "EItemType::Grenade",
+  "EItemType::MutantLoot",
+  "EItemType::Other",
+  "EItemType::Weapon",
+]);
 
 const bartenders = new Set([
   "Bartender_Zalesie_TradePrototype",
@@ -131,12 +248,14 @@ export const generalTraders = new Set([
   "VartaTrader_TradePrototype",
 ]);
 
-const allEtypes = [
-  "EItemType::Artifact",
-  "EItemType::Attach",
-  "EItemType::Consumable",
-  "EItemType::Detector",
-  "EItemType::Grenade",
-  "EItemType::MutantLoot",
-  "EItemType::Other",
-];
+export const GeneralNPCTradePrototypesMoneyMult = new Map([
+  ["GeneralNPC_TradePrototype_Bandit", 0.8],
+  ["GeneralNPC_TradePrototype", 1],
+  ["GeneralNPC_TradePrototype_Militaries", 1.1],
+  ["GeneralNPC_TradePrototype_Scientists", 1.4],
+  ["GeneralNPC_TradePrototype_Duty", 1.8],
+  ["GeneralNPC_TradePrototype_Mercenary", 2.1],
+  ["GeneralNPC_TradePrototype_Freedom", 2.5],
+  ["GeneralNPC_TradePrototype_Spark", 3],
+  ["GeneralNPC_TradePrototype_Corpus", 5],
+]);

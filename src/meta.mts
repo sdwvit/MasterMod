@@ -80,7 +80,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Water no longer slows you down or drains your stamina",
+  changenote: "General NPCs buy everything except mutant parts, but condition must be pristine. Upgrades are non-blocking, even attachment ones.",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

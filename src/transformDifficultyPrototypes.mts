@@ -1,7 +1,6 @@
 import { DifficultyPrototype } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
-import { transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
 export const DIFFICULTY_FACTOR = 4;
 /**
  * Increases cost of everything and damage on Hard difficulty.
