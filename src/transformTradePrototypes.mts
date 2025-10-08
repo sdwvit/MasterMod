@@ -38,6 +38,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
               5: "EItemType::Detector",
               6: "EItemType::Grenade",
               7: "EItemType::MutantLoot",
+              8: "EItemType::Ammo",
             },
           },
         },
@@ -74,7 +75,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
   }
   const TradeGenerators = struct.TradeGenerators.map(([_k, tg]) => {
     const fork = tg.fork();
-    fork.BuyLimitations = tg.BuyLimitations?.fork?.() || (new Struct({ __internal__: { isArray: true } }) as any);
+    fork.BuyLimitations = tg.BuyLimitations?.fork?.() || (new Struct({ __internal__: { isArray: true, bpatch: true } }) as any);
 
     const limitations = ["EItemType::MutantLoot"];
 
@@ -130,9 +131,9 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
       );
     }
     while (limitations.length < allBuyLimitations.size) {
-      limitations.push("EItemType::None");
+      limitations.push("delete");
     }
-    limitations.forEach((l) => fork.BuyLimitations.addNode(l));
+    limitations.forEach((l, i) => (l === "delete" ? fork.BuyLimitations.removeNode(`${i}`) : fork.BuyLimitations.addNode(l)));
 
     if (GeneralNPCTradePrototypesMoneyMult.has(struct.SID)) {
       fork.ArmorSellMinDurability = 1;

@@ -8,7 +8,6 @@ export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = (st
     return Object.assign(struct.fork(), { TradePrototypeSID: techniciansAndTheirTradePrototypes.get(struct.SID) });
   }
   if (guidesAndTheirTradePrototypes[struct.SID]) {
-    // todo doesn't work
     return Object.assign(struct.fork(), { TradePrototypeSID: guidesAndTheirTradePrototypes[struct.SID] });
   }
 };
@@ -48,6 +47,7 @@ const techniciansAndTheirTradePrototypes = new Map([
 ]);
 
 const guidesAndTheirTradePrototypes = {
+  TerriconGuider: "Guide_TradePrototype", // kukuha
   ZalesieGuider: "Guide_TradePrototype",
   ShevchenkoGuider: "Guide_TradePrototype",
   HimzavodGuider: "Guide_TradePrototype",
@@ -59,6 +59,17 @@ const guidesAndTheirTradePrototypes = {
   HoghouseGuider: "Guide_TradePrototype",
   RookieVillageGuider: "Guide_TradePrototype",
   LesnikBaseGuider: "Guide_TradePrototype",
+  NoonBaseGuider: "Guide_TradePrototype", // masina
+  SkadovskGuider: "Guide_TradePrototype", // cervonec
+  ShipyardGuider: "Guide_TradePrototype",
+  NeutralVolk: "Guide_TradePrototype",
+  NeutralGarik: "Guide_TradePrototype",
+  NeutralDadaLena: "Guide_TradePrototype",
+  ScientistViktorKoska: "Guide_TradePrototype", // malachite
+  NeutralMuhomor: "Guide_TradePrototype", // eger, Himzavod
+  DutyMarsal: "Guide_TradePrototype", // concrete plant
+  FreedomLaguha: "Guide_TradePrototype", // rostok
+  CorpusTelegraf: "Guide_TradePrototype", // pripyat
 };
 
 /**
