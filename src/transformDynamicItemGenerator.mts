@@ -52,8 +52,7 @@ const transformTrade = (struct: DynamicItemGenerator) => {
       case "EItemGenerationCategory::WeaponSecondary":
         return Object.assign(e.fork(), { ReputationThreshold: 1000000 });
       case "EItemGenerationCategory::SubItemGenerator":
-        // @ts-expect-error mismatching types
-        const PossibleItems = e.PossibleItems.map(([_k, pi]) => {
+        const PossibleItems = (e.PossibleItems as DynamicItemGenerator["ItemGenerator"][number]["PossibleItems"]).map(([_k, pi]) => {
           if (
             generalTradersTradeItemGenerators.has(struct.SID) &&
             (pi.ItemGeneratorPrototypeSID?.includes("Attach") ||
@@ -80,7 +79,7 @@ const transformTrade = (struct: DynamicItemGenerator) => {
 
 const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
   const fork = e.fork();
-  const PossibleItems = e.PossibleItems.map(([_k, pi], j) => {
+  const PossibleItems = e.PossibleItems.filter(([_k, pi]) => !pi.ItemPrototypeSID.toLowerCase().includes("key")).map(([_k, pi], j) => {
     let chance = semiRandom(i + j); // Randomize
     while (chance > 0.02) {
       chance /= 2;
