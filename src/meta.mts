@@ -24,6 +24,7 @@ import { transformArtifactPrototypes } from "./transformArtifactPrototypes.mjs";
 import { transformQuestArtifactPrototypes } from "./transformQuestArtifactPrototypes.mjs";
 import { transformQuestItemPrototypes } from "./transformQuestItemPrototypes.mjs";
 import { transformWeaponPrototypes } from "./transformWeaponPrototypes.mjs";
+import { transformQuestPrototypes } from "./transformQuestPrototypes.mjs";
 
 const structTransformers = [
   transformALifeDirectorScenarioPrototypes,
@@ -50,6 +51,7 @@ const structTransformers = [
   transformUpgradePrototypes,
   transformWeaponGeneralSetupPrototypes,
   transformWeaponPrototypes,
+  transformQuestPrototypes,
 ] as const;
 
 export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> = {
@@ -89,7 +91,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Remove quest item flags. Fix bug with missing stash key in Concrete Plant",
+  changenote: "Add debug quest to switch quest item states",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

@@ -1,6 +1,5 @@
 import { AttachPrototype } from "s2cfgtojson";
 import { EntriesTransformer } from "./metaType.mjs";
-import { transformDynamicItemGenerator } from "./transformDynamicItemGenerator.mjs";
 
 /**
  * Increases the cost of Attachments by 10x.

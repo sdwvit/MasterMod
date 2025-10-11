@@ -1,7 +1,7 @@
 import { WeaponGeneralSetupPrototype } from "s2cfgtojson";
 import { uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.

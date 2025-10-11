@@ -85,6 +85,7 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `Tushkan`
 - `QuestNodePrototypes`:
   - `BodyParts_Malahit`
+  - `E01_MQ01`
   - `RSQ01`
   - `RSQ04`
   - `RSQ05`
@@ -93,6 +94,8 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_C00_ROSTOK`
   - `RSQ09_C00_MALAHIT`
   - `RSQ10_C00_HARPY`
+- `QuestPrototypes`:
+  - `E01_MQ01`
 - `CharacterWeaponSettingsPrototypes`:
   - `NPCWeaponSettingsPrototypes`
 - `WeaponData`:
