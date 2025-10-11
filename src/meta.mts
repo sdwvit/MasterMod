@@ -20,28 +20,36 @@ import { transformWeaponGeneralSetupPrototypes } from "./transformWeaponGeneralS
 import { transformQuestObjPrototypes } from "./transformQuestObjPrototypes.mts";
 import { transformMeshGeneratorPrototypes } from "./transformMeshGeneratorPrototypes.mts";
 import { transformDialogPrototypes } from "./transformDialogPrototypes.mts";
+import { transformArtifactPrototypes } from "./transformArtifactPrototypes.mjs";
+import { transformQuestArtifactPrototypes } from "./transformQuestArtifactPrototypes.mjs";
+import { transformQuestItemPrototypes } from "./transformQuestItemPrototypes.mjs";
+import { transformWeaponPrototypes } from "./transformWeaponPrototypes.mjs";
 
 const structTransformers = [
-  transformDynamicItemGenerator,
-  transformObjPrototypes,
-  transformDifficultyPrototypes,
-  transformAttachPrototypes,
-  transformEffectPrototypes,
-  transformNPCWeaponSettingsPrototypes,
-  transformMobs,
-  transformSpawnActorPrototypes,
-  transformQuestNodePrototypes,
-  transformQuestRewardsPrototypes,
-  transformDialogPrototypes,
-  transformTradePrototypes,
-  transformStashPrototypes,
-  transformItemGeneratorPrototypes,
   transformALifeDirectorScenarioPrototypes,
   transformArmorPrototypes,
+  transformArtifactPrototypes,
+  transformAttachPrototypes,
+  transformDialogPrototypes,
+  transformDifficultyPrototypes,
+  transformDynamicItemGenerator,
+  transformEffectPrototypes,
+  transformItemGeneratorPrototypes,
+  transformMeshGeneratorPrototypes,
+  transformMobs,
+  transformNPCWeaponSettingsPrototypes,
+  transformObjPrototypes,
+  transformQuestArtifactPrototypes,
+  transformQuestItemPrototypes,
+  transformQuestNodePrototypes,
+  transformQuestObjPrototypes,
+  transformQuestRewardsPrototypes,
+  transformSpawnActorPrototypes,
+  transformStashPrototypes,
+  transformTradePrototypes,
   transformUpgradePrototypes,
   transformWeaponGeneralSetupPrototypes,
-  transformQuestObjPrototypes,
-  transformMeshGeneratorPrototypes,
+  transformWeaponPrototypes,
 ] as const;
 
 export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> = {
@@ -54,6 +62,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [QoL] Prevents Player and NPCs from being knocked down.
  [*] [QoL] Removes Fall damage for Player and NPCs.
  [*] [QoL] Water no longer slows you down or drains your stamina.
+ [*] [QoL] Allows buying/selling/dropping quest items.
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
  [*] [QoL/Balance] There is now no cooldown between repeatable quests.
@@ -80,7 +89,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Fix for General NPC Trade Prototypes",
+  changenote: "Remove quest item flags. Fix bug with missing stash key in Concrete Plant",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

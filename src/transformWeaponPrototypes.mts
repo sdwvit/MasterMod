@@ -4,11 +4,11 @@ import { EntriesTransformer } from "./metaType.mjs";
 /**
  * Remove an essential flag from various items
  */
-export const transformQuestItemPrototypes: EntriesTransformer<QuestItemPrototype> = (struct) => {
+export const transformWeaponPrototypes: EntriesTransformer<QuestItemPrototype> = (struct) => {
   if (struct.IsQuestItem) {
     return Object.assign(struct.fork(), { IsQuestItem: false });
   }
   return null;
 };
-transformQuestItemPrototypes.files = ["/QuestItemPrototypes.cfg"];
-transformQuestItemPrototypes._name = "Remove an essential flag from QuestItemPrototypes";
+transformWeaponPrototypes.files = ["/WeaponPrototypes.cfg"];
+transformWeaponPrototypes._name = "Remove an essential flag from WeaponPrototypes";

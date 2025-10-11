@@ -26,6 +26,8 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
 
 - `ALifePrototypes`:
   - `ALifeDirectorScenarioPrototypes`
+- `ArtifactPrototypes`:
+  - `QuestArtifactPrototypes`
 - `DialogPrototypes`:
   - `RSQ01_Dialog_Warlock_RSQ`
   - `RSQ04_Dialog_Drabadan_RSQ`
@@ -59,7 +61,10 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ10_Reward`
 - `ItemPrototypes`:
   - `ArmorPrototypes`
+  - `ArtifactPrototypes`
   - `AttachPrototypes`
+  - `QuestItemPrototypes`
+  - `WeaponPrototypes`
 - `ObjPrototypes`:
   - `BlindDog`
   - `Bloodsucker`
