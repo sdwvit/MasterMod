@@ -1,13 +1,33 @@
-import { DialogPrototype } from "s2cfgtojson";
+import { DialogPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
 import { logger } from "./logger.mjs";
 import { DialogRewardMap, rewardFormula } from "./rewardFormula.mjs";
+import { deepMerge } from "./deepMerge.mjs";
+
+const MALACHITE_BRIBE = 50000;
 
 /**
  * Show the correct money reward for repeatable quests
  */
 export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = (struct) => {
+  if (struct.SID === "Malahit_Hub_DialogueOnEntrance_Bribe_62758") {
+    const fork = struct.fork();
+
+    return deepMerge(fork, {
+      DialogActions: new Struct({ "0": new Struct({ DialogActionParam: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }),
+      DialogAnswerActions: new Struct({ "0": new Struct({ DialogActionParam: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }),
+      TopicAvailabilityConditions: new Struct({ "0": new Struct({ "0": new Struct({ Money: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }) }),
+    }).fork(true);
+  }
+  if (struct.SID === "Malahit_Hub_DialogueOnEntrance_WaitForReply") {
+    const fork = struct.fork();
+    return deepMerge(fork, {
+      NextDialogOptions: new Struct({
+        "2": new Struct({ Conditions: new Struct({ 0: new Struct({ 0: new Struct({ Money: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }) }) }),
+      }),
+    }).fork(true);
+  }
   let keepo = false;
 
   const fork = struct.fork();
@@ -39,5 +59,7 @@ transformDialogPrototypes.files = [
   "/DialogPrototypes/RSQ05_Dialog_Sich_RSQ.cfg",
   "/DialogPrototypes/RSQ04_Dialog_Drabadan_RSQ.cfg",
   "/DialogPrototypes/RSQ01_Dialog_Warlock_RSQ.cfg",
+  "/DialogPrototypes/Malahit_Hub_DialogueOnEntrance.cfg",
 ];
+
 transformDialogPrototypes._name = "Show the correct money reward for repeatable quests";

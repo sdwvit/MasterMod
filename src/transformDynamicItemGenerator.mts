@@ -4,7 +4,9 @@ import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFac
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
+import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
+import assert from "node:assert";
 
 const generalTradersTradeItemGenerators = new Set([
   "AsylumTrader_TradeItemGenerator",
@@ -30,6 +32,39 @@ const technicianTradeTradeItemGenerators = new Set([
   "PowerPlugTechnician_TradeItemGenerator",
   "AsylumTechnician_TradeItemGenerator",
 ]);
+
+const nvgs = (await readFileAndGetStructs<ArmorPrototype>("ItemPrototypes/NightVisionGogglesPrototypes.cfg")).filter(
+  (e) => e.SID !== "TemplateNightVisionGoggles" && !e.SID.includes("NPC"),
+);
+
+const nvgsDescriptors = nvgs.map((e, i) => {
+  return {
+    __internal__: {
+      refkey: e.SID,
+      _extras: {
+        isDroppable: true,
+        ItemGenerator: {
+          Category: "EItemGenerationCategory::BodyArmor",
+          PlayerRank: ["ERank::Newbie", "ERank::Experienced", "ERank::Veteran", "ERank::Master"][i % 4],
+        },
+      },
+    },
+    SID: e.SID,
+  };
+});
+const nvgsByFaction = {
+  neutral: nvgsDescriptors.slice(0, 3),
+  bandit: nvgsDescriptors.slice(0, 2),
+  mercenary: nvgsDescriptors.slice(0, 4),
+  military: nvgsDescriptors.slice(0, 3),
+  corpus: nvgsDescriptors.slice(0, 4),
+  scientist: nvgsDescriptors.slice(0, 3),
+  freedom: nvgsDescriptors.slice(0, 4),
+  duty: nvgsDescriptors.slice(0, 3),
+  monolith: nvgsDescriptors.slice(0, 4),
+  varta: nvgsDescriptors.slice(0, 3),
+  spark: nvgsDescriptors.slice(0, 4),
+};
 
 const minDropDurability = 0.01; // 1%
 const maxDropDurability = 0.5; // 50%
@@ -125,7 +160,7 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
   fork.bAllowSameCategoryGeneration = true;
   fork.PlayerRank = itemGenerator.PlayerRank;
   fork.Category = itemGenerator.Category;
-  fork.PossibleItems = itemGenerator.PossibleItems.filter((e): e is any => !!(e[1] && allArmorRank[e[1].ItemPrototypeSID]));
+  fork.PossibleItems = itemGenerator.PossibleItems.filter((e): e is any => !!(e[1] && allItemRank[e[1].ItemPrototypeSID]));
   const options = fork.PossibleItems.entries().map(([_k, v]) => v);
 
   const weights = Object.fromEntries(
@@ -138,8 +173,9 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
   const invisibleArmors = options.filter((pi) => undroppableArmors.has(pi.ItemPrototypeSID));
   const faction = struct.SID.split("_").find((f) => factions[f.toLowerCase()]) || "neutral";
   const extraArmors = extraArmorsByFaction[factions[faction.toLowerCase()] as keyof typeof extraArmorsByFaction];
+  const nvgsForFaction = nvgsByFaction[faction.toLowerCase() as keyof typeof nvgsByFaction] || [];
 
-  extraArmors
+  [...extraArmors, ...nvgsForFaction]
     .filter((descriptor) => {
       const descriptorRank = descriptor.__internal__._extras.ItemGenerator?.PlayerRank;
       const igRank = fork.PlayerRank;
@@ -153,14 +189,14 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
     })
     .forEach((descriptor) => {
       const originalSID = descriptor.__internal__.refkey;
-      const newArmorSID = descriptor.SID as string;
-      const dummyPossibleItem = new Struct({ ItemPrototypeSID: newArmorSID, __internal__: { rawName: "_" } }) as GetStructType<PossibleItem>;
+      const newItemSID = descriptor.SID as string;
+      const dummyPossibleItem = new Struct({ ItemPrototypeSID: newItemSID, __internal__: { rawName: "_" } }) as GetStructType<PossibleItem>;
 
-      weights[newArmorSID] = getChanceForSID(allArmorRank[newArmorSID] ? newArmorSID : originalSID);
-      const maybeNewArmor = newArmors[newArmorSID] as typeof descriptor;
+      weights[newItemSID] = getChanceForSID(allItemRank[newItemSID] ? newItemSID : originalSID);
+      const maybeNewArmor = newArmors[newItemSID] as typeof descriptor;
 
       if (fork.Category === (maybeNewArmor?.__internal__._extras?.ItemGenerator?.Category || "EItemGenerationCategory::BodyArmor")) {
-        fork.PossibleItems.addNode(dummyPossibleItem, newArmorSID);
+        fork.PossibleItems.addNode(dummyPossibleItem, newItemSID);
         if (maybeNewArmor || descriptor.__internal__._extras.isDroppable) {
           droppableArmors.push(dummyPossibleItem as any);
         } else {
@@ -185,7 +221,7 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
     pi.Chance = 1; // make sure it always spawns on npc
     pi.Weight = precision(weights[pi.ItemPrototypeSID] / y);
   });
-  fork.PossibleItems = fork.PossibleItems.filter((e): e is any => !!(e[1] && allArmorRank[e[1].ItemPrototypeSID]));
+  fork.PossibleItems = fork.PossibleItems.filter((e): e is any => !!(e[1] && allItemRank[e[1].ItemPrototypeSID]));
   if (!fork.PossibleItems.entries().length) {
     return;
   }
@@ -315,7 +351,7 @@ function calculateArmorScore(armor: ArmorPrototype): number {
 const maxDurability = Math.max(...Object.values(allDefaultArmorDefs).map((a) => a.BaseDurability ?? 0));
 const minDurability = Math.min(...Object.values(allDefaultArmorDefs).map((a) => a.BaseDurability ?? 10000));
 
-export const allArmorRank = Object.fromEntries(
+export const allItemRank = Object.fromEntries(
   Object.values({
     ...allDefaultArmorDefs,
     ...Object.fromEntries(
@@ -336,50 +372,17 @@ export const allArmorRank = Object.fromEntries(
       const backfilled = backfillArmorDef(JSON.parse(JSON.stringify(armor))) as ArmorPrototype;
       return [armor.SID, calculateArmorScore(backfilled)] as [string, number];
     })
-    .sort((a, b) => a[0].localeCompare(b[0])),
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .concat(nvgs.map((nv, i, arr) => [nv.SID, (i + 1) / arr.length] as const)),
 );
-
-const minimumArmorCost = Object.values(allArmorRank).reduce((a, b) => Math.min(a, b), Infinity);
-const maximumArmorCost = Object.values(allArmorRank).reduce((a, b) => Math.max(a, b), -Infinity);
-
-const undroppableArmors = new Set([
-  "NPC_Sel_Armor",
-  "NPC_Sel_Neutral_Armor",
-  "NPC_Tec_Armor",
-  "NPC_Cloak_Heavy_Neutral_Armor",
-  "NPC_SkinCloak_Bandit_Armor",
-  "NPC_HeavyExoskeleton_Mercenaries_Armor",
-  "NPC_Heavy_Military_Armor",
-  "NPC_Cloak_Heavy_Military_Armor",
-  "NPC_Sci_Armor",
-  "NPC_Battle_Noon_Armor",
-  "NPC_HeavyAnomaly_Noon_Armor",
-  "NPC_HeavyExoskeleton_Noon_Armor",
-  "NPC_Exoskeleton_Noon_Armor",
-  "NPC_Spark_Armor",
-  "NPC_Anomaly_Spark_Armor",
-  "NPC_HeavyExoskeleton_Spark_Armor",
-  "NPC_Heavy_Corps_Armor",
-  "NPC_Heavy2_Coprs_Armor",
-  "NPC_Heavy3_Corps_Armor",
-  "NPC_Heavy3Exoskeleton_Coprs_Armor",
-  "NPC_Exoskeleton_Coprs_Armor",
-  "NPC_Richter_Armor",
-  "NPC_Korshunov_Armor",
-  "NPC_Korshunov_Armor_2",
-  "NPC_Dalin_Armor",
-  "NPC_Agata_Armor",
-  "NPC_Faust_Armor",
-  "NPC_Kaymanov_Armor",
-  "NPC_Shram_Armor",
-  "NPC_Dekhtyarev_Armor",
-  "NPC_Sidorovich_Armor",
-  "NPC_Barmen_Armor",
-  "NPC_Batya_Armor",
-  "NPC_Tyotya_Armor",
-]);
+const minimumArmorCost = Object.values(allItemRank).reduce((a, b) => Math.min(a, b), Infinity);
+const maximumArmorCost = Object.values(allItemRank).reduce((a, b) => Math.max(a, b), -Infinity);
+const npcArmors = (await readFileAndGetStructs<ArmorPrototype>("ItemPrototypes/ArmorPrototypes.cfg"))
+  .map((e) => e?.SID)
+  .filter((s) => s.includes("NPC_"));
+const undroppableArmors = new Set(npcArmors);
 
 function getChanceForSID(sid: string) {
-  const zeroToOne = 1 - (allArmorRank[sid] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
+  const zeroToOne = 1 - (allItemRank[sid] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
   return zeroToOne * 0.14 + 0.01; // 1% to 15%
 }

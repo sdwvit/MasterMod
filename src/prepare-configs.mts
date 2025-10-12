@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import { meta } from "./meta.mts";
 import { spawnSync } from "child_process";
-import { modFolderSteam } from "./base-paths.mjs";
+import { modFolderRaw, modFolderSteam } from "./base-paths.mjs";
 import { getCfgFileProcessor } from "./get-cfg-file-processor.mjs";
 import { logger } from "./logger.mjs";
 import { onL2Finish } from "./l2-cache.mjs";
@@ -10,6 +10,7 @@ import { onL1Finish } from "./l1-cache.mjs";
 import { getFilesForTransformer } from "./create-cfg-file-selector-for-transformer.mjs";
 
 console.time();
+if (fs.existsSync(modFolderRaw)) fs.rmSync(modFolderRaw, { recursive: true, force: true });
 if (!fs.existsSync(modFolderSteam)) fs.mkdirSync(modFolderSteam, { recursive: true });
 
 const total = await Promise.all(

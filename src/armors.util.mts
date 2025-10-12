@@ -56,7 +56,7 @@ export type DeeplyPartial<T> = {
         : T[P];
 };
 
-type ArmorDescriptor = {
+export type ArmorDescriptor = {
   __internal__: {
     refkey: string;
     _extras?: {

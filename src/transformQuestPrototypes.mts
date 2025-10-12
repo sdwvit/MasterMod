@@ -1,6 +1,6 @@
-import { QuestNodePrototype, Struct } from "s2cfgtojson";
+import { Struct } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { modName } from "./base-paths.mjs";
 
 const oncePerFile = new Set<string>();

@@ -53,6 +53,8 @@ transformItemGeneratorPrototypes.files = ["/ItemGeneratorPrototypes.cfg", "/Item
 transformItemGeneratorPrototypes._name = "Reduce consumable and ammo spawns";
 const prohibitedIds = ["Arena"];
 
-const ammoPrototypes = new Set(readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/AmmoPrototypes.cfg").map((e) => e.SID));
-const consumablePrototypes = new Set(readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/ConsumablePrototypes.cfg").map((e) => e.SID));
-const grenadePrototypes = new Set(readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/GrenadePrototypes.cfg").map((e) => e.SID));
+const ammoPrototypes = new Set((await readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/AmmoPrototypes.cfg")).map((e) => e.SID));
+const consumablePrototypes = new Set(
+  (await readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/ConsumablePrototypes.cfg")).map((e) => e.SID),
+);
+const grenadePrototypes = new Set((await readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/GrenadePrototypes.cfg")).map((e) => e.SID));

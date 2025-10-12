@@ -29,6 +29,7 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
 - `ArtifactPrototypes`:
   - `QuestArtifactPrototypes`
 - `DialogPrototypes`:
+  - `Malahit_Hub_DialogueOnEntrance`
   - `RSQ01_Dialog_Warlock_RSQ`
   - `RSQ04_Dialog_Drabadan_RSQ`
   - `RSQ05_Dialog_Sich_RSQ`
