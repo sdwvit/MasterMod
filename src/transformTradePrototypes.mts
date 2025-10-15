@@ -1,4 +1,4 @@
-import { Struct, TradePrototype } from "s2cfgtojson";
+import { EItemType, Struct, TradePrototype } from "s2cfgtojson";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
 import { semiRandom } from "./semi-random.mjs";
@@ -39,6 +39,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
               6: "EItemType::Grenade",
               7: "EItemType::MutantLoot",
               8: "EItemType::Ammo",
+              9: "EItemType::NightVisionGoggles",
             },
           },
         },
@@ -63,7 +64,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
     );
   }
 
-  if (!struct.TradeGenerators) {
+  if (!struct.TradeGenerators || ignoreSIDs.has(struct.SID)) {
     return;
   }
   const fork = struct.fork();
@@ -76,7 +77,6 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
   const TradeGenerators = struct.TradeGenerators.map(([_k, tg]) => {
     const fork = tg.fork();
     fork.BuyLimitations = tg.BuyLimitations?.fork?.() || (new Struct({ __internal__: { isArray: true, bpatch: true } }) as any);
-
     const limitations = ["EItemType::MutantLoot"];
 
     if (bartenders.has(struct.SID)) {
@@ -90,6 +90,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
           "EItemType::Detector",
           "EItemType::Grenade",
           "EItemType::MutantLoot",
+          "EItemType::NightVisionGoggles",
         ],
       );
     }
@@ -106,6 +107,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
           "EItemType::Detector",
           "EItemType::Grenade",
           "EItemType::Other",
+          "EItemType::NightVisionGoggles",
         ],
       );
     }
@@ -121,6 +123,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
           "EItemType::Grenade",
           "EItemType::Other",
           "EItemType::Attach",
+          "EItemType::NightVisionGoggles",
         ],
       );
     }
@@ -130,10 +133,8 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
         ...["EItemType::Artifact", "EItemType::Armor", "EItemType::Weapon", "EItemType::Ammo", "EItemType::Consumable", "EItemType::Other"],
       );
     }
-    while (limitations.length < allBuyLimitations.size) {
-      limitations.push("delete");
-    }
-    limitations.forEach((l, i) => (l === "delete" ? fork.BuyLimitations.removeNode(`${i}`) : fork.BuyLimitations.addNode(l)));
+
+    limitations.forEach((l) => fork.BuyLimitations.addNode(l));
 
     if (GeneralNPCTradePrototypesMoneyMult.has(struct.SID)) {
       fork.ArmorSellMinDurability = 1;
@@ -162,6 +163,7 @@ const allBuyLimitations = new Set([
   "EItemType::MutantLoot",
   "EItemType::Other",
   "EItemType::Weapon",
+  "EItemType::NightVisionGoggles",
 ]);
 
 const bartenders = new Set([
@@ -260,3 +262,5 @@ export const GeneralNPCTradePrototypesMoneyMult = new Map([
   ["GeneralNPC_TradePrototype_Spark", 3],
   ["GeneralNPC_TradePrototype_Corpus", 5],
 ]);
+
+const ignoreSIDs = new Set(["BaseTraderNPC_Template", "BasicTrader", "TraderNPC", "AllTraderNPC", "RC_TraderNPC", "TradeTest"]);

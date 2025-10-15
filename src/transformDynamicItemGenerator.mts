@@ -6,7 +6,6 @@ import { precision } from "./precision.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
-import assert from "node:assert";
 
 const generalTradersTradeItemGenerators = new Set([
   "AsylumTrader_TradeItemGenerator",

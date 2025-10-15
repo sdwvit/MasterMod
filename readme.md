@@ -28,6 +28,17 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `ALifeDirectorScenarioPrototypes`
 - `ArtifactPrototypes`:
   - `QuestArtifactPrototypes`
+- `GameData`:
+  - `BarbedWirePrototypes`
+  - `DifficultyPrototypes`
+  - `EffectPrototypes`
+  - `ItemGeneratorPrototypes`
+  - `MeshGeneratorPrototypes`
+  - `ObjPrototypes`
+  - `RelationPrototypes`
+  - `StashPrototypes`
+  - `TradePrototypes`
+  - `UpgradePrototypes`
 - `DialogPrototypes`:
   - `Malahit_Hub_DialogueOnEntrance`
   - `RSQ01_Dialog_Warlock_RSQ`
@@ -38,15 +49,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_Dialog_Barmen_RSQ`
   - `RSQ09_Dialog_Spica_RSQ`
   - `RSQ10_Dialog_Harpy_RSQ`
-- `GameData`:
-  - `DifficultyPrototypes`
-  - `EffectPrototypes`
-  - `ItemGeneratorPrototypes`
-  - `MeshGeneratorPrototypes`
-  - `ObjPrototypes`
-  - `StashPrototypes`
-  - `TradePrototypes`
-  - `UpgradePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`

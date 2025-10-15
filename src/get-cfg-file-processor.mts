@@ -15,20 +15,19 @@ const writeFile = promisify(fs.writeFile);
 export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransformer<T>) {
   return async function processOneCfgFile(filePath: string, fileIndex: number): Promise<Struct[]> {
     const pathToSave = path.parse(filePath.slice(baseCfgDir.length + 1));
-    const rawContent = await readFile(filePath, "utf8");
-
-    if (transformer.contents?.length && !transformer.contents.some((c) => rawContent.includes(c))) {
-      return [];
-    }
 
     if (!(filePath.includes("SpawnActorPrototypes/WorldMap_WP/") && !filePath.endsWith("0.cfg"))) {
       logger.log(`Processing file: ${filePath}`);
     }
-    if (!L1Cache[filePath]?.length) {
+    if (!L1Cache[filePath]) {
       L1CacheState.needsUpdate = true;
+      const rawContent = await readFile(filePath, "utf8");
+      if (transformer.contents?.length && !transformer.contents.some((c) => rawContent.includes(c))) {
+        L1Cache[filePath] = [];
+        return [];
+      }
       L1Cache[filePath] = Struct.fromString(rawContent) as T[];
     }
-
     const array = L1Cache[filePath] as T[];
     const structsById: Record<string, T> = Object.fromEntries(array.map((s) => [s.__internal__.rawName, s as T]));
     const extraStructs = [];
@@ -38,12 +37,10 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
       const s = array[index];
       const id = s.__internal__.rawName;
       if (!id) continue;
-      const clone = s.fork(true);
-      clone.__internal__.rawName = id;
-      clone.__internal__.refkey = id;
-      clone.__internal__.refurl = "../" + pathToSave.base;
 
-      const processedStruct = transformer(clone as T, { index, fileIndex, array, filePath, structsById, extraStructs });
+      const processedStruct = transformer(s as T, { index, fileIndex, array, filePath, structsById, extraStructs });
+
+      s.__internal__.refurl = "../" + pathToSave.base;
       if (processedStruct) {
         delete processedStruct.__internal__.refkey;
         delete processedStruct.__internal__.refurl;

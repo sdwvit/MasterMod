@@ -2,15 +2,14 @@ import path from "node:path";
 import childProcess from "node:child_process";
 import * as fs from "node:fs";
 import * as VDF from "@node-steam/vdf";
+import "./ensureDotEnv.mts";
 
-import dotEnv from "dotenv";
 await import("./pull-staged.mjs");
-dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
-const MODS_PATH = path.join(import.meta.dirname, "..");
-const STALKER_STEAM_ID = "1643320";
 import { meta } from "./meta.mjs";
 import { spawnSync } from "child_process";
-import { modName } from "./base-paths.mjs";
+import { modName, projectRoot } from "./base-paths.mjs";
+
+const STALKER_STEAM_ID = "1643320";
 
 const sanitize = (str: string) => str.replace(/\n/g, "").replace(/"/g, '\\"');
 
@@ -20,8 +19,8 @@ const cmd = () => {
 
   vdfData.workshopitem.appid = STALKER_STEAM_ID;
   vdfData.workshopitem.publishedfileid ||= "0"; // This will be set by SteamCMD
-  vdfData.workshopitem.contentfolder = path.join(MODS_PATH, "steamworkshop");
-  vdfData.workshopitem.previewfile = path.join(MODS_PATH, "512.png");
+  vdfData.workshopitem.contentfolder = path.join(projectRoot, "steamworkshop");
+  vdfData.workshopitem.previewfile = path.join(projectRoot, "512.png");
   vdfData.workshopitem.title = sanitize(`${modName.replace(/([A-Z])/g, " $1").trim()} by sdwvit`);
   vdfData.workshopitem.description = sanitize(meta.description);
   vdfData.workshopitem.changenote = sanitize(meta.changenote);
@@ -41,7 +40,7 @@ const cmd = () => {
 
 childProcess.execSync(cmd(), {
   stdio: "inherit",
-  cwd: MODS_PATH,
+  cwd: projectRoot,
   shell: "/usr/bin/bash",
   env: process.env,
 });

@@ -1,7 +1,5 @@
 import path from "node:path";
-import dotEnv from "dotenv";
-
-dotEnv.config({ path: path.join(import.meta.dirname, "..", ".env") });
+import "./ensureDotEnv.mts";
 
 export const rawCfgEnclosingFolder = path.join("Stalker2", "Content", "GameLite");
 export const baseCfgDir = path.join(process.env.SDK_PATH, rawCfgEnclosingFolder);

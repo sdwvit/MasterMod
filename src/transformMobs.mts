@@ -1,6 +1,7 @@
 import { MutantBase } from "s2cfgtojson";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
 
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
@@ -10,9 +11,7 @@ export const transformMobs: EntriesTransformer<MutantBase> = (struct) => {
     return null;
   }
   const fork = struct.fork();
-  if (struct.SID === "Pseudogiant") {
-    fork.VitalParams = Object.assign(struct.VitalParams.fork(), { MaxHP: struct.VitalParams.MaxHP * 2 });
-  }
+  fork.VitalParams = Object.assign(struct.VitalParams.fork(), { MaxHP: struct.VitalParams.MaxHP * DIFFICULTY_FACTOR });
   fork.Protection = Object.assign(struct.Protection.fork(), { Strike: 0.0001 }); // Set Strike protection to 0 for all mobs
   return fork;
 };
