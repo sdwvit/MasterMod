@@ -5,6 +5,7 @@ import { EntriesTransformer } from "./metaType.mjs";
  * Remove barbed wire bleeding and armor damage
  */
 export const transformBarbedWirePrototypes: EntriesTransformer<BarbedWirePrototype> = (struct) => {
+  if (struct.SID !== "Empty") return null;
   const fork = struct.fork();
 
   if (struct.BleedingChance) fork.BleedingChance = 0;
