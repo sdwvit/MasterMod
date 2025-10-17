@@ -85,7 +85,7 @@ function transformDestructibleObjects(struct: SpawnActorPrototype) {
 
   const igs = struct.ItemGeneratorSettings.map(([_k, e]) => {
     const fork = e.fork();
-    const igs = e.ItemGenerators.map(([_k, ie]) => {
+    const ig = e.ItemGenerators.map(([_k, ie]) => {
       if (!ie?.PrototypeSID) {
         return;
       }
@@ -96,16 +96,18 @@ function transformDestructibleObjects(struct: SpawnActorPrototype) {
       return Object.assign(ie.fork(), { PrototypeSID: "Milk" });
     });
 
-    if (!igs.entries().length) {
+    if (!ig.entries().length) {
       return;
     }
 
-    fork.ItemGenerators = igs;
+    ig.__internal__.bpatch = true;
+    fork.ItemGenerators = ig;
     return fork;
   });
   if (!igs.entries().length) {
     return;
   }
+  igs.__internal__.bpatch = true;
   fork.ItemGeneratorSettings = igs;
   return fork;
 }
@@ -154,13 +156,14 @@ function transformItemContainers(struct: SpawnActorPrototype) {
     if (!ig.entries().length) {
       return;
     }
+    ig.__internal__.bpatch = true;
     fork.ItemGenerators = ig;
     return fork;
   });
   if (!igs.entries().length) {
     return;
   }
-
+  igs.__internal__.bpatch = true;
   fork.ItemGeneratorSettings = igs;
   return fork;
 }

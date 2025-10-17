@@ -2,6 +2,7 @@ import { ALifeDirectorScenarioPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import { modName } from "./base-paths.mjs";
+import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
@@ -63,7 +64,7 @@ export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeD
     }),
   });
 
-  return newStruct;
+  return markAsForkRecursively(newStruct);
 };
 transformALifeDirectorScenarioPrototypes._name = "Transform ALifeDirectorScenarioPrototypes";
 transformALifeDirectorScenarioPrototypes.files = ["/ALifeDirectorScenarioPrototypes.cfg"];

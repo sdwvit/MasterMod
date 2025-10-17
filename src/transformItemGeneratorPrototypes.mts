@@ -3,6 +3,7 @@ import { semiRandom } from "./semi-random.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
 export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorPrototype> = (struct, context) => {
   if (prohibitedIds.some((id) => struct.SID.includes(id))) {
@@ -47,7 +48,7 @@ export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorP
     return;
   }
 
-  return Object.assign(struct.fork(), { ItemGenerator });
+  return markAsForkRecursively(Object.assign(struct.fork(), { ItemGenerator }));
 };
 transformItemGeneratorPrototypes.files = ["/ItemGeneratorPrototypes.cfg", "/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg"];
 transformItemGeneratorPrototypes._name = "Reduce consumable and ammo spawns";

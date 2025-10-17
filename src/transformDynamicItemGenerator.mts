@@ -6,6 +6,7 @@ import { precision } from "./precision.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
+import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
 const generalTradersTradeItemGenerators = new Set([
   "AsylumTrader_TradeItemGenerator",
@@ -102,12 +103,14 @@ const transformTrade = (struct: DynamicItemGenerator) => {
         if (!PossibleItems.entries().length) {
           return;
         }
+        PossibleItems.__internal__.bpatch = true;
         return Object.assign(e.fork(), { PossibleItems });
     }
   });
   if (!ItemGenerator.entries().length) {
     return;
   }
+  ItemGenerator.__internal__.bpatch = true;
   return Object.assign(fork, { ItemGenerator });
 };
 
@@ -124,6 +127,7 @@ const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"][number], 
   if (!PossibleItems.entries().length) {
     return;
   }
+  PossibleItems.__internal__.bpatch = true;
   return Object.assign(fork, { PossibleItems });
 };
 
@@ -138,6 +142,7 @@ const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"][number], i: n
   if (!PossibleItems.entries().length) {
     return;
   }
+  PossibleItems.__internal__.bpatch = true;
   return Object.assign(fork, { PossibleItems });
 };
 
@@ -157,7 +162,7 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
   }
   const fork = itemGenerator.fork();
   fork.bAllowSameCategoryGeneration = true;
-  fork.PlayerRank = itemGenerator.PlayerRank;
+  if (itemGenerator.PlayerRank) fork.PlayerRank = itemGenerator.PlayerRank;
   fork.Category = itemGenerator.Category;
   fork.PossibleItems = itemGenerator.PossibleItems.filter((e): e is any => !!(e[1] && allItemRank[e[1].ItemPrototypeSID]));
   const options = fork.PossibleItems.entries().map(([_k, v]) => v);
@@ -225,7 +230,7 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
     return;
   }
 
-  return fork;
+  return markAsForkRecursively(fork);
 };
 
 const transformCombat = (struct: DynamicItemGenerator) => {
@@ -278,7 +283,7 @@ const transformCombat = (struct: DynamicItemGenerator) => {
   if (!ItemGenerator.entries().length || !ItemGenerator.filter((e): e is any => !!(e[1].PossibleItems as Struct).entries().length).entries().length) {
     return;
   }
-
+  ItemGenerator.__internal__.bpatch = true;
   return Object.assign(fork, { ItemGenerator });
 };
 

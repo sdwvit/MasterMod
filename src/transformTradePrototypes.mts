@@ -145,7 +145,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (str
     }
     return fork;
   });
-
+  TradeGenerators.__internal__.bpatch = true;
   return Object.assign(fork, { TradeGenerators });
 };
 

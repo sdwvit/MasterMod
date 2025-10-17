@@ -3,6 +3,7 @@ import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newArmors } from
 import { deepMerge } from "./deepMerge.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
+import path from "node:path";
 
 const get = (obj: any, path: `${string}.${string}` | string) => {
   return path.split(".").reduce((o, i) => (o || {})[i], obj);
@@ -33,7 +34,7 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = (str
 
       const newArmor = new Struct({
         SID: newSID,
-        __internal__: { rawName: newSID, refkey: original, refurl: struct.__internal__.refurl },
+        __internal__: { rawName: newSID, refkey: original, refurl: `../${path.parse(context.filePath).base}` },
       }) as ArmorPrototype;
       backfillArmorDef(newArmor);
       const overrides = { ...newArmors[newSID as keyof typeof newArmors] };

@@ -16,11 +16,13 @@ export const transformUpgradePrototypes: EntriesTransformer<UpgradePrototype> = 
     Object.assign(fork, {
       BlockingUpgradePrototypeSIDs: struct.BlockingUpgradePrototypeSIDs.map(([_k, e]) => "empty"),
     });
+    fork.BlockingUpgradePrototypeSIDs.__internal__.bpatch = true;
   }
   if (struct.InterchangeableUpgradePrototypeSIDs?.entries().length /*&& !struct.AttachPrototypeSIDs?.entries().length*/) {
     Object.assign(fork, {
       InterchangeableUpgradePrototypeSIDs: struct.InterchangeableUpgradePrototypeSIDs.map(([_k, e]) => "empty"),
     });
+    fork.InterchangeableUpgradePrototypeSIDs.__internal__.bpatch = true;
   }
   if (fork.entries().length) {
     return fork;

@@ -10,7 +10,7 @@ import { EntriesTransformer, MetaType } from "./metaType.mjs";
 export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = (struct) => {
   if (struct.SID === "KillVolumeEffect") {
     return Object.assign(struct.fork(), {
-      ApplyExtraEffectPrototypeSIDs: struct.ApplyExtraEffectPrototypeSIDs.map(() => "empty"),
+      ApplyExtraEffectPrototypeSIDs: struct.ApplyExtraEffectPrototypeSIDs.map(() => "empty").fork(true),
     });
   }
   if (consumables.has(struct.SID)) {

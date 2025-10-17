@@ -37,15 +37,18 @@ export const transformStashPrototypes: EntriesTransformer<StashPrototype> = (str
       if (!Items.entries().length) {
         return;
       }
+      Items.__internal__.bpatch = true;
       fork.Items = Items;
       return fork;
     });
+    fork.SmartLootParams.ConsumablesParams.__internal__.bpatch = true;
     return fork;
   });
 
   if (!ItemGenerators.entries().length) {
     return;
   }
+  ItemGenerators.__internal__.bpatch = true;
 
   return Object.assign(struct.fork(), { ItemGenerators });
 };

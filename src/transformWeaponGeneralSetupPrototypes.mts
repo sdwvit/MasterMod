@@ -1,4 +1,4 @@
-import { WeaponGeneralSetupPrototype } from "s2cfgtojson";
+import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
 import { uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
@@ -48,11 +48,12 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
       }
     }
     fork.CompatibleAttachments = struct.CompatibleAttachments.fork(true);
-    Object.values(dedup).forEach((e) => {
-      fork.CompatibleAttachments.addNode(e);
+    Object.values(dedup).forEach((e: Struct) => {
+      fork.CompatibleAttachments.addNode(e.fork(true));
     });
     const CompatibleAttachments = fork.CompatibleAttachments.filter((e): e is any => !!dedup[e[1].AttachPrototypeSID]);
     if (CompatibleAttachments.entries().length) {
+      CompatibleAttachments.__internal__.bpatch = true;
       fork.CompatibleAttachments = CompatibleAttachments;
     }
   }

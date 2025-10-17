@@ -4,6 +4,7 @@ import { EntriesTransformer, MetaType } from "./metaType.mjs";
 import { logger } from "./logger.mjs";
 import { DialogRewardMap, rewardFormula } from "./rewardFormula.mjs";
 import { deepMerge } from "./deepMerge.mjs";
+import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
 const MALACHITE_BRIBE = 50000;
 
@@ -48,7 +49,7 @@ export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = (s
     DialogActions: struct.DialogActions?.map?.(mapper),
     DialogAnswerActions: struct.DialogAnswerActions?.map?.(mapper),
   };
-  if (keepo) return Object.assign(fork, overrides);
+  if (keepo) return markAsForkRecursively(Object.assign(fork, overrides));
 };
 transformDialogPrototypes.files = [
   "/DialogPrototypes/RSQ10_Dialog_Harpy_RSQ.cfg",
