@@ -1,14 +1,18 @@
-import { QuestItemPrototype } from "s2cfgtojson";
+import { WeaponPrototype } from "s2cfgtojson";
 import { EntriesTransformer } from "./metaType.mjs";
 
 /**
  * Remove an essential flag from various items
  */
-export const transformWeaponPrototypes: EntriesTransformer<QuestItemPrototype> = (struct) => {
+export const transformWeaponPrototypes: EntriesTransformer<WeaponPrototype> = (struct) => {
+  const fork = struct.fork();
   if (struct.IsQuestItem) {
-    return Object.assign(struct.fork(), { IsQuestItem: false });
+    Object.assign(fork, { IsQuestItem: false });
   }
-  return null;
+  if (!fork.entries().length) {
+    return null;
+  }
+  return fork;
 };
 transformWeaponPrototypes.files = ["/WeaponPrototypes.cfg"];
-transformWeaponPrototypes._name = "Remove an essential flag from WeaponPrototypes";
+transformWeaponPrototypes._name = "Remove an essential flag from WeaponPrototypes & align NPCWeaponAttributes with PlayerWeaponAttributes";

@@ -13,7 +13,7 @@ export const uniqueAttachmentsToAlternatives: Record<string, string> = {
   UDP_Deadeye_Colim: "EN_ColimScope_1",
   Gun_Silence_ColimScope: "RU_ColimScope_1",
   Gun_Sledgehummer_GoloScope: "EN_GoloScope_1",
-  Gun_Sotnyk_ColimScope: "RU_X2Scope_1",
+  // Gun_Sotnyk_ColimScope: "RU_X2Scope_1", // has extra effects, so need to keep it separate and adjust all weapons to be compatible with it
   Sharpshooter_Silen: "EN_Silen_3",
   Gun_Silence_Silen: "RU_Silen_2",
   Sofmod_Silen: "EN_Silen_3",
@@ -36,6 +36,7 @@ export const scopeDefinitions = {
       Socket: "GoloScopeSocket",
       IconPosX: 155,
       IconPosY: 9,
+      WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/M16/T_inv_w_m16_en_goloscope_1.T_inv_w_m16_en_goloscope_1'`,
     },
     EN_ColimScope_1: {
       AttachPrototypeSID: "EN_ColimScope_1",
@@ -56,6 +57,7 @@ export const scopeDefinitions = {
       IconPosX: 60,
       IconPosY: 0,
       AimMuzzleVFXSocket: "X4ScopeMuzzle",
+      WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/M16/T_inv_w_m16_en_x4scope_1.T_inv_w_m16_en_x4scope_1'`,
     },
     EN_X8Scope_1: {
       AttachPrototypeSID: "EN_X8Scope_1",
@@ -64,6 +66,7 @@ export const scopeDefinitions = {
       IconPosY: 0,
       AimMuzzleVFXSocket: "X8ScopeMuzzle",
       AimShellShutterVFXSocket: "X8ScopeShells",
+      WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/M16/T_inv_w_sharpshooter_en_x8scope_1.T_inv_w_sharpshooter_en_x8scope_1'`,
     },
   },
   nEN: {

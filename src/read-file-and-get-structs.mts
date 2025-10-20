@@ -13,8 +13,11 @@ export const readFileAndGetStructs = async <T extends Struct>(filePath: string, 
   } else {
     const fileContents = await readFile(fullPath, "utf8");
     const processed = filePreprocess ? filePreprocess(fileContents) : fileContents;
-    L1Cache[fullPath] = Struct.fromString<T>(processed);
-    if (!filePreprocess) L1CacheState.needsUpdate = true;
-    return L1Cache[fullPath] as T[];
+    const parsed = Struct.fromString<T>(processed);
+    if (!filePreprocess) {
+      L1Cache[fullPath] = parsed;
+      L1CacheState.needsUpdate = true;
+    }
+    return parsed;
   }
 };
