@@ -1,11 +1,16 @@
 import { ObjPrototype } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
-import { logger } from "./logger.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 
 export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = (struct) => {
   if (techniciansAndTheirTradePrototypes.has(struct.SID)) {
-    return Object.assign(struct.fork(), { TradePrototypeSID: techniciansAndTheirTradePrototypes.get(struct.SID) });
+    const fork = Object.assign(struct.fork(), {
+      TradePrototypeSID: techniciansAndTheirTradePrototypes.get(struct.SID),
+    });
+    if (!struct.ItemGeneratorPrototypeSID) {
+      fork.ItemGeneratorPrototypeSID = "MainTraderItemGeneratorV1";
+    }
+    return fork;
   }
   if (guidesAndTheirTradePrototypes[struct.SID]) {
     return Object.assign(struct.fork(), { TradePrototypeSID: guidesAndTheirTradePrototypes[struct.SID] });
@@ -42,7 +47,7 @@ const techniciansAndTheirTradePrototypes = new Map([
   ["NeutralMultik", "Asylum_Technician_TradePrototype"],
   ["NeutralSemenyc", "Asylum_Technician_TradePrototype"],
   ["DutySerzantHmaruk", "Technician_ChemicalPlant_TradePrototype"],
-  ["CorpusGarpia", "PowerPlugTechnician_TradeItemGenerator"],
+  ["CorpusGarpia", "Technician_Yanov_TradePrototype"],
   ["CorpusMedlak", "PowerPlugTechnician_TradeItemGenerator"],
 ]);
 

@@ -68,6 +68,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [QoL] Prevents Player and NPCs from being knocked down.
  [*] [QoL] Removes Fall damage for Player and NPCs.
  [*] [QoL] Water no longer slows you down or drains your stamina.
+ [*] [QoL] X8 Scope compatible with more weapons (more compatibility fixes to come).
  [*] [QoL] Allows buying/selling/dropping quest items.
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
  [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
@@ -81,6 +82,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [Challenge] Traders are not allowed to sell gear.
  [*] [Challenge] Traders or Bartenders are not allowed to buy gear.
  [*] [Challenge / Balance] 🔪🗡🦟️ Increase given and taken damage on Hard difficulty to 400%.
+ [*] [Challenge] Enemy's weapons damage is increased to be on par with player's weapons.
  [*] [Balance] Makes some consumables last longer, with the same value (antirad removes radiation slowly, 10x longer, but with the same value).
  [*] [Balance] Removes armor from vanilla mutants.
  [*] [Balance] NPCs drop armor, but it is damaged and will cost a lot to repair.

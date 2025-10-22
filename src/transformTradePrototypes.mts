@@ -1,6 +1,6 @@
-import { EItemType, Struct, TradePrototype } from "s2cfgtojson";
+import { Struct, TradePrototype } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { semiRandom } from "./semi-random.mjs";
 import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
 import { precision } from "./precision.mjs";

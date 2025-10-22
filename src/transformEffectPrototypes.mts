@@ -1,13 +1,31 @@
 import { EffectPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
-
+const oncePerFile = new Set<string>();
 /**
  * Makes some consumables last longer.
  * Also negates KillVolumeEffect (borderguard instakill)
  * @param struct
  */
-export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = (struct) => {
+export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = (struct, context) => {
+  if (!oncePerFile.has(context.filePath)) {
+    oncePerFile.add(context.filePath);
+    context.extraStructs.push(
+      new Struct({
+        __internal__: {
+          rawName: "AimingFOVX16Effect",
+          isRoot: true,
+        },
+        SID: "AimingFOVX16Effect",
+        Type: "EEffectType::AimingFOV",
+        ValueMin: "-85%",
+        ValueMax: "-85%",
+        bIsPermanent: true,
+        Positive: "EBeneficial::Negative",
+      }) as EffectPrototype,
+    );
+  }
+
   if (struct.SID === "KillVolumeEffect") {
     return Object.assign(struct.fork(), {
       ApplyExtraEffectPrototypeSIDs: struct.ApplyExtraEffectPrototypeSIDs.map(() => "empty").fork(true),

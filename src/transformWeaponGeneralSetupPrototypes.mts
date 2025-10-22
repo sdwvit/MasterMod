@@ -1,92 +1,151 @@
 import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
-import { scopeDefinitions, uniqueAttachmentsToAlternatives } from "./basicAttachments.mjs";
+import {
+  allCompatibleAttachmentDefs,
+  allCompatibleAttachmentDefsByWeaponGeneralSetupPrototypeSID,
+  uniqueAttachmentsToAlternatives,
+} from "./basicAttachments.mjs";
 
 import { EntriesTransformer, MetaContext } from "./metaType.mjs";
 
 function mapUniqueAttachmentsToGeneric(
-  sPAIPSs: Struct & { [p: `${number}`]: Struct & { AttachSID: string; bHiddenInInventory: boolean } },
   fork: WeaponGeneralSetupPrototype,
   struct: WeaponGeneralSetupPrototype,
   context: MetaContext<WeaponGeneralSetupPrototype>,
 ) {
-  if (sPAIPSs?.filter(([k, e]) => !!(e?.bHiddenInInventory && uniqueAttachmentsToAlternatives[e?.AttachSID])).entries().length) {
-    const preinstalledAttachmentsItemPrototypeSIDs = sPAIPSs.map(([k, e]) => {
-      if (!uniqueAttachmentsToAlternatives[e.AttachSID]) {
-        return;
-      }
+  if (struct.PreinstalledAttachmentsItemPrototypeSIDs) {
+    fork.PreinstalledAttachmentsItemPrototypeSIDs = struct.PreinstalledAttachmentsItemPrototypeSIDs.filter(
+      ([_k, e]) => !!uniqueAttachmentsToAlternatives[e.AttachSID],
+    ).map(([_k, e]) => {
       return Object.assign(e.fork(), {
         AttachSID: uniqueAttachmentsToAlternatives[e.AttachSID],
         bHiddenInInventory: false,
-        __internal__: {
-          rawName: k,
-        },
       });
     });
 
-    if (preinstalledAttachmentsItemPrototypeSIDs.entries().length) {
-      fork.PreinstalledAttachmentsItemPrototypeSIDs = preinstalledAttachmentsItemPrototypeSIDs.fork();
-      preinstalledAttachmentsItemPrototypeSIDs.entries().forEach(([_k, e]) => {
-        fork.PreinstalledAttachmentsItemPrototypeSIDs.addNode(e, e.__internal__.rawName);
+    fork.PreinstalledAttachmentsItemPrototypeSIDs.__internal__.bskipref = false;
+    fork.PreinstalledAttachmentsItemPrototypeSIDs.__internal__.bpatch = true;
+
+    if (!fork.PreinstalledAttachmentsItemPrototypeSIDs.entries().length) {
+      delete fork.PreinstalledAttachmentsItemPrototypeSIDs;
+    }
+  }
+
+  /**
+   * 1. If a weapon has unique attachments, make it also compatible with standard alternatives.
+   * 2. Additionally, if a weapon has a parent, use parent's compatible attachments too.
+   * 3. Finally, combine them all, avoiding duplicates, and not messing up the keys.
+   */
+  if (struct.CompatibleAttachments) {
+    fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+
+    struct.CompatibleAttachments.filter(([_k, e]) => !!uniqueAttachmentsToAlternatives[e.AttachPrototypeSID]).forEach(([_k, e]) => {
+      const newKey = uniqueAttachmentsToAlternatives[e.AttachPrototypeSID];
+      fork.CompatibleAttachments.addNode(Object.assign(e.clone(), { AttachPrototypeSID: newKey }), newKey);
+    });
+
+    if (struct.SID === "Gun_Krivenko_HG_GS") {
+      struct.__internal__.refkey = "GunUDP_HG";
+    }
+    let parent = context.structsById[struct.__internal__.refkey];
+
+    while (parent && parent.CompatibleAttachments) {
+      parent.CompatibleAttachments.forEach(([_k, e]) => {
+        if (
+          !fork.CompatibleAttachments[e.AttachPrototypeSID] &&
+          !struct.CompatibleAttachments.entries().find(([_k2, e2]) => e2.AttachPrototypeSID === e.AttachPrototypeSID)
+        ) {
+          // no reassigning
+          const newE = e.clone();
+          delete newE.BlockingUpgradeIDs;
+          delete newE.RequiredUpgradeIDs;
+          fork.CompatibleAttachments.addNode(newE, e.AttachPrototypeSID);
+        }
       });
-      fork.PreinstalledAttachmentsItemPrototypeSIDs.__internal__.bskipref = false;
+      parent = context.structsById[parent.__internal__.refkey];
     }
 
-    if (struct.CompatibleAttachments) {
-      const extraCompatibleAttachments = {} as Record<string, WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"]>;
-      const existing = grabAttachments(struct, extraCompatibleAttachments);
-      const refCompatibleAttachments = grabAttachments(context.structsById[struct.__internal__.refkey], extraCompatibleAttachments);
-
-      const dedup = { ...refCompatibleAttachments, ...extraCompatibleAttachments };
-
-      const existingKeys = new Set(Object.keys(existing));
-      for (const k of Object.keys(dedup)) {
-        if (existingKeys.has(k)) {
-          delete dedup[k];
-        }
-      }
-      fork.CompatibleAttachments = struct.CompatibleAttachments.fork(true);
-      Object.values(dedup).forEach((e) => {
-        fork.CompatibleAttachments.addNode(e.fork(true), e.AttachPrototypeSID);
-      });
-      const CompatibleAttachments = fork.CompatibleAttachments.filter((e): e is any => !!dedup[e[1].AttachPrototypeSID]);
-      if (CompatibleAttachments.entries().length) {
-        CompatibleAttachments.__internal__.bpatch = true;
-        fork.CompatibleAttachments = CompatibleAttachments;
-      }
+    if (!fork.CompatibleAttachments.entries().length) {
+      delete fork.CompatibleAttachments;
     }
   }
 }
 
-const en_GoloScope_1 = () => new Struct(scopeDefinitions.EN.EN_GoloScope_1) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"];
-const en_X2Scope_1 = () => new Struct(scopeDefinitions.EN.EN_X2Scope_1) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"];
-const en_X4Scope_1 = () => new Struct(scopeDefinitions.EN.EN_X4Scope_1) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"];
-const en_X8Scope_1 = () => new Struct(scopeDefinitions.EN.EN_X8Scope_1) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"];
-
+const getCompatibleAttachmentDefinition = (sid: string) =>
+  new Struct(allCompatibleAttachmentDefs[sid]) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"];
+const getCompatibleAttachmentDefinitionByWeaponSetupSID = (weaponSid: string, sid: string) =>
+  new Struct(
+    allCompatibleAttachmentDefsByWeaponGeneralSetupPrototypeSID[weaponSid][sid],
+  ) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"];
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
 export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGeneralSetupPrototype> = (struct, context) => {
   const fork = struct.fork();
 
-  mapUniqueAttachmentsToGeneric(struct.PreinstalledAttachmentsItemPrototypeSIDs, fork, struct, context);
+  mapUniqueAttachmentsToGeneric(fork, struct, context);
 
   if (struct.SID === "GunG37_ST") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
-    const x8Scope = en_X8Scope_1();
-    x8Scope.WeaponSpecificIcon = `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/GP37/T_inv_w_gp37_en_x8scope_1.T_inv_w_gp37_en_x8scope_1'`;
-    fork.CompatibleAttachments.addNode(x8Scope, "EN_X8Scope_1");
+    fork.CompatibleAttachments.addNode(
+      Object.assign(getCompatibleAttachmentDefinition("EN_X8Scope_1"), {
+        WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/GP37/T_inv_w_gp37_en_x8scope_1.T_inv_w_gp37_en_x8scope_1'`,
+      }),
+      "EN_X8Scope_1",
+    );
+    fork.CompatibleAttachments.addNode(
+      Object.assign(getCompatibleAttachmentDefinition("EN_X16Scope_1"), {
+        WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/GP37/T_inv_w_gp37_en_x8scope_1.T_inv_w_gp37_en_x8scope_1'`,
+      }),
+      "EN_X16Scope_1",
+    );
+
+    return fork;
+  }
+
+  if (struct.SID === "GunUDP_Deadeye_HG") {
+    fork.UpgradePrototypeSIDs ??= struct.UpgradePrototypeSIDs.fork();
+    fork.UpgradePrototypeSIDs.addNode("GunUDP_Upgrade_Attachment_Laser", "GunUDP_Upgrade_Attachment_Laser");
+    fork.CompatibleAttachments["EN_ColimScope_1"].Socket = "ColimScopeSocket_corrected";
+  }
+  if (struct.SID === "GunUDP_HG" || struct.SID === "Gun_Krivenko_HG_GS") {
+    fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("EN_ColimScope_1"), "EN_ColimScope_1");
+    fork.CompatibleAttachments["EN_ColimScope_1"].Socket = "ColimScopeSocket_corrected";
+    fork.CompatibleAttachments["EN_ColimScope_1"].WeaponSpecificIcon =
+      `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/UDP/T_inv_w_en_colim_scope.T_inv_w_en_colim_scope'`;
   }
 
   if (struct.SID === "Gun_Sharpshooter_AR_GS") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
-    fork.CompatibleAttachments.addNode(en_GoloScope_1(), "en_GoloScope_1");
-    fork.CompatibleAttachments.addNode(en_X4Scope_1(), "en_X4Scope_1");
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinitionByWeaponSetupSID("GunM16_ST", "EN_GoloScope_1"), "EN_GoloScope_1");
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinitionByWeaponSetupSID("GunM16_ST", "EN_X4Scope_1"), "EN_X4Scope_1");
+    return fork;
   }
 
-  if (struct.SID === "Gun_Unknown_AR_GS" || struct.SID === "GunM16_ST" || struct.SID === "Gun_SOFMOD_AR") {
+  if (struct.SID === "Gun_Unknown_AR_GS" || struct.SID === "GunM16_ST" || struct.SID === "Gun_SOFMOD_AR_GS") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
-    fork.CompatibleAttachments.addNode(en_X8Scope_1(), "en_X8Scope_1");
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("EN_X8Scope_1"), "EN_X8Scope_1");
+    return fork;
   }
+  /*
+   if (struct.SID === "GunGvintar_ST" || struct.SID === "Gun_Merc_AR_GS") {
+     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X8Scope_1"), "RU_X8Scope_1");
+     fork.CompatibleAttachments["RU_X8Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
+   }
+
+   if (struct.SID === "GunSVDM_SP" || struct.SID === "Gun_Lynx_SR_GS") {
+     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X8Scope_1"), "RU_X8Scope_1");
+   }
+
+   if (struct.SID === "Gun_Whip_SR_GS" || struct.SID === "GunSVU_SP") {
+     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X2Scope_1"), "RU_X2Scope_1");
+     fork.CompatibleAttachments["RU_X2Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
+     fork.CompatibleAttachments["RU_X2Scope_1"].Socket = "X4ScopeSocket";
+   }
+ */
 
   if (!fork.entries().length) {
     return;
@@ -96,24 +155,3 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
 };
 transformWeaponGeneralSetupPrototypes.files = ["/WeaponGeneralSetupPrototypes.cfg"];
 transformWeaponGeneralSetupPrototypes._name = "Make unique weapons moddable";
-
-const grabAttachments = (
-  struct: WeaponGeneralSetupPrototype,
-  extraCompatibleAttachments: Record<string, WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"]>,
-) => {
-  if (!struct.CompatibleAttachments) {
-    return {};
-  }
-  return Object.fromEntries(
-    struct.CompatibleAttachments.entries().map(([_, v]) => {
-      if (uniqueAttachmentsToAlternatives[v.AttachPrototypeSID]) {
-        const dummy = v.clone();
-        dummy.__internal__.isRoot = false;
-        const key = uniqueAttachmentsToAlternatives[v.AttachPrototypeSID];
-        dummy.AttachPrototypeSID = key;
-        extraCompatibleAttachments[key] = dummy;
-      }
-      return [v.AttachPrototypeSID, v];
-    }),
-  );
-};

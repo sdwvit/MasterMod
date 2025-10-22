@@ -1,14 +1,6 @@
-export const basicScopes = {
-  RU_ColimScope_1: true,
-  EN_ColimScope_1: true,
-  EN_GoloScope_1: true,
-  RU_X2Scope_1: true,
-  EN_X2Scope_1: true,
-  RU_X4Scope_1: true,
-  EN_X4Scope_1: true,
-  RU_X8Scope_1: true,
-  EN_X8Scope_1: true,
-};
+import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
+import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
+
 export const uniqueAttachmentsToAlternatives: Record<string, string> = {
   UDP_Deadeye_Colim: "EN_ColimScope_1",
   Gun_Silence_ColimScope: "RU_ColimScope_1",
@@ -27,121 +19,47 @@ export const uniqueAttachmentsToAlternatives: Record<string, string> = {
   SVDM_Scope: "RU_X4Scope_1",
   Gvintar_Scope: "RU_X4Scope_1",
   SVU_Scope: "RU_X8Scope_1",
+
+  GunThreeLine_Scope: "GunThreeLine_Scope",
 };
 
-export const scopeDefinitions = {
-  EN: {
-    EN_GoloScope_1: {
-      AttachPrototypeSID: "EN_GoloScope_1",
-      Socket: "GoloScopeSocket",
-      IconPosX: 155,
-      IconPosY: 9,
-      WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/M16/T_inv_w_m16_en_goloscope_1.T_inv_w_m16_en_goloscope_1'`,
-    },
-    EN_ColimScope_1: {
-      AttachPrototypeSID: "EN_ColimScope_1",
-      Socket: "ColimScopeSocket",
-      IconPosX: 155,
-      IconPosY: 9,
-    },
-    EN_X2Scope_1: {
-      AttachPrototypeSID: "EN_X2Scope_1",
-      Socket: "X2ScopeSocket",
-      IconPosX: 155,
-      IconPosY: 9,
-      AimMuzzleVFXSocket: "X2ScopeMuzzle",
-    },
-    EN_X4Scope_1: {
-      AttachPrototypeSID: "EN_X4Scope_1",
-      Socket: "X4ScopeSocket",
-      IconPosX: 60,
-      IconPosY: 0,
-      AimMuzzleVFXSocket: "X4ScopeMuzzle",
-      WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/M16/T_inv_w_m16_en_x4scope_1.T_inv_w_m16_en_x4scope_1'`,
-    },
-    EN_X8Scope_1: {
-      AttachPrototypeSID: "EN_X8Scope_1",
-      Socket: "X8ScopeSocket",
-      IconPosX: 60,
-      IconPosY: 0,
-      AimMuzzleVFXSocket: "X8ScopeMuzzle",
-      AimShellShutterVFXSocket: "X8ScopeShells",
-      WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/M16/T_inv_w_sharpshooter_en_x8scope_1.T_inv_w_sharpshooter_en_x8scope_1'`,
-    },
-  },
-  nEN: {
-    RU_ColimScope_1: {
-      AttachPrototypeSID: "RU_ColimScope_1",
-      Socket: "ColimScopeSocket",
-      IconPosX: 155,
-      IconPosY: 9,
-    },
-    RU_X2Scope_1: {
-      AttachPrototypeSID: "RU_X2Scope_1",
-      Socket: "X2ScopeSocket",
-      IconPosX: 155,
-      IconPosY: 9,
-      AimMuzzleVFXSocket: "X2ScopeMuzzle",
-      AimShellShutterVFXSocket: "X2ScopeShells",
-    },
-    RU_X4Scope_1: {
-      AttachPrototypeSID: "RU_X4Scope_1",
-      Socket: "X4ScopeSocket",
-      IconPosX: 60,
-      IconPosY: 0,
-      AimMuzzleVFXSocket: "X4ScopeMuzzle",
-      AimShellShutterVFXSocket: "X4ScopeShells",
-    },
-    RU_X8Scope_1: {
-      AttachPrototypeSID: "RU_X8Scope_1",
-      Socket: "X8ScopeSocket",
-      IconPosX: 60,
-      IconPosY: 0,
-      AimMuzzleVFXSocket: "X8ScopeMuzzle",
-    },
-  },
+export const allCompatibleAttachmentDefsByWeaponGeneralSetupPrototypeSID: Record<
+  string,
+  Record<string, WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"]>
+> = {};
+
+export const allCompatibleAttachmentDefs: Record<string, WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"]> = {
+  EN_X16Scope_1: new Struct({
+    AttachPrototypeSID: "EN_X16Scope_1",
+    Socket: "X16ScopeSocket",
+    IconPosX: 90,
+    IconPosY: 0,
+    AimMuzzleVFXSocket: "X16ScopeMuzzle",
+    WeaponSpecificIcon:
+      "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/Mark/T_inv_w_mark_en_x8scope_1.T_inv_w_mark_en_x8scope_1'",
+  }) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"],
+
+  RU_X8Scope_1: new Struct({
+    AttachPrototypeSID: "RU_X8Scope_1",
+    Socket: "X8ScopeSocket",
+    IconPosX: 60,
+    IconPosY: 0,
+    AimMuzzleVFXSocket: "X8ScopeMuzzle",
+    WeaponSpecificIcon:
+      "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/SVU/T_inv_w_svu_ru_x8scope_1.T_inv_w_svu_ru_x8scope_1'",
+  }) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"],
 };
 
-export const basicAttachments = {
-  ...basicScopes,
-  RU_Silen_1: true,
-  RU_Silen_2: true,
-  RU_Silen_3: true,
-  EN_Silen_1: true,
-  EN_Silen_2: true,
-  EN_Silen_3: true,
-  EN_Silen_4: true,
-  GunPM_MagIncreased: true,
-  GunUDP_MagIncreased: true,
-  GunM10_MagIncreased: true,
-  GunAPB_MagIncreased: true,
-  GunKora_MagIncreased: true,
-  GunViper_MagIncreased: true,
-  GunAK_MagPaired: true,
-  GunBucket_MagIncreased: true,
-  GunIntegral_MagIncreased: true,
-  GunZubr_MagIncreased: true,
-  GunAK74_MagIncreased: true,
-  GunM16_MagIncreased: true,
-  GunGP37_MagPaired: true,
-  GunGP37_MagLarge: true,
-  GunFora_MagIncreased: true,
-  GunGrim_MagIncreased: true,
-  GunGrim_MagLarge: true,
-  GunGvintar_MagIncreased: true,
-  GunKharod_MagPaired: true,
-  GunLavina_MagIncreased: true,
-  GunDnipro_MagPaired: true,
-  GunPKP_MagIncreased: true,
-  GunPKP_MagLarge: true,
-  GunM860_MagLarge: true,
-  GunD12_MagIncreased: true,
-  GunD12_MagPaired: true,
-  GunD12_MagLarge: true,
-  GunMark_MagIncreased: true,
-  GunSVU_MagIncreased: true,
-  GunGauss_MagIncreased: true,
-  RU_GLaunch_1: true,
-  EN_GLaunch_1: true,
-  EN_BuckLaunch_1: true,
-};
+(await readFileAndGetStructs("WeaponData/WeaponGeneralSetupPrototypes.cfg")).forEach((struct: WeaponGeneralSetupPrototype) => {
+  if (struct.CompatibleAttachments) {
+    struct.CompatibleAttachments.forEach(([k, e]) => {
+      const newE = e.clone();
+      delete newE.BlockingUpgradeIDs;
+      delete newE.RequiredUpgradeIDs;
+
+      allCompatibleAttachmentDefsByWeaponGeneralSetupPrototypeSID[struct.SID] ??= {};
+      allCompatibleAttachmentDefsByWeaponGeneralSetupPrototypeSID[struct.SID][newE.AttachPrototypeSID] = newE;
+      allCompatibleAttachmentDefs[newE.AttachPrototypeSID] = newE;
+    });
+  }
+});

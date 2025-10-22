@@ -4,7 +4,7 @@ import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFac
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
 
-import { EntriesTransformer } from "./metaType.mjs";
+import { EntriesTransformer, MetaContext } from "./metaType.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
@@ -70,14 +70,47 @@ const minDropDurability = 0.01; // 1%
 const maxDropDurability = 0.5; // 50%
 const allRanks = new Set<ERank>(["ERank::Newbie", "ERank::Experienced", "ERank::Veteran", "ERank::Master"]);
 
-const transformTrade = (struct: DynamicItemGenerator) => {
+const transformTrade = (struct: DynamicItemGenerator, context: MetaContext<DynamicItemGenerator>) => {
   const fork = struct.fork();
+  if (technicianTradeTradeItemGenerators.has(struct.SID)) {
+    fork.RefreshTime = "1d";
+  }
   const ItemGenerator = struct.ItemGenerator.map(([_k, e]) => {
     // noinspection FallThroughInSwitchStatementJS
     switch (e.Category) {
       case "EItemGenerationCategory::Attach":
         if (generalTradersTradeItemGenerators.has(struct.SID)) {
           return Object.assign(e.fork(), { ReputationThreshold: 1000000 });
+        }
+        if (struct.SID === "Trader_Attachments_T4_ItemGenerator") {
+          return Object.assign(e.fork(), {
+            PossibleItems: Object.assign(e.PossibleItems.fork(), {
+              RU_X4Scope_1: new Struct({
+                ItemPrototypeSID: "RU_X4Scope_1",
+                Chance: 0.7,
+                MinCount: 1,
+                MaxCount: 1,
+              }),
+              RU_X8Scope_1: new Struct({
+                ItemPrototypeSID: "RU_X8Scope_1",
+                Chance: 0.3,
+                MinCount: 1,
+                MaxCount: 1,
+              }),
+              EN_X8Scope_1: new Struct({
+                ItemPrototypeSID: "EN_X8Scope_1",
+                Chance: 0.3,
+                MinCount: 1,
+                MaxCount: 1,
+              }),
+              EN_X16Scope_1: new Struct({
+                ItemPrototypeSID: "EN_X16Scope_1",
+                Chance: 0.2,
+                MinCount: 1,
+                MaxCount: 1,
+              }),
+            }),
+          });
         }
         break;
       case "EItemGenerationCategory::BodyArmor":
@@ -233,7 +266,7 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
   return markAsForkRecursively(fork);
 };
 
-const transformCombat = (struct: DynamicItemGenerator) => {
+const transformCombat = (struct: DynamicItemGenerator, context: MetaContext<DynamicItemGenerator>) => {
   const fork = struct.fork();
 
   const categories = struct.ItemGenerator.entries().map(([_k, ig]) => ig.Category);
@@ -291,14 +324,14 @@ const transformCombat = (struct: DynamicItemGenerator) => {
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
  */
-export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = (struct) => {
+export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = (struct, context) => {
   /**
    * Does not allow traders to sell gear.
    */
   if (struct.SID.includes("Trade")) {
-    return transformTrade(struct);
+    return transformTrade(struct, context);
   }
-  return transformCombat(struct);
+  return transformCombat(struct, context);
 };
 transformDynamicItemGenerator.files = ["/DynamicItemGenerator.cfg"];
 transformDynamicItemGenerator._name = "Transform DynamicItemGenerator prototypes";
