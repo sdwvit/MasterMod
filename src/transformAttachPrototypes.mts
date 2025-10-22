@@ -32,6 +32,8 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = (s
           "4": "ScopeAimingMovementNeg10Effect",
           "5": "ScopeRecoilPos20Effect",
         }) as any,
+        MeshPrototypeSID: "EN_X16Scope_1",
+        Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Attach/T_inv_icon_en_x16scope_1.T_inv_icon_en_x16scope_1'`,
       }) as AttachPrototype,
     );
   }

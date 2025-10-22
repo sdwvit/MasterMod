@@ -27,6 +27,7 @@ import { transformWeaponPrototypes } from "./transformWeaponPrototypes.mjs";
 import { transformQuestPrototypes } from "./transformQuestPrototypes.mjs";
 import { transformRelationPrototypes } from "./transformRelationPrototypes.mjs";
 import { transformBarbedWirePrototypes } from "./transformBarbedWirePrototypes.mjs";
+import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
 
 const structTransformers = [
   transformBarbedWirePrototypes,
@@ -56,6 +57,7 @@ const structTransformers = [
   transformWeaponGeneralSetupPrototypes,
   transformWeaponPrototypes,
   transformQuestPrototypes,
+  transformMeshPrototypes,
 ] as const;
 
 export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> = {
@@ -97,7 +99,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Make x8 falcon scope compatible with AR and GP37",
+  changenote: "Add x16 scope compatible with GP37",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

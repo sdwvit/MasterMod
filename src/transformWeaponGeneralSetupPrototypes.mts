@@ -57,7 +57,6 @@ function mapUniqueAttachmentsToGeneric(
           // no reassigning
           const newE = e.clone();
           delete newE.BlockingUpgradeIDs;
-          delete newE.RequiredUpgradeIDs;
           fork.CompatibleAttachments.addNode(newE, e.AttachPrototypeSID);
         }
       });
@@ -94,11 +93,17 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
     );
     fork.CompatibleAttachments.addNode(
       Object.assign(getCompatibleAttachmentDefinition("EN_X16Scope_1"), {
-        WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/GP37/T_inv_w_gp37_en_x8scope_1.T_inv_w_gp37_en_x8scope_1'`,
+        WeaponSpecificIcon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/WeaponAndAttachments/GP37/T_inv_w_gp37_en_x16scope_1.T_inv_w_gp37_en_x16scope_1'`,
       }),
       "EN_X16Scope_1",
     );
 
+    fork.CompatibleAttachments["EN_X16Scope_1"].RequiredUpgradeIDs = new Struct({
+      0: "GunG37_Upgrade_Attachment_Rail",
+    });
+    fork.CompatibleAttachments["EN_X16Scope_1"].RequiredUpgradeIDs = new Struct({
+      0: "GunG37_Upgrade_Attachment_Rail",
+    });
     return fork;
   }
 

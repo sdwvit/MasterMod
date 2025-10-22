@@ -32,7 +32,7 @@ export const allCompatibleAttachmentDefs: Record<string, WeaponGeneralSetupProto
   EN_X16Scope_1: new Struct({
     AttachPrototypeSID: "EN_X16Scope_1",
     Socket: "X16ScopeSocket",
-    IconPosX: 90,
+    IconPosX: 60,
     IconPosY: 0,
     AimMuzzleVFXSocket: "X16ScopeMuzzle",
     WeaponSpecificIcon:
