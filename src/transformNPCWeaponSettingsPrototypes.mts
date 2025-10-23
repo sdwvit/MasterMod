@@ -9,7 +9,9 @@ const playerWeaponSettingsPrototypesBySID = Object.fromEntries(
   ),
 );
 const weaponPrototypesByNPCSettingsMap = Object.fromEntries(
-  (await readFileAndGetStructs<WeaponPrototype>("ItemPrototypes/WeaponPrototypes.cfg")).map((s) => [s.NPCWeaponAttributes, s]),
+  (await readFileAndGetStructs<WeaponPrototype>("ItemPrototypes/WeaponPrototypes.cfg"))
+    .filter((s) => s.SID !== "UA_GLaunch_Weapon_Data_En" && s.SID !== "UA_GLaunch_Weapon_Data_Ru")
+    .map((s) => [s.NPCWeaponAttributes, s]),
 );
 
 /**
@@ -19,11 +21,14 @@ export const transformNPCWeaponSettingsPrototypes: EntriesTransformer<NPCWeaponS
   if (struct.SID.includes("Guard")) {
     let ref = structsById[struct.__internal__.refkey];
 
-    while (ref?.BaseDamage >= 500) {
-      ref = structsById[ref.__internal__.refkey];
+    while (
+      ref?.BaseDamage >= 50 &&
+      (structsById[ref.__internal__.refkey] ?? playerWeaponSettingsPrototypesBySID[ref.__internal__.refkey])?.BaseDamage
+    ) {
+      ref = structsById[ref.__internal__.refkey] ?? playerWeaponSettingsPrototypesBySID[ref.__internal__.refkey];
     }
 
-    return Object.assign(struct.fork(), { BaseDamage: ref?.BaseDamage ?? 50 });
+    return Object.assign(struct.fork(), { BaseDamage: ref?.BaseDamage });
   }
   if (struct.SID === "GunAK74_Strelok_ST_NPC") {
     return Object.assign(struct.fork(), { BaseDamage: 9, ArmorPiercing: 3 });

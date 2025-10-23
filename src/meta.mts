@@ -99,7 +99,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Add x16 scope compatible with GP37",
+  changenote: "Fix abnormal damage by NPCs with AK",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

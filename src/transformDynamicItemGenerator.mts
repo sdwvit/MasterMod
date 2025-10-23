@@ -166,12 +166,25 @@ const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"][number], 
 
 const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
   const fork = e.fork();
-  const PossibleItems = e.PossibleItems.filter((e): e is any => e[1].AmmoMaxCount > 10).map(([_k, pi], j) =>
-    Object.assign(pi.fork(), {
-      AmmoMinCount: 0,
-      AmmoMaxCount: Math.floor(1 + 5 * semiRandom(i + j)),
-    }),
-  );
+  const minMaxAmmo = (pi, j) => ({
+    AmmoMinCount: 0,
+    AmmoMaxCount: Math.min(Math.floor(1 + 10 * semiRandom(i + j)), pi.AmmoMaxCount),
+  });
+  const PossibleItems = e.PossibleItems.map(([_k, pi], j) => Object.assign(pi.fork(), minMaxAmmo(pi, j)));
+
+  // add lavinas
+  const [_, gvintarMaybe] = e.PossibleItems.entries().find(([_k, pi]) => pi.ItemPrototypeSID === "GunGvintar_ST") || [];
+  if (gvintarMaybe) {
+    PossibleItems.addNode(
+      new Struct({
+        ...gvintarMaybe,
+        ...minMaxAmmo(gvintarMaybe, PossibleItems.entries().length),
+        ItemPrototypeSID: "GunLavina_ST",
+      }),
+      "GunLavina_ST",
+    );
+  }
+
   if (!PossibleItems.entries().length) {
     return;
   }
@@ -421,5 +434,5 @@ const undroppableArmors = new Set(npcArmors);
 
 function getChanceForSID(sid: string) {
   const zeroToOne = 1 - (allItemRank[sid] - minimumArmorCost) / (maximumArmorCost - minimumArmorCost); // 1 means cheapest armor, 0 means most expensive armor
-  return zeroToOne * 0.14 + 0.01; // 1% to 15%
+  return zeroToOne * 0.05 + 0.01; // 1% to 5%
 }

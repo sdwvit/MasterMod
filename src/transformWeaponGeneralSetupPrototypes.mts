@@ -132,25 +132,27 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("EN_X8Scope_1"), "EN_X8Scope_1");
     return fork;
   }
+
+  if (struct.SID === "GunGvintar_ST" || struct.SID === "Gun_Merc_AR_GS") {
+    fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X8Scope_1"), "RU_X8Scope_1");
+    fork.CompatibleAttachments["RU_X8Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
+  }
+
   /*
-   if (struct.SID === "GunGvintar_ST" || struct.SID === "Gun_Merc_AR_GS") {
-     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
-     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X8Scope_1"), "RU_X8Scope_1");
-     fork.CompatibleAttachments["RU_X8Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
-   }
 
-   if (struct.SID === "GunSVDM_SP" || struct.SID === "Gun_Lynx_SR_GS") {
-     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
-     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X8Scope_1"), "RU_X8Scope_1");
-   }
+  if (struct.SID === "GunSVDM_SP" || struct.SID === "Gun_Lynx_SR_GS") {
+    fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X8Scope_1"), "RU_X8Scope_1");
+  }
 
-   if (struct.SID === "Gun_Whip_SR_GS" || struct.SID === "GunSVU_SP") {
-     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
-     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X2Scope_1"), "RU_X2Scope_1");
-     fork.CompatibleAttachments["RU_X2Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
-     fork.CompatibleAttachments["RU_X2Scope_1"].Socket = "X4ScopeSocket";
-   }
- */
+  if (struct.SID === "Gun_Whip_SR_GS" || struct.SID === "GunSVU_SP") {
+    fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X2Scope_1"), "RU_X2Scope_1");
+    fork.CompatibleAttachments["RU_X2Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
+    fork.CompatibleAttachments["RU_X2Scope_1"].Socket = "X4ScopeSocket";
+  }
+*/
 
   if (!fork.entries().length) {
     return;
