@@ -109,6 +109,12 @@ const transformTrade = (struct: DynamicItemGenerator, context: MetaContext<Dynam
                 MinCount: 1,
                 MaxCount: 1,
               }),
+              UA_X16Scope_1: new Struct({
+                ItemPrototypeSID: "UA_X16Scope_1",
+                Chance: 0.2,
+                MinCount: 1,
+                MaxCount: 1,
+              }),
             }),
           });
         }

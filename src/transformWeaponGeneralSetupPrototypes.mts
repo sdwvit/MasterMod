@@ -98,7 +98,7 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
       "EN_X16Scope_1",
     );
 
-    fork.CompatibleAttachments["EN_X16Scope_1"].RequiredUpgradeIDs = new Struct({
+    fork.CompatibleAttachments["EN_X8Scope_1"].RequiredUpgradeIDs = new Struct({
       0: "GunG37_Upgrade_Attachment_Rail",
     });
     fork.CompatibleAttachments["EN_X16Scope_1"].RequiredUpgradeIDs = new Struct({
@@ -110,9 +110,8 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
   if (struct.SID === "GunUDP_Deadeye_HG") {
     fork.UpgradePrototypeSIDs ??= struct.UpgradePrototypeSIDs.fork();
     fork.UpgradePrototypeSIDs.addNode("GunUDP_Upgrade_Attachment_Laser", "GunUDP_Upgrade_Attachment_Laser");
-    fork.CompatibleAttachments["EN_ColimScope_1"].Socket = "ColimScopeSocket_corrected";
   }
-  if (struct.SID === "GunUDP_HG" || struct.SID === "Gun_Krivenko_HG_GS") {
+  if (struct.SID === "GunUDP_HG" || struct.SID === "Gun_Krivenko_HG_GS" || struct.SID === "GunUDP_Deadeye_HG") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("EN_ColimScope_1"), "EN_ColimScope_1");
     fork.CompatibleAttachments["EN_ColimScope_1"].Socket = "ColimScopeSocket_corrected";
@@ -133,10 +132,12 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
     return fork;
   }
 
-  if (struct.SID === "GunGvintar_ST" || struct.SID === "Gun_Merc_AR_GS") {
+  if (struct.SID === "GunGvintar_ST" || struct.SID === "Gun_Merc_AR_GS" || struct.SID === "GunLavina_ST" || struct.SID === "Gun_Trophy_AR_GS") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("RU_X8Scope_1"), "RU_X8Scope_1");
     fork.CompatibleAttachments["RU_X8Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
+    fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("UA_X16Scope_1"), "UA_X16Scope_1");
+    fork.CompatibleAttachments["UA_X16Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
   }
 
   /*
