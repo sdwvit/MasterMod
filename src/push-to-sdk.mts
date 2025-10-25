@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import { logger } from "./logger.mjs";
 import { modName, sdkModsFolder, modFolderRaw } from "./base-paths.mjs";
 import { mkdirSync } from "fs";
-import { copyFileSync, cpSync } from "node:fs";
+import { cpSync } from "node:fs";
 
 const cmd = () => {
   const destinationPath = path.join(sdkModsFolder, modName, "Content", "GameLite", "GameData");

@@ -30,6 +30,12 @@ export const transformRelationPrototypes: EntriesTransformer<RelationPrototype> 
   fork.Relations["Mercenaries<->Varta"] = 0;
   fork.Relations["Varta<->Mercenaries"] = 0;
 
+  fork.Relations["Freedom<->Duty"] = -800;
+  fork.Relations["Duty<->Freedom"] = -800;
+
+  fork.Relations["Varta<->Spark"] = -800;
+  fork.Relations["Spark<->Varta"] = -800;
+
   return fork;
 };
 

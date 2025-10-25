@@ -40,6 +40,11 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `StashPrototypes`
   - `TradePrototypes`
   - `UpgradePrototypes`
+- `DialogPoolPrototypes`:
+  - `GroupAgnostic_Army`
+  - `GroupAgnostic_Bandits`
+  - `GroupAgnostic_FreeStalkers`
+  - `GroupAgnostic_Monolith`
 - `DialogPrototypes`:
   - `Malahit_Hub_DialogueOnEntrance`
   - `RSQ01_Dialog_Warlock_RSQ`

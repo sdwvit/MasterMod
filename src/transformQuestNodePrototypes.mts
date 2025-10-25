@@ -1,7 +1,8 @@
 import { QuestNodePrototype, Struct } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer, MetaContext } from "./metaType.mjs";
 import { utilQuestSID } from "./transformQuestPrototypes.mjs";
+import { questItemSIDs } from "./questItemSIDs.mjs";
 
 let oncePerTransformer = false;
 
@@ -15,9 +16,26 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
 
   if (!oncePerTransformer) {
     oncePerTransformer = true;
+    injectQuestNodeExtras(context);
+  }
+};
 
-    const getQuestNodeStruct = (itemPrototypeSID: string) =>
-      new Struct(`
+transformQuestNodePrototypes._name = "Remove quest timeouts";
+transformQuestNodePrototypes.files = [
+  "/QuestNodePrototypes/BodyParts_Malahit.cfg",
+  "/QuestNodePrototypes/RSQ01.cfg",
+  "/QuestNodePrototypes/RSQ04.cfg",
+  "/QuestNodePrototypes/RSQ05.cfg",
+  "/QuestNodePrototypes/RSQ06_C00___SIDOROVICH.cfg",
+  "/QuestNodePrototypes/RSQ07_C00_TSEMZAVOD.cfg",
+  "/QuestNodePrototypes/RSQ08_C00_ROSTOK.cfg",
+  "/QuestNodePrototypes/RSQ09_C00_MALAHIT.cfg",
+  "/QuestNodePrototypes/RSQ10_C00_HARPY.cfg",
+];
+
+function injectQuestNodeExtras(context: MetaContext<QuestNodePrototype>) {
+  const getQuestNodeStruct = (itemPrototypeSID: string) =>
+    new Struct(`
       ${utilQuestSID}_SwitchQuestItemState_${itemPrototypeSID} : struct.begin
          SID = ${utilQuestSID}_SwitchQuestItemState_${itemPrototypeSID}
          NodePrototypeVersion = 1
@@ -41,7 +59,7 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
       struct.end
     `) as QuestNodePrototype;
 
-    const specialQuestNode = new Struct(`
+  const specialQuestNode = new Struct(`
       ${utilQuestSID}_Start : struct.begin
          SID = ${utilQuestSID}_Start
          NodePrototypeVersion = 1
@@ -51,196 +69,6 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
          LaunchOnQuestStart = true
       struct.end
     `) as QuestNodePrototype;
-    context.extraStructs.push(specialQuestNode);
-    questItemSIDs.forEach((questItemSID) => context.extraStructs.push(getQuestNodeStruct(questItemSID)));
-  }
-};
-transformQuestNodePrototypes._name = "Remove quest timeouts";
-transformQuestNodePrototypes.files = [
-  "/QuestNodePrototypes/BodyParts_Malahit.cfg",
-  "/QuestNodePrototypes/RSQ01.cfg",
-  "/QuestNodePrototypes/RSQ04.cfg",
-  "/QuestNodePrototypes/RSQ05.cfg",
-  "/QuestNodePrototypes/RSQ06_C00___SIDOROVICH.cfg",
-  "/QuestNodePrototypes/RSQ07_C00_TSEMZAVOD.cfg",
-  "/QuestNodePrototypes/RSQ08_C00_ROSTOK.cfg",
-  "/QuestNodePrototypes/RSQ09_C00_MALAHIT.cfg",
-  "/QuestNodePrototypes/RSQ10_C00_HARPY.cfg",
-];
-
-const questItemSIDs = [
-  "Scanner",
-  "Inductor",
-  "BasePDA_Bandits",
-  "BasePDA_Neutrals",
-  "BasePDA_Freedom",
-  "BasePDA_Duty",
-  "BasePDA_Spark",
-  "BasePDA_Ward",
-  "BasePDA_Military",
-  "BasePDA_Monolith",
-  "BasePDA_MonolithBroken",
-  "BasePDA_Mercs",
-  "QuestItem_Recorder_Base",
-  "QuestItem_Notepad_Paper",
-  "QuestItem_Notepad_OldDiary",
-  "QuestItem_Notepad_Officer",
-  "QuestItem_USB_Damaged_White",
-  "QuestItem_USB_Damaged_Black",
-  "QuestItem_USB_Damaged_Blue",
-  "QuestItem_USB_Damaged_Burnt",
-  "QuestItem_USB_Stalker_Blue",
-  "QuestItem_USB_Stalker_Red",
-  "QuestItem_USB_Stalker_Big",
-  "QuestItem_USB_Modern_Darkblue",
-  "QuestItem_USB_Modern_Black",
-  "QuestItem_USB_Modern_White",
-  "QuestItem_USB_Upgrade",
-  "QuestItem_KeyCard_Blue",
-  "QuestItem_KeyCard_Green",
-  "QuestItem_KeyCard_Yellow",
-  "QuestItem_KeyCard_Red",
-  "QuestItem_Note_A4",
-  "QuestItem_Note_Notebook",
-  "QuestItem_Note_Notepad",
-  "QuestItem_Note_Burnt",
-  "QuestItem_Note_Ragged",
-  "QuestItem_Note_BrandNew",
-  "QuestItem_Note_Kaimanov",
-  "QuestItem_Folder_Journal",
-  "QuestItem_Folder_Scheme",
-  "QuestItem_Folder_File",
-  "QuestItem_Folder_Brown",
-  "QuestItem_Folder_White",
-  "QuestItem_Folder_Blue",
-  "QuestItem_Key_Chest",
-  "QuestItem_Key_Padlock",
-  "QuestItem_Key_DoorOld",
-  "QuestItem_Key_DoorNew",
-  "QuestItem_Collar_N1",
-  "QuestItem_Collar_N2",
-  "QuestItem_Collar_N3",
-  "QuestItem_Case_X11",
-  "QuestItem_Case_Blue",
-  "QuestItem_Case_Mil",
-  "QuestItem_Case_Nato",
-  "QuestItem_Case_Sci",
-  "QuestItem_Case_Diplomat",
-  "QuestItem_Fuse_Low",
-  "QuestItem_Fuse_Mid",
-  "QuestItem_Fuse_High",
-  "QuestItem_Tubus",
-  "StrangePDA",
-  "Icon",
-  "FaustData",
-  "E03_05_NestorNote",
-  "AzimutControlRoomKey",
-  "E06_MQ03_DalinData",
-  "RSQ01_WarlockPackage",
-  "RSQ04_C05_FuelCan",
-  "SQ13_PDA_Budnik",
-  "SQ13_Soul",
-  "RSQ05_C01_FlashDrive",
-  "E02_MQ03_VartaSensors",
-  "RSQ06_C04_Goods",
-  "E06_MQ02_CryptoKey",
-  "E07_PsyEmitter",
-  "VartaDogtag",
-  "E05_MQ03_KalanchaFlashDisk",
-  "SQ50_SultanSuitcase",
-  "krivenko_full_flashdrive_05_05",
-  "krivenko_flashdrive_05_05",
-  "E08_MQ03_SuppressorDocs",
-  "E08_MQ03_KeycardLabX5",
-  "QuestArtifactCrystalThorn",
-  "SQ86_SashkaBitokPDA",
-  "E07_MQ02_PripoyKey",
-  "E05_MQ01_ShterevPDA",
-  "E05_MQ01_VartaSensors",
-  "E07_MQ03_ControlEmitter",
-  "E05_MQ01_ShterevDiary",
-  "E04_SQ02_KvaskaPDA",
-  "SQ06_PsiLamp",
-  "SQ06_PsiLampDestroyed",
-  "E05_SQ03_PDASavruk",
-  "EQ156_CaseBones",
-  "E10_MQ01_SiviyPDA_Item",
-  "E10_MQ01_YarlPDA_Item",
-  "E10_MQ01_VolkodavPDA_Item",
-  "E08_SQ01_KardanDvupalovFirstPDA",
-  "E08_SQ01_KardanDvupalovSecondPDA",
-  "RSQ07_Item",
-  "RSQ07_Item2",
-  "E10_MQ02_Regenerator",
-  "RSQ08_Item",
-  "RSQ08_Item2",
-  "RSQ09_Item",
-  "RSQ010_Item",
-  "E08_EQ02_DenyaByvalyiPDA",
-  "SQ88_MacekPDA",
-  "SQ88_GrebenNote",
-  "Malahit_KeyCard",
-  "E11_MQ04_DoorKey",
-  "NegodaPDA",
-  "E11_MQ02_KeyCardX15",
-  "E11_MQ02_InstAntNote",
-  "SQ90_PseudoGiantCollar",
-  "E14_MQ01_LaundromatDocs_Item",
-  "E14_MQ01_Helicopter_Item",
-  "E14_MQ01_Prometey_Spark_Item",
-  "E14_MQ01_Prometey_Varta_Item",
-  "E14_MQ01_Coordinates_Item",
-  "E12_MQ01_PDADuh",
-  "EQ165_USBTrachuk",
-  "E12_MO01_PhotoIskra",
-  "E08_EQ01_CollarBayun",
-  "E08_EQ02_CollarSnork",
-  "E08_EQ03_CollarBloodsucker",
-  "E16_MQ03_StrelokPDA",
-  "E16_MQ03_KeyKard_Granite",
-  "SQ88_KuvaldaDiary",
-  "ANCQ24_VenyaNotes",
-  "SQ06_PDA_ZombieScientist",
-  "E16_MQ03_CartridgeSkif",
-  "E11_MQ01_DeciphererX3",
-  "RSQ07_C09_ContainerItem",
-  "RSQ01_NewbiePDA",
-  "RSQ01_NewbiePDA2",
-  "RSQ01_NewbiePDA3",
-  "RSQ01_NewbiePDA4",
-  "RSQ04_C10_GlavarPDA",
-  "E11_MQ01_Cartridge",
-  "E11_MQ01_DarkHabar",
-  "E08_MQ03_ListWarning",
-  "E08_MQ03_ConrolRoomKey",
-  "E11_MQ01_Tracker",
-  "E08_MQ03_SherbaToDvupalov_Note",
-  "E08_MQ03_SciArticle",
-  "E08_MQ03_LetterForChubko",
-  "E08_MQ03_CollarsTestsData",
-  "E08_MQ03_DvupaloDairy",
-  "E08_MQ03_ReceptionNote",
-  "E08_MQ03_DvupalovRecorder_Mutants",
-  "E08_DvupolovRecorder_PrisonCell",
-  "ProjectControllerDocs",
-  "E08_MQ04_Explosives",
-  "E12_MQ01_SkanerMItem",
-  "E12_MQ01_DuhStashKey",
-  "E05_MQ02_KalanchaMap",
-  "E12_MO01_DuhToRihterItem",
-  "E07_SQ01_SurgeryKit",
-  "E08_MQ04_UndergroundKeycard",
-  "E15_MQ03_CartridgeItem",
-  "E06_MQ01_AgathaNote",
-  "E15_MQ03_ProjectYItem",
-  "E06_MQ01_Card",
-  "EchoE01",
-  "E02_MQ03_RebraKey",
-  "EQ10_PastuhPDA",
-  "Guitar",
-  "AlteredScarsToast",
-  "RichtersPlayer",
-  "nvgpack_supack_KlucPDA",
-  "Gun_SkifGun_HG",
-  "CPrologArtifactSlug",
-];
+  context.extraStructs.push(specialQuestNode);
+  questItemSIDs.forEach((questItemSID) => context.extraStructs.push(getQuestNodeStruct(questItemSID)));
+}

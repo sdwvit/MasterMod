@@ -28,20 +28,22 @@ import { transformQuestPrototypes } from "./transformQuestPrototypes.mjs";
 import { transformRelationPrototypes } from "./transformRelationPrototypes.mjs";
 import { transformBarbedWirePrototypes } from "./transformBarbedWirePrototypes.mjs";
 import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
+import { transformDialogPoolPrototypes } from "./transformDialogPoolPrototypes.mjs";
 
 const structTransformers = [
-  transformBarbedWirePrototypes,
-  transformRelationPrototypes,
   transformALifeDirectorScenarioPrototypes,
   transformArmorPrototypes,
   transformArtifactPrototypes,
   transformAttachPrototypes,
+  transformBarbedWirePrototypes,
+  transformDialogPoolPrototypes,
   transformDialogPrototypes,
   transformDifficultyPrototypes,
   transformDynamicItemGenerator,
   transformEffectPrototypes,
   transformItemGeneratorPrototypes,
   transformMeshGeneratorPrototypes,
+  transformMeshPrototypes,
   transformMobs,
   transformNPCWeaponSettingsPrototypes,
   transformObjPrototypes,
@@ -49,15 +51,15 @@ const structTransformers = [
   transformQuestItemPrototypes,
   transformQuestNodePrototypes,
   transformQuestObjPrototypes,
+  transformQuestPrototypes,
   transformQuestRewardsPrototypes,
+  transformRelationPrototypes,
   transformSpawnActorPrototypes,
   transformStashPrototypes,
   transformTradePrototypes,
   transformUpgradePrototypes,
   transformWeaponGeneralSetupPrototypes,
   transformWeaponPrototypes,
-  transformQuestPrototypes,
-  transformMeshPrototypes,
 ] as const;
 
 export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> = {
@@ -99,7 +101,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Fix abnormal damage by NPCs with AK",
+  changenote: "Every NPC can now trade. Adjust Freedom-Duty Varta-Spark relationships",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

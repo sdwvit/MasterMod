@@ -2,6 +2,9 @@ import { ObjPrototype } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
 
+/**
+ * Adds trade prototypes to all technicians and guides.
+ */
 export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = (struct) => {
   if (techniciansAndTheirTradePrototypes.has(struct.SID)) {
     const fork = Object.assign(struct.fork(), {
@@ -13,7 +16,11 @@ export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = (st
     return fork;
   }
   if (guidesAndTheirTradePrototypes[struct.SID]) {
-    return Object.assign(struct.fork(), { TradePrototypeSID: guidesAndTheirTradePrototypes[struct.SID] });
+    const fork = Object.assign(struct.fork(), { TradePrototypeSID: guidesAndTheirTradePrototypes[struct.SID] });
+    if (!struct.ItemGeneratorPrototypeSID) {
+      fork.ItemGeneratorPrototypeSID = "MainTraderItemGeneratorV1";
+    }
+    return fork;
   }
 };
 transformQuestObjPrototypes.files = ["/QuestObjPrototypes.cfg"];
