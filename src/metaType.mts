@@ -8,7 +8,7 @@ export type MetaContext<T> = {
   filePath: string;
   structsById: Record<string, T>;
 };
-export type EntriesTransformer<T> = ((entries: T, context: MetaContext<T>) => Struct | null) & {
+export type EntriesTransformer<T> = ((entries: T, context: MetaContext<T>) => Promise<Struct | null>) & {
   contains?: true;
   contents?: string[];
   _name: string;
@@ -19,4 +19,5 @@ export type MetaType<T> = {
   description: string;
   structTransformers: EntriesTransformer<T>[];
   onFinish?(): void;
+  onTransformerFinish?(transformer: EntriesTransformer<T>): void;
 };

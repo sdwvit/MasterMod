@@ -62,6 +62,8 @@ const structTransformers = [
   transformWeaponPrototypes,
 ] as const;
 
+export const finishedTransformers = new Set<string>();
+
 export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> = {
   description: `A collection of various configs aimed to increase game difficulty and make it more interesting.[h3][/h3]
 [hr][/hr]
@@ -105,5 +107,8 @@ All changes have been tested against fresh save file. Some of these changes won'
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);
+  },
+  onTransformerFinish(transformer) {
+    finishedTransformers.add(transformer._name);
   },
 };

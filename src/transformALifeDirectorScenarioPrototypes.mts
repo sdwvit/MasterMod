@@ -7,7 +7,7 @@ import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
  */
-export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeDirectorScenarioPrototype> = (struct, {}) => {
+export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeDirectorScenarioPrototype> = async (struct, {}) => {
   const newStruct = struct.fork();
 
   Object.assign(newStruct, {

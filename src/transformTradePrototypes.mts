@@ -9,7 +9,7 @@ const oncePerFile = new Set<string>();
 /**
  * Don't allow traders to buy weapons and armor.
  */
-export const transformTradePrototypes: EntriesTransformer<TradePrototype> = (struct, context) => {
+export const transformTradePrototypes: EntriesTransformer<TradePrototype> = async (struct, context) => {
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
     context.extraStructs.push(

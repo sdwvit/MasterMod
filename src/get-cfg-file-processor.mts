@@ -39,7 +39,7 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
       const id = s.__internal__.rawName;
       if (!id) continue;
 
-      const processedStruct = transformer(s as T, { index, fileIndex, array, filePath, structsById, extraStructs });
+      const processedStruct = await transformer(s as T, { index, fileIndex, array, filePath, structsById, extraStructs });
 
       s.__internal__.refurl = "../" + pathToSave.base;
       if (processedStruct) {

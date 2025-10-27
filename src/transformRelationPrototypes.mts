@@ -5,7 +5,7 @@ import { EntriesTransformer } from "./metaType.mjs";
 /**
  * Fixes some of the relationships
  */
-export const transformRelationPrototypes: EntriesTransformer<RelationPrototype> = (struct) => {
+export const transformRelationPrototypes: EntriesTransformer<RelationPrototype> = async (struct) => {
   const fork = struct.fork();
 
   fork.Relations = struct.Relations.fork();

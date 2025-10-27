@@ -78,7 +78,7 @@ const getCompatibleAttachmentDefinitionByWeaponSetupSID = (weaponSid: string, si
 /**
  * Enables removing attachments from unique weapons, as well as makes them compatible with ref weapon attachments.
  */
-export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGeneralSetupPrototype> = (struct, context) => {
+export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGeneralSetupPrototype> = async (struct, context) => {
   const fork = struct.fork();
 
   mapUniqueAttachmentsToGeneric(fork, struct, context);

@@ -17,7 +17,7 @@ const weaponPrototypesByNPCSettingsMap = Object.fromEntries(
 /**
  * Transforms NPC Weapon Settings Prototypes to set default BaseDamage for Guard NPCs.
  */
-export const transformNPCWeaponSettingsPrototypes: EntriesTransformer<NPCWeaponSettingsPrototype> = (struct, { structsById }) => {
+export const transformNPCWeaponSettingsPrototypes: EntriesTransformer<NPCWeaponSettingsPrototype> = async (struct, { structsById }) => {
   if (struct.SID.includes("Guard")) {
     let ref = structsById[struct.__internal__.refkey];
 

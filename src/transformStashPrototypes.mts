@@ -3,7 +3,7 @@ import { semiRandom } from "./semi-random.mjs";
 
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
 
-export const transformStashPrototypes: EntriesTransformer<StashPrototype> = (struct, { index }) => {
+export const transformStashPrototypes: EntriesTransformer<StashPrototype> = async (struct, { index }) => {
   if (struct.SID === "empty") {
     return;
   }

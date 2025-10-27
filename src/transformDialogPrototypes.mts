@@ -11,45 +11,19 @@ const MALACHITE_BRIBE = 50000;
 /**
  * Show the correct money reward for repeatable quests
  */
-export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = (struct) => {
+export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = async (struct) => {
   if (struct.SID === "Malahit_Hub_DialogueOnEntrance_Bribe_62758") {
-    const fork = struct.fork();
-
-    return deepMerge(fork, {
-      DialogActions: new Struct({ "0": new Struct({ DialogActionParam: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }),
-      DialogAnswerActions: new Struct({ "0": new Struct({ DialogActionParam: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }),
-      TopicAvailabilityConditions: new Struct({ "0": new Struct({ "0": new Struct({ Money: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }) }),
-    }).fork(true);
+    return adjustMalahitBribe(struct);
   }
   if (struct.SID === "Malahit_Hub_DialogueOnEntrance_WaitForReply") {
-    const fork = struct.fork();
-    return deepMerge(fork, {
-      NextDialogOptions: new Struct({
-        "2": new Struct({ Conditions: new Struct({ 0: new Struct({ 0: new Struct({ Money: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }) }) }),
-      }),
-    }).fork(true);
+    return adjustMalahitBribeDialogValue(struct);
   }
-  let keepo = false;
 
-  const fork = struct.fork();
+  const fork = adjustQuestRewards(struct);
 
-  const mapper = ([_k, v]) => {
-    if (v.DialogAction === "EDialogAction::ShowMoney" && typeof v.DialogActionParam === "object") {
-      const minmax = DialogRewardMap[struct.SID] as number;
-      keepo = true;
-      return Object.assign(v.fork(), {
-        DialogActionParam: Object.assign(v.DialogActionParam.fork(), {
-          VariableValue: rewardFormula(minmax, minmax).reduce((a, b) => a + b, 0) / 2,
-        }),
-      });
-    }
-  };
-
-  const overrides = {
-    DialogActions: struct.DialogActions?.map?.(mapper),
-    DialogAnswerActions: struct.DialogAnswerActions?.map?.(mapper),
-  };
-  if (keepo) return markAsForkRecursively(Object.assign(fork, overrides));
+  if (fork.entries().length) {
+    return fork;
+  }
 };
 transformDialogPrototypes.files = [
   "/DialogPrototypes/RSQ10_Dialog_Harpy_RSQ.cfg",
@@ -64,3 +38,50 @@ transformDialogPrototypes.files = [
 ];
 
 transformDialogPrototypes._name = "Show the correct money reward for repeatable quests";
+
+function adjustMalahitBribe(struct: DialogPrototype) {
+  const fork = struct.fork();
+
+  return deepMerge(fork, {
+    DialogActions: new Struct({ "0": new Struct({ DialogActionParam: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }),
+    DialogAnswerActions: new Struct({ "0": new Struct({ DialogActionParam: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }),
+    TopicAvailabilityConditions: new Struct({ "0": new Struct({ "0": new Struct({ Money: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }) }),
+  }).fork(true);
+}
+
+function adjustMalahitBribeDialogValue(struct: DialogPrototype) {
+  const fork = struct.fork();
+  return deepMerge(fork, {
+    NextDialogOptions: new Struct({
+      "2": new Struct({ Conditions: new Struct({ 0: new Struct({ 0: new Struct({ Money: new Struct({ VariableValue: MALACHITE_BRIBE }) }) }) }) }),
+    }),
+  }).fork(true);
+}
+
+function adjustQuestRewards(struct: DialogPrototype) {
+  const fork = struct.fork();
+
+  const mapper = ([_k, v]) => {
+    if (v.DialogAction === "EDialogAction::ShowMoney" && typeof v.DialogActionParam === "object") {
+      const minmax = DialogRewardMap[struct.SID] as number;
+      return Object.assign(v.fork(), {
+        DialogActionParam: Object.assign(v.DialogActionParam.fork(), {
+          VariableValue: rewardFormula(minmax, minmax).reduce((a, b) => a + b, 0) / 2,
+        }),
+      });
+    }
+  };
+
+  const DialogActions = struct.DialogActions?.map?.(mapper);
+  const DialogAnswerActions = struct.DialogAnswerActions?.map?.(mapper);
+  if (DialogActions && DialogActions.entries().length) {
+    DialogActions.__internal__.bpatch = true;
+    fork.DialogActions = DialogActions;
+  }
+  if (DialogAnswerActions && DialogAnswerActions.entries().length) {
+    DialogAnswerActions.__internal__.bpatch = true;
+    fork.DialogAnswerActions = DialogAnswerActions;
+  }
+
+  return fork;
+}

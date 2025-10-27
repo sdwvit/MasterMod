@@ -126,7 +126,7 @@ const transformTrade = (struct: DynamicItemGenerator, context: MetaContext<Dynam
       case "EItemGenerationCategory::WeaponSecondary":
         return Object.assign(e.fork(), { ReputationThreshold: 1000000 });
       case "EItemGenerationCategory::SubItemGenerator":
-        const PossibleItems = (e.PossibleItems as DynamicItemGenerator["ItemGenerator"][number]["PossibleItems"]).map(([_k, pi]) => {
+        const PossibleItems = (e.PossibleItems as DynamicItemGenerator["ItemGenerator"]["0"]["PossibleItems"]).map(([_k, pi]) => {
           if (
             generalTradersTradeItemGenerators.has(struct.SID) &&
             (pi.ItemGeneratorPrototypeSID?.includes("Attach") ||
@@ -153,7 +153,7 @@ const transformTrade = (struct: DynamicItemGenerator, context: MetaContext<Dynam
   return Object.assign(fork, { ItemGenerator });
 };
 
-const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
+const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"]["0"], i: number) => {
   const fork = e.fork();
   const PossibleItems = e.PossibleItems.filter(([_k, pi]) => !pi.ItemPrototypeSID.toLowerCase().includes("key")).map(([_k, pi], j) => {
     let chance = semiRandom(i + j); // Randomize
@@ -170,7 +170,7 @@ const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"][number], 
   return Object.assign(fork, { PossibleItems });
 };
 
-const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
+const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"]["0"], i: number) => {
   const fork = e.fork();
   const minMaxAmmo = (pi, j) => ({
     AmmoMinCount: 0,
@@ -201,7 +201,7 @@ const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"][number], i: n
 /**
  * Allows NPCs to drop armor and helmets.
  */
-const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItemGenerator["ItemGenerator"][number], i: number) => {
+const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItemGenerator["ItemGenerator"]["0"], i: number) => {
   if (
     struct.SID.includes("WeaponPistol") ||
     struct.SID.includes("Consumables") ||
@@ -343,7 +343,7 @@ const transformCombat = (struct: DynamicItemGenerator, context: MetaContext<Dyna
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
  */
-export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = (struct, context) => {
+export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = async (struct, context) => {
   /**
    * Does not allow traders to sell gear.
    */

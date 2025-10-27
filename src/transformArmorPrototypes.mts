@@ -14,7 +14,7 @@ const oncePerFile = new Set<string>();
 /**
  * Adds armor that doesn't block head, but also removes any psy protection. Allows player to use helmets.
  */
-export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = (struct, context) => {
+export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = async (struct, context) => {
   if (bannedids.has(struct.SID)) {
     return null;
   }

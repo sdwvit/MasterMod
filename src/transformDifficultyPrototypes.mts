@@ -5,7 +5,7 @@ export const DIFFICULTY_FACTOR = 4;
 /**
  * Increases cost of everything and damage on Hard difficulty.
  */
-export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototype> = (struct) => {
+export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototype> = async (struct) => {
   if (struct.SID !== "Hard") {
     return null;
   }

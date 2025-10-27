@@ -5,7 +5,7 @@ import { EntriesTransformer, MetaType } from "./metaType.mjs";
 /**
  * Unlocks blocking upgrades.
  */
-export const transformUpgradePrototypes: EntriesTransformer<UpgradePrototype> = (struct) => {
+export const transformUpgradePrototypes: EntriesTransformer<UpgradePrototype> = async (struct) => {
   if (struct.SID === "empty") {
     return Object.assign(struct.fork(), {
       RepairCostModifier: `0.02f`,

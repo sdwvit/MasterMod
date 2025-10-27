@@ -1,9 +1,9 @@
-import { DialogPoolPrototype } from "s2cfgtojson";
+import { DialogPoolPrototype, Struct } from "s2cfgtojson";
 import { EntriesTransformer } from "./metaType.mjs";
 /**
  * Transforms DialogPoolPrototype structs to replace "SpeakToLeader" dialog events with "Hello" topics.
  */
-export const transformDialogPoolPrototypes: EntriesTransformer<DialogPoolPrototype> = (struct, context) => {
+export const transformDialogPoolPrototypes: EntriesTransformer<DialogPoolPrototype> = async (struct, context) => {
   if (struct.DialogEventType === "EDialogEventType::Interact_SpeakToLeader") {
     const fork = struct.fork();
     fork.AvailableDialogs = struct.AvailableDialogs.fork(true).map(([_, dialog]) => speakToLeaderToHelloTopicsMap[dialog] || dialog);
@@ -19,7 +19,7 @@ transformDialogPoolPrototypes.files = [
   "/GroupAgnostic_Bandits.cfg",
   "/GroupAgnostic_FreeStalkers.cfg",
   "/GroupAgnostic_Monolith.cfg",
-]; // filler
+];
 
 const speakToLeaderToHelloTopicsMap = {
   General_freestalkers_0_NPC_Interact_SpeakToLeader: "General_freestalkers_0_NPC_Interact_Neutral",

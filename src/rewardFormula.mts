@@ -4,39 +4,31 @@ export const SIDRewardMap = {
   RSQ00_reward_var1: 15000, // find common artifact
   RSQ00_reward_var2: 30000, // find uncommon artifact
   RSQ00_reward_var3: 60000, // find rare artifact
-
   RSQ01_reward_var1: 3200, // bring stash item
   RSQ01_reward_var2: 5000, // kill easy mutants
   RSQ01_reward_var3: 8000, // kill bandits
   RSQ01_reward_var4: 5000, // find dead stalker pda or stalker squad
-
   RSQ04_reward_var1: 3500, // bandit squad or find dead stalker pda or stalker squad
   RSQ04_reward_var2: 4000, // bandit squad drabadan
   RSQ04_reward_var3: 8000, // bandit squad drabadan
   RSQ04_reward_var4: 10000, // bandit squad
-
   RSQ05_reward_var1: 6000,
   RSQ05_reward_var2: 8000,
   RSQ05_reward_var3: 9000,
   RSQ05_reward_var4: 10000, // kill bloodsucker
-
   RSQ06_reward_var1: 5000, // easy mutants or bring stash item
   RSQ06_reward_var2: 6000, // zombies or ?
   RSQ06_reward_var3: 8000, // bandit squad or find dead stalker pda or stalker squad
   RSQ06_reward_var4: 15800, // bring gun for newbie
-
   RSQ07_reward_var1: 5000, // easy mutants or bring stash item
   RSQ07_reward_var2: 8000, // bandits
   RSQ07_reward_var3: 8000,
-
   RSQ08_reward_var1: 10000,
   RSQ08_reward_var2: 20000,
   RSQ08_reward_var3: 30000, // find uncommon artifact
-
   RSQ09_reward_var1: 5000, // easy mutants or bring stash item
   RSQ09_reward_var2: 8000, // bandits ?
   RSQ09_reward_var3: 10000, // spica turn on devices
-
   RSQ10_reward_var1: 10000, // harpy bandits or stalkers
   RSQ10_reward_var2: 10000, // bring stash item
   RSQ10_reward_var3: 10000, // harpy bandits or stalkers

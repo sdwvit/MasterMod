@@ -5,7 +5,7 @@ import { EntriesTransformer } from "./metaType.mjs";
 /**
  * Adds trade prototypes to all technicians and guides.
  */
-export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = (struct) => {
+export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = async (struct) => {
   if (techniciansAndTheirTradePrototypes.has(struct.SID)) {
     const fork = Object.assign(struct.fork(), {
       TradePrototypeSID: techniciansAndTheirTradePrototypes.get(struct.SID),

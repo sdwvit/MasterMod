@@ -4,7 +4,7 @@ import { EntriesTransformer } from "./metaType.mjs";
 /**
  * Remove an essential flag from various items
  */
-export const transformQuestArtifactPrototypes: EntriesTransformer<ArtifactPrototype> = (struct) => {
+export const transformQuestArtifactPrototypes: EntriesTransformer<ArtifactPrototype> = async (struct) => {
   if (struct.IsQuestItem) {
     return Object.assign(struct.fork(), { IsQuestItem: false });
   }

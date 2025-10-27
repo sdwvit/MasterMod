@@ -14,7 +14,7 @@ type MeshGeneratorPrototype = GetStructType<{
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
  */
-export const transformMeshGeneratorPrototypes: EntriesTransformer<MeshGeneratorPrototype> = (struct, c) => {
+export const transformMeshGeneratorPrototypes: EntriesTransformer<MeshGeneratorPrototype> = async (struct, c) => {
   if (struct.SID === "BAN_03_a_MeshGenerator" || struct.SID === "BAN_04_a_MeshGenerator") {
     const fork = struct.fork();
     const newMesh = deepMerge(fork, {

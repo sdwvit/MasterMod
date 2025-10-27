@@ -4,7 +4,7 @@ import { EntriesTransformer } from "./metaType.mjs";
 /**
  * Remove an essential flag from various items
  */
-export const transformWeaponPrototypes: EntriesTransformer<WeaponPrototype> = (struct) => {
+export const transformWeaponPrototypes: EntriesTransformer<WeaponPrototype> = async (struct) => {
   const fork = struct.fork();
   if (struct.IsQuestItem) {
     Object.assign(fork, { IsQuestItem: false });

@@ -1,4 +1,4 @@
-import { ArmorPrototype, EItemGenerationCategory, ERank, Struct } from "s2cfgtojson";
+import { ArmorPrototype, EItemGenerationCategory, ERank, Refs, Struct } from "s2cfgtojson";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -46,14 +46,8 @@ export function backfillArmorDef(armor: Struct): ArmorPrototype {
   return armor as ArmorPrototype;
 }
 
-export type DeeplyPartial<T> = {
-  [P in keyof T]?: T[P] extends Array<infer U>
-    ? Array<DeeplyPartial<U>>
-    : T[P] extends ReadonlyArray<infer U>
-      ? ReadonlyArray<DeeplyPartial<U>>
-      : T[P] extends object
-        ? DeeplyPartial<T[P]>
-        : T[P];
+type DeeplyPartial<T extends Struct> = {
+  [P in Exclude<keyof T, keyof Struct>]?: T[P] extends Struct ? DeeplyPartial<T[P]> : T[P];
 };
 
 export type ArmorDescriptor = {
@@ -65,7 +59,7 @@ export type ArmorDescriptor = {
       isDroppable?: boolean;
     };
   };
-} & DeeplyPartial<Omit<ArmorPrototype, "__internal__">>;
+} & DeeplyPartial<ArmorPrototype>;
 
 export const newArmors = {
   BattleExoskeleton_Varta_Armor_MasterMod_headless: {
@@ -435,10 +429,10 @@ export const newArmors = {
     },
     SID: "SkinCloak_Bandit_Armor_MasterMod",
     LocalizationSID: "SkinJacket_Bandit_Armor",
-    Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape_Bandit_Armor.T_IFI_Cape_Bandit_Armor'",
+    //Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape_Bandit_Armor.T_IFI_Cape_Bandit_Armor'",
     MeshGenerator: new Struct({ "0": new Struct({ MeshGeneratorPrototypeSID: "BAN_03_a_MeshGenerator_Player", Weight: 1 }) }) as any,
-    bBlockHead: true,
-    InvisibleInPlayerInventory: true,
+    // bBlockHead: true,
+    // InvisibleInPlayerInventory: true,
   } satisfies ArmorDescriptor,
   SkinCloak_Bandit_Armor2_MasterMod_headless: {
     __internal__: {
@@ -452,10 +446,10 @@ export const newArmors = {
       },
     },
     SID: "SkinCloak_Bandit_Armor2_MasterMod_headless",
-    Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape2_Bandit_Armor.T_IFI_Cape2_Bandit_Armor'",
+    // Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Cape2_Bandit_Armor.T_IFI_Cape2_Bandit_Armor'",
     LocalizationSID: "SkinJacket_Bandit_Armor",
     MeshGenerator: new Struct({ "0": new Struct({ MeshGeneratorPrototypeSID: "BAN_04_a_MeshGenerator_Player", Weight: 1 }) }) as any,
-    InvisibleInPlayerInventory: true,
+    //InvisibleInPlayerInventory: true,
   } satisfies ArmorDescriptor,
 };
 

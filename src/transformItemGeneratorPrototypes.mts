@@ -5,7 +5,7 @@ import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { EntriesTransformer, MetaType } from "./metaType.mjs";
 import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
-export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorPrototype> = (struct, context) => {
+export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorPrototype> = async (struct, context) => {
   if (prohibitedIds.some((id) => struct.SID.includes(id))) {
     return null;
   }

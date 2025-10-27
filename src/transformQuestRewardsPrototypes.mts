@@ -6,7 +6,7 @@ import { rewardFormula, SIDRewardMap } from "./rewardFormula.mjs";
 /**
  * Increase reward for repeatable quests
  */
-export const transformQuestRewardsPrototypes: EntriesTransformer<ItemGeneratorPrototype> = (struct: ItemGeneratorPrototype) => {
+export const transformQuestRewardsPrototypes: EntriesTransformer<ItemGeneratorPrototype> = async (struct: ItemGeneratorPrototype) => {
   if (struct.MoneyGenerator) {
     const minmax = SIDRewardMap[struct.SID] as number;
     return Object.assign(struct.fork(), {

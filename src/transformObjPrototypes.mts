@@ -7,15 +7,18 @@ import { EntriesTransformer, MetaType } from "./metaType.mjs";
  * Also removes Fall damage.
  * @param struct
  */
-export const transformObjPrototypes: EntriesTransformer<ObjPrototype> = (struct) => {
+export const transformObjPrototypes: EntriesTransformer<ObjPrototype> = async (struct) => {
+  const fork = struct.fork();
+  if (struct.ShouldGenerateStashClues) {
+    fork.ShouldGenerateStashClues = false;
+  }
   if (struct.SID === "NPCBase") {
-    return Object.assign(struct.fork(), {
+    Object.assign(fork, {
       CanBeKnockedDown: false,
       Protection: Object.assign(struct.Protection?.fork() || new Struct().fork(), { Fall: 100 }),
     });
   }
   if (struct.SID === "Player") {
-    const fork = struct.fork();
     fork.WaterContactInfo = struct.WaterContactInfo.fork();
     fork.WaterContactInfo.SingleCurveEffects = struct.WaterContactInfo.SingleCurveEffects.fork(true).map(
       () => Object.assign(new Struct(), { EffectSID: "empty" }) as any,
@@ -23,10 +26,14 @@ export const transformObjPrototypes: EntriesTransformer<ObjPrototype> = (struct)
     fork.WaterContactInfo.DualCurveEffects = struct.WaterContactInfo.DualCurveEffects.fork(true).map(
       () => Object.assign(new Struct(), { EffectSID: "empty" }) as any,
     );
-    return Object.assign(fork, {
+    Object.assign(fork, {
       CanBeKnockedDown: false,
       Protection: Object.assign(struct.Protection?.fork() || new Struct().fork(), { Fall: 100 }),
     });
+  }
+
+  if (fork.entries().length) {
+    return fork;
   }
 };
 transformObjPrototypes.files = ["/GameData/ObjPrototypes.cfg", "/ObjPrototypes/GeneralNPCObjPrototypes.cfg"];

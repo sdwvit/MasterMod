@@ -5,7 +5,7 @@ const oncePerFile = new Set<string>();
 /**
  * Increases the cost of Attachments by 10x.
  */
-export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = (struct, context) => {
+export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = async (struct, context) => {
   if (struct.Cost) {
     return Object.assign(struct.fork(), { Cost: struct.Cost * 10 });
   }

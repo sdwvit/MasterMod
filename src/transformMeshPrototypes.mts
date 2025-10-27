@@ -7,7 +7,7 @@ const oncePerFile = new Set<string>();
 /**
  * Adds x16 scope mesh prototype.
  */
-export const transformMeshPrototypes: EntriesTransformer<MeshPrototype> = (struct, c) => {
+export const transformMeshPrototypes: EntriesTransformer<MeshPrototype> = async (struct, c) => {
   if (!oncePerFile.has(c.filePath)) {
     oncePerFile.add(c.filePath);
     c.extraStructs.push(

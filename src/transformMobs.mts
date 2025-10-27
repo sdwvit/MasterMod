@@ -6,7 +6,7 @@ import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
 /**
  * Sets bullet (Strike) protection to 0 for all mobs.
  */
-export const transformMobs: EntriesTransformer<MutantBase> = (struct) => {
+export const transformMobs: EntriesTransformer<MutantBase> = async (struct) => {
   if (!struct.Protection) {
     return null;
   }

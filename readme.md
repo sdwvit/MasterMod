@@ -94,15 +94,84 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `Tushkan`
 - `QuestNodePrototypes`:
   - `BodyParts_Malahit`
-  - `E01_MQ01`
+  - `E03_SQ01_C1`
   - `RSQ01`
+  - `RSQ01_C01`
+  - `RSQ01_C02`
+  - `RSQ01_C03`
+  - `RSQ01_C04`
+  - `RSQ01_C05`
+  - `RSQ01_C06`
   - `RSQ04`
+  - `RSQ04_C01`
+  - `RSQ04_C02`
+  - `RSQ04_C03`
+  - `RSQ04_C04`
+  - `RSQ04_C05`
+  - `RSQ04_C06`
+  - `RSQ04_C07`
+  - `RSQ04_C08`
+  - `RSQ04_C09`
+  - `RSQ04_C10`
   - `RSQ05`
+  - `RSQ05_C01`
+  - `RSQ05_C02`
+  - `RSQ05_C04`
+  - `RSQ05_C05`
+  - `RSQ05_C07`
+  - `RSQ05_C08`
+  - `RSQ05_C09`
+  - `RSQ05_C10`
   - `RSQ06_C00___SIDOROVICH`
+  - `RSQ06_C01___K_Z`
+  - `RSQ06_C02___K_M`
+  - `RSQ06_C03___K_B`
+  - `RSQ06_C04___K_S`
+  - `RSQ06_C05___B_B`
+  - `RSQ06_C06___B_A`
+  - `RSQ06_C07___B_A`
+  - `RSQ06_C08___B_A`
+  - `RSQ06_C09___S_P`
   - `RSQ07_C00_TSEMZAVOD`
+  - `RSQ07_C01_K_Z`
+  - `RSQ07_C02_K_M`
+  - `RSQ07_C03_K_M`
+  - `RSQ07_C04_K_B`
+  - `RSQ07_C05_B_B`
+  - `RSQ07_C06_B_A`
+  - `RSQ07_C07_B_A`
+  - `RSQ07_C08_B_A`
+  - `RSQ07_C09_S_P`
   - `RSQ08_C00_ROSTOK`
+  - `RSQ08_C01_K_M`
+  - `RSQ08_C02_K_B`
+  - `RSQ08_C03_K_S`
+  - `RSQ08_C04_B_B`
+  - `RSQ08_C05_B_B`
+  - `RSQ08_C06_B_A`
+  - `RSQ08_C07_B_A`
+  - `RSQ08_C08_B_A`
+  - `RSQ08_C09_S_P`
   - `RSQ09_C00_MALAHIT`
+  - `RSQ09_C01_K_M`
+  - `RSQ09_C02_K_M`
+  - `RSQ09_C03_K_M`
+  - `RSQ09_C04_K_S`
+  - `RSQ09_C05_B_B`
+  - `RSQ09_C06_B_A`
+  - `RSQ09_C07_B_A`
+  - `RSQ09_C08_B_A`
+  - `RSQ09_C09_S_P`
   - `RSQ10_C00_HARPY`
+  - `RSQ10_C01_K_M`
+  - `RSQ10_C02_K_M`
+  - `RSQ10_C03_K_S`
+  - `RSQ10_C04_K_S`
+  - `RSQ10_C05_B_B`
+  - `RSQ10_C06_B_A`
+  - `RSQ10_C07_B_A`
+  - `RSQ10_C08_B_A`
+  - `RSQ10_C09_S_P`
 - `QuestPrototypes`:
   - `E01_MQ01`
 - `CharacterWeaponSettingsPrototypes`:

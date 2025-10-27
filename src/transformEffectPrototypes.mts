@@ -5,9 +5,8 @@ const oncePerFile = new Set<string>();
 /**
  * Makes some consumables last longer.
  * Also negates KillVolumeEffect (borderguard instakill)
- * @param struct
  */
-export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = (struct, context) => {
+export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = async (struct, context) => {
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
     context.extraStructs.push(
