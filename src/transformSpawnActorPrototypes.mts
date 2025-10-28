@@ -143,7 +143,7 @@ function rememberAndEmptyStash(struct: SpawnActorPrototype, fork: SpawnActorProt
   }
   totals.ItemContainer++;
   allStashes[struct.SID] = struct;
-  fork.ItemGeneratorSettings;
+  fork.SpawnOnStart = false;
 
   return fork;
 }

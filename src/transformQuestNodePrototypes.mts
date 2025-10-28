@@ -1,7 +1,6 @@
-import { EQuestNodeType, QuestNodePrototype, Struct } from "s2cfgtojson";
+import { QuestNodePrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer, MetaContext } from "./metaType.mjs";
-import { randomCacheQuestSID, utilQuestSID } from "./transformQuestPrototypes.mjs";
 import path from "node:path";
 import { finishedTransformers } from "./meta.mjs";
 import { transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
@@ -9,10 +8,12 @@ import { waitFor } from "./waitFor.mjs";
 import { allStashes } from "./stashes.mjs";
 import { modName } from "./base-paths.mjs";
 import { questItemSIDs } from "./questItemSIDs.mjs";
+import { precision } from "./precision.mjs";
 
 let oncePerTransformer = false;
 const oncePerFile = new Set<string>();
-
+const RandomStashQuestName = `RandomStashQuest`; // if you change this, also change Blueprint in SDK
+const RandomStashQuestNodePrefix = `${modName}_RandomStashQuest`;
 /**
  * Removes timeout for repeating quests.
  */
@@ -28,7 +29,8 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
 
   if (!oncePerTransformer) {
     oncePerTransformer = true;
-    await injectQuestNodeExtras(context);
+    injectUtilQuestNodes(context);
+    await injectMassiveRNGQuestNodes(context);
   }
 };
 
@@ -124,92 +126,54 @@ const getLaunchers = (sids: string[], name: string): any => {
   return new Struct(Object.fromEntries(sids.map((sid, i) => [i, { Excluding: false, Connections: { 0: { SID: sid, Name: name } } }])));
 };
 
-async function injectQuestNodeExtras(context: MetaContext<QuestNodePrototype>) {
-  injectUtilQuestNodes(context);
-  await injectMassiveRNGQuestNodes(context);
-}
-
 async function injectMassiveRNGQuestNodes(context: MetaContext<QuestNodePrototype>) {
   await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes._name));
-  context.extraStructs.push(
-    new Struct(`
-      ${randomCacheQuestSID}_Start : struct.begin
-         SID = ${randomCacheQuestSID}_Start
-         NodePrototypeVersion = 1
-         QuestSID = ${randomCacheQuestSID}
-         NodeType = EQuestNodeType::Technical
-         StartDelay = 0
-         LaunchOnQuestStart = true
-         Repeatable = true
-      struct.end
-    `) as QuestNodePrototype,
-  );
-  const end = new Struct(`
-      ${randomCacheQuestSID}_End : struct.begin
-        SID = ${randomCacheQuestSID}_End
-        NodePrototypeVersion = 1
-        QuestSID = ${randomCacheQuestSID}
-        NodeType = EQuestNodeType::End
-        Repeatable = true
-        ExcludeAllNodesInContainer = true
-      struct.end
-    `) as QuestNodePrototype;
-  context.extraStructs.push(end);
 
   const stashes = Object.keys(allStashes);
   const randomNode = new Struct(`
-    ${randomCacheQuestSID}_Random : struct.begin
-        SID = ${randomCacheQuestSID}_Random
-        NodePrototypeVersion = 3
-        Repeatable = true
-        QuestSID = ${randomCacheQuestSID}
+    ${RandomStashQuestNodePrefix}_Random : struct.begin
+        SID = ${RandomStashQuestNodePrefix}_Random
+        QuestSID = ${RandomStashQuestName}
         NodeType = EQuestNodeType::Random
     struct.end`) as QuestNodePrototype;
-  randomNode.Launchers = getLaunchers([`${randomCacheQuestSID}_Start`], "");
   context.extraStructs.push(randomNode);
   stashes.forEach((key, i) => {
     randomNode.OutputPinNames ||= new Struct() as any;
     randomNode.OutputPinNames.addNode(i);
     randomNode.PinWeights ||= new Struct() as any;
-    randomNode.PinWeights.addNode(i + 1);
+    randomNode.PinWeights.addNode(precision(1 - (i + 1) / stashes.length, 1e6));
 
-    const spawnerSID = `${randomCacheQuestSID}_Random_${i}_Spawn`;
+    const spawnerSID = `${RandomStashQuestNodePrefix}_Random_${i}_Spawn`;
     const spawner = new Struct(`
       ${spawnerSID} : struct.begin
          SID = ${spawnerSID}
-         NodePrototypeVersion = 1
-         QuestSID = ${randomCacheQuestSID}
+         QuestSID = ${RandomStashQuestName}
          NodeType = EQuestNodeType::Spawn
-         Repeatable = true
          TargetQuestGuid = ${key}
          IgnoreDamageType = EIgnoreDamageType::None
          SpawnHidden = false
          SpawnNodeExcludeType = ESpawnNodeExcludeType::SeamlessDespawn
       struct.end
     `) as QuestNodePrototype;
-    spawner.Launchers = getLaunchers([`${randomCacheQuestSID}_Random`], String(i)) as any;
+    spawner.Launchers = getLaunchers([`${RandomStashQuestNodePrefix}_Random`], String(i)) as any;
 
     context.extraStructs.push(spawner);
     const cacheNotif = new Struct(`
-        ${randomCacheQuestSID}_Random_${i} : struct.begin
-           SID = ${randomCacheQuestSID}_Random_${i}
-           NodePrototypeVersion = 1
-           QuestSID = ${randomCacheQuestSID}
-           Repeatable = true
+        ${RandomStashQuestNodePrefix}_Random_${i} : struct.begin
+           SID = ${RandomStashQuestNodePrefix}_Random_${i}
+           QuestSID = ${RandomStashQuestName}
            NodeType = EQuestNodeType::GiveCache
            TargetQuestGuid = ${key}
         struct.end
       `) as QuestNodePrototype;
-    cacheNotif.Launchers = getLaunchers([`${randomCacheQuestSID}_Random`], "") as any;
+    cacheNotif.Launchers = getLaunchers([`${RandomStashQuestNodePrefix}_Random`], String(i)) as any;
 
     context.extraStructs.push(cacheNotif);
 
     const tpSkif = new Struct(`
-        ${randomCacheQuestSID}_Random_${i}_tp : struct.begin
-           SID = ${randomCacheQuestSID}_Random_${i}_tp
-           NodePrototypeVersion = 1
-           QuestSID = ${randomCacheQuestSID}
-           Repeatable = true
+        ${RandomStashQuestNodePrefix}_Random_${i}_tp : struct.begin
+           SID = ${RandomStashQuestNodePrefix}_Random_${i}_tp
+           QuestSID = ${RandomStashQuestName}
            NodeType = EQuestNodeType::TeleportCharacter
            TargetQuestGuid = AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
            TeleportLocationAndRotation : struct.begin
@@ -238,17 +202,15 @@ function injectStashClueReward(context: MetaContext<QuestNodePrototype>) {
   const launcher = `${fileName}_SetItemGenerator_Player`;
 
   /**
-   * ConsoleCommand start a quest for giving a clue.
+   * ConsoleCommand start a quest node for giving a clue.
    */
   context.extraStructs.push(
     new Struct(`
       ${modName}_${fileName}_Give_Cache : struct.begin
          SID = ${modName}_${fileName}_Give_Cache
-         NodePrototypeVersion = 1
          QuestSID = ${fileName}
          NodeType = EQuestNodeType::ConsoleCommand
-         Repeatable = true
-         ConsoleCommand = XStartQuestNodeBySID ${randomCacheQuestSID}_Start
+         ConsoleCommand = XStartQuestNodeBySID ${RandomStashQuestNodePrefix}_Random
          Launchers : struct.begin
             [0] : struct.begin
                Excluding = false
@@ -266,27 +228,24 @@ function injectStashClueReward(context: MetaContext<QuestNodePrototype>) {
 }
 
 function injectUtilQuestNodes(context: MetaContext<QuestNodePrototype>) {
+  const startSID = `${RandomStashQuestNodePrefix}_SwitchQuestItemState_Start`;
   const getQuestNodeStruct = (itemPrototypeSID: string) =>
     new Struct(`
-      ${utilQuestSID}_SwitchQuestItemState_${itemPrototypeSID} : struct.begin
-         SID = ${utilQuestSID}_SwitchQuestItemState_${itemPrototypeSID}
-         NodePrototypeVersion = 3
-         QuestSID = ${utilQuestSID}
+      ${RandomStashQuestNodePrefix}_SwitchQuestItemState_${itemPrototypeSID} : struct.begin
+         SID = ${RandomStashQuestNodePrefix}_SwitchQuestItemState_${itemPrototypeSID}
+         QuestSID = ${RandomStashQuestName}
          NodeType = EQuestNodeType::SwitchQuestItemState
-         Repeatable = true
-         
          Launchers : struct.begin
             [0] : struct.begin
                Excluding = false
                Connections : struct.begin
                   [0] : struct.begin
-                     SID = ${utilQuestSID}_Start
+                     SID = ${startSID}
                      Name =
                   struct.end
                struct.end
             struct.end
          struct.end
-          
          ItemPrototypeSID = ${itemPrototypeSID}
          QuestItem = false
       struct.end
@@ -294,14 +253,11 @@ function injectUtilQuestNodes(context: MetaContext<QuestNodePrototype>) {
 
   context.extraStructs.push(
     new Struct(`
-      ${utilQuestSID}_Start : struct.begin
-         SID = ${utilQuestSID}_Start
-         NodePrototypeVersion = 3
-         QuestSID = ${utilQuestSID}
+      ${startSID} : struct.begin
+         SID = ${startSID}
+         QuestSID = ${RandomStashQuestName}
          NodeType = EQuestNodeType::Technical
-         StartDelay = 0
-         Repeatable = true
-         LaunchOnQuestStart = true
+         StartDelay = 0 
       struct.end
     `) as QuestNodePrototype,
   );

@@ -172,8 +172,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ10_C07_B_A`
   - `RSQ10_C08_B_A`
   - `RSQ10_C09_S_P`
-- `QuestPrototypes`:
-  - `E01_MQ01`
 - `CharacterWeaponSettingsPrototypes`:
   - `NPCWeaponSettingsPrototypes`
 - `WeaponData`:

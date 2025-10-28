@@ -24,7 +24,6 @@ import { transformArtifactPrototypes } from "./transformArtifactPrototypes.mjs";
 import { transformQuestArtifactPrototypes } from "./transformQuestArtifactPrototypes.mjs";
 import { transformQuestItemPrototypes } from "./transformQuestItemPrototypes.mjs";
 import { transformWeaponPrototypes } from "./transformWeaponPrototypes.mjs";
-import { transformQuestPrototypes } from "./transformQuestPrototypes.mjs";
 import { transformRelationPrototypes } from "./transformRelationPrototypes.mjs";
 import { transformBarbedWirePrototypes } from "./transformBarbedWirePrototypes.mjs";
 import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
@@ -51,7 +50,6 @@ const structTransformers = [
   transformQuestItemPrototypes,
   transformQuestNodePrototypes,
   transformQuestObjPrototypes,
-  transformQuestPrototypes,
   transformQuestRewardsPrototypes,
   transformRelationPrototypes,
   transformSpawnActorPrototypes,
