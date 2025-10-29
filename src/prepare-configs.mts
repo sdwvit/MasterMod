@@ -10,7 +10,7 @@ import { onL1Finish } from "./l1-cache.mjs";
 import { getFilesForTransformer } from "./create-cfg-file-selector-for-transformer.mjs";
 
 console.time();
-// if (fs.existsSync(modFolderRaw)) fs.rmSync(modFolderRaw, { recursive: true, force: true });
+if (fs.existsSync(modFolderRaw)) fs.rmSync(modFolderRaw, { recursive: true, force: true });
 if (!fs.existsSync(modFolderSteam)) fs.mkdirSync(modFolderSteam, { recursive: true });
 
 const total = await Promise.all(

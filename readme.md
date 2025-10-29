@@ -55,6 +55,8 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_Dialog_Barmen_RSQ`
   - `RSQ09_Dialog_Spica_RSQ`
   - `RSQ10_Dialog_Harpy_RSQ`
+- `GlobalVariablePrototypes`:
+  - `CluePrototypes`
 - `ItemGeneratorPrototypes`:
   - `DynamicItemGenerator`
   - `Gamepass_ItemGenerators`

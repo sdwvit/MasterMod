@@ -28,6 +28,7 @@ import { transformRelationPrototypes } from "./transformRelationPrototypes.mjs";
 import { transformBarbedWirePrototypes } from "./transformBarbedWirePrototypes.mjs";
 import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
 import { transformDialogPoolPrototypes } from "./transformDialogPoolPrototypes.mjs";
+import { transformCluePrototypes } from "./transformCluePrototypes.mjs";
 
 const structTransformers = [
   transformALifeDirectorScenarioPrototypes,
@@ -35,6 +36,7 @@ const structTransformers = [
   transformArtifactPrototypes,
   transformAttachPrototypes,
   transformBarbedWirePrototypes,
+  transformCluePrototypes,
   transformDialogPoolPrototypes,
   transformDialogPrototypes,
   transformDifficultyPrototypes,
@@ -67,6 +69,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 [hr][/hr]
 [h3]All changes to the base game:[/h3]
 [list]
+ [*] [Challenge] NPCs bodies don't give stash clues, instead you have to do recurring vendor quests to receive stashes 
  [*] [Challenge] No enemy markers. No threat indicators.
  [*] [Challenge] Armors don't take head slot (except for SEVA's), but also don't protect from PSY damage, so you need to use helmets.
  [*] [QoL] Prevents Player and NPCs from being knocked down.
@@ -101,7 +104,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "Every NPC can now trade. Adjust Freedom-Duty Varta-Spark relationships",
+  changenote: "NPCs bodies don't give stash clues, instead you have to do recurring vendor quests to receive stashes. Fix GunThreeLine_Scope price.",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

@@ -1,9 +1,10 @@
 import { AttachPrototype, SpawnActorPrototype, WeaponPrototype } from "s2cfgtojson";
 import { logger } from "./logger.mts";
 
-import { EntriesTransformer } from "./metaType.mjs";
+import { EntriesTransformer, MetaContext } from "./metaType.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { allStashes } from "./stashes.mjs";
+import { getGeneratedStashSID } from "./transformCluePrototypes.mjs";
 
 /**
  * Removes preplaced items from the map. Like medkits, destructible items contents, and gear.
@@ -21,7 +22,7 @@ export const transformSpawnActorPrototypes: EntriesTransformer<SpawnActorPrototy
       break;
     }
     case "ESpawnType::ItemContainer": {
-      fork = rememberAndEmptyStash(struct, fork);
+      fork = rememberAndEmptyStash(struct, fork, context);
       break;
     }
   }
@@ -137,12 +138,14 @@ function transformItems(struct: SpawnActorPrototype, fork: SpawnActorPrototype) 
   return Object.assign(fork, { SpawnOnStart: false }) as SpawnActorPrototype;
 }
 
-function rememberAndEmptyStash(struct: SpawnActorPrototype, fork: SpawnActorPrototype) {
+function rememberAndEmptyStash(struct: SpawnActorPrototype, fork: SpawnActorPrototype, context: MetaContext<SpawnActorPrototype>) {
   if (struct.ClueVariablePrototypeSID !== "EmptyInherited" || !containers.has(struct.SpawnedPrototypeSID)) {
     return fork;
   }
   totals.ItemContainer++;
   allStashes[struct.SID] = struct;
+
+  fork.ClueVariablePrototypeSID = getGeneratedStashSID((context.fileIndex % 100) + 1);
   fork.SpawnOnStart = false;
 
   return fork;
