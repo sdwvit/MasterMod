@@ -4,7 +4,7 @@ import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, extraArmorsByFac
 import { factions } from "./factions.mjs";
 import { precision } from "./precision.mjs";
 
-import { EntriesTransformer, MetaContext } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
@@ -70,7 +70,7 @@ const minDropDurability = 0.01; // 1%
 const maxDropDurability = 0.5; // 50%
 const allRanks = new Set<ERank>(["ERank::Newbie", "ERank::Experienced", "ERank::Veteran", "ERank::Master"]);
 
-const transformTrade = (struct: DynamicItemGenerator, context: MetaContext<DynamicItemGenerator>) => {
+const transformTrade = (struct: DynamicItemGenerator) => {
   const fork = struct.fork();
   if (technicianTradeTradeItemGenerators.has(struct.SID)) {
     fork.RefreshTime = "1d";
@@ -285,7 +285,7 @@ const transformArmor = (struct: DynamicItemGenerator, itemGenerator: DynamicItem
   return markAsForkRecursively(fork);
 };
 
-const transformCombat = (struct: DynamicItemGenerator, context: MetaContext<DynamicItemGenerator>) => {
+const transformCombat = (struct: DynamicItemGenerator) => {
   const fork = struct.fork();
 
   const categories = struct.ItemGenerator.entries().map(([_k, ig]) => ig.Category);
@@ -343,14 +343,14 @@ const transformCombat = (struct: DynamicItemGenerator, context: MetaContext<Dyna
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
  */
-export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = async (struct, context) => {
+export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = async (struct) => {
   /**
    * Does not allow traders to sell gear.
    */
   if (struct.SID.includes("Trade")) {
-    return transformTrade(struct, context);
+    return transformTrade(struct);
   }
-  return transformCombat(struct, context);
+  return transformCombat(struct);
 };
 transformDynamicItemGenerator.files = ["/DynamicItemGenerator.cfg"];
 transformDynamicItemGenerator._name = "Transform DynamicItemGenerator prototypes";

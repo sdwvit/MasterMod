@@ -1,6 +1,6 @@
 import { EffectPrototype, Struct } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 const oncePerFile = new Set<string>();
 /**
  * Makes some consumables last longer.

@@ -1,7 +1,7 @@
 import { StashPrototype } from "s2cfgtojson";
 import { semiRandom } from "./semi-random.mjs";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 
 export const transformStashPrototypes: EntriesTransformer<StashPrototype> = async (struct, { index }) => {
   if (struct.SID === "empty") {

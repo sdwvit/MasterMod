@@ -1,6 +1,6 @@
 import { MutantBase } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { DIFFICULTY_FACTOR } from "./transformDifficultyPrototypes.mjs";
 
 /**

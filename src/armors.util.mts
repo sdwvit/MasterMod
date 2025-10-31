@@ -1,4 +1,4 @@
-import { ArmorPrototype, EItemGenerationCategory, ERank, Refs, Struct } from "s2cfgtojson";
+import { ArmorPrototype, EItemGenerationCategory, ERank, Struct } from "s2cfgtojson";
 import fs from "node:fs";
 import path from "node:path";
 

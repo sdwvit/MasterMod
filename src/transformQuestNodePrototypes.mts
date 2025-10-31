@@ -9,11 +9,14 @@ import { allStashes } from "./stashes.mjs";
 import { modName } from "./base-paths.mjs";
 import { questItemSIDs } from "./questItemSIDs.mjs";
 import { precision } from "./precision.mjs";
+import { questContainers } from "./questContainers.mjs";
+import { grabQuestContainers } from "./grabQuestContainers.mjs";
 
 let oncePerTransformer = false;
 const oncePerFile = new Set<string>();
 const RandomStashQuestName = `RandomStashQuest`; // if you change this, also change Blueprint in SDK
 const RandomStashQuestNodePrefix = `${modName}_RandomStashQuest`;
+
 /**
  * Removes timeout for repeating quests.
  */
@@ -122,12 +125,13 @@ transformQuestNodePrototypes.files = [
   ...[...launchers].map((e) => `/QuestNodePrototypes/${e}.cfg`),
 ];
 
-const getLaunchers = (sids: string[], name: string): any => {
-  return new Struct(Object.fromEntries(sids.map((sid, i) => [i, { Excluding: false, Connections: { 0: { SID: sid, Name: name } } }])));
+const getLaunchers = (sids_names: { SID: string; Name: string }[]): any => {
+  return new Struct(Object.fromEntries(sids_names.map(({ SID, Name }, i) => [i, { Excluding: false, Connections: { 0: { SID, Name } } }])));
 };
 
 async function injectMassiveRNGQuestNodes(context: MetaContext<QuestNodePrototype>) {
   await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes._name));
+  await waitFor(() => finishedTransformers.has(grabQuestContainers._name));
 
   const stashes = Object.keys(allStashes);
   const randomNode = new Struct(`
@@ -143,6 +147,7 @@ async function injectMassiveRNGQuestNodes(context: MetaContext<QuestNodePrototyp
     randomNode.PinWeights ||= new Struct() as any;
     randomNode.PinWeights.addNode(precision(1 - (i + 1) / stashes.length, 1e6));
 
+    // we also need to spawn these containers when either random has been rolled or a Quest requires this stash
     const spawnerSID = `${RandomStashQuestNodePrefix}_Random_${i}_Spawn`;
     const spawner = new Struct(`
       ${spawnerSID} : struct.begin
@@ -155,7 +160,13 @@ async function injectMassiveRNGQuestNodes(context: MetaContext<QuestNodePrototyp
          SpawnNodeExcludeType = ESpawnNodeExcludeType::SeamlessDespawn
       struct.end
     `) as QuestNodePrototype;
-    spawner.Launchers = getLaunchers([`${RandomStashQuestNodePrefix}_Random`], String(i)) as any;
+    const launcherConfig = [{ SID: `${RandomStashQuestNodePrefix}_Random`, Name: String(i) }];
+    if (questContainers[key]) {
+      questContainers[key].forEach((SID) => {
+        launcherConfig.push({ SID, Name: "" });
+      });
+    }
+    spawner.Launchers = getLaunchers(launcherConfig) as any;
 
     context.extraStructs.push(spawner);
     const cacheNotif = new Struct(`
@@ -166,7 +177,7 @@ async function injectMassiveRNGQuestNodes(context: MetaContext<QuestNodePrototyp
            TargetQuestGuid = ${key}
         struct.end
       `) as QuestNodePrototype;
-    cacheNotif.Launchers = getLaunchers([`${RandomStashQuestNodePrefix}_Random`], String(i)) as any;
+    cacheNotif.Launchers = getLaunchers([{ SID: `${RandomStashQuestNodePrefix}_Random`, Name: String(i) }]) as any;
 
     context.extraStructs.push(cacheNotif);
 
@@ -188,7 +199,7 @@ async function injectMassiveRNGQuestNodes(context: MetaContext<QuestNodePrototyp
            ShouldBlendViaFade = false
         struct.end
       `) as QuestNodePrototype;
-    context.extraStructs.push(tpSkif);
+    // context.extraStructs.push(tpSkif);
   });
 }
 

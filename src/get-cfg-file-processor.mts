@@ -6,7 +6,6 @@ import { baseCfgDir, modFolderRaw, modName, rawCfgEnclosingFolder } from "./base
 import { promisify } from "node:util";
 import { logger } from "./logger.mjs";
 import { L1Cache, L1CacheState } from "./l1-cache.mjs";
-import { deepMerge } from "./deepMerge.mjs";
 
 const readFile = promisify(fs.readFile);
 const exists = promisify(fs.exists);

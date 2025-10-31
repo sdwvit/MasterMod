@@ -1,6 +1,6 @@
-import { GetStructType, ObjPrototype, Struct } from "s2cfgtojson";
+import { ObjPrototype, Struct } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 
 /**
  * Prevents NPCs from being knocked down.

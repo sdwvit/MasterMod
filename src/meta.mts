@@ -29,8 +29,10 @@ import { transformBarbedWirePrototypes } from "./transformBarbedWirePrototypes.m
 import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
 import { transformDialogPoolPrototypes } from "./transformDialogPoolPrototypes.mjs";
 import { transformCluePrototypes } from "./transformCluePrototypes.mjs";
+import { grabQuestContainers } from "./grabQuestContainers.mjs";
 
 const structTransformers = [
+  grabQuestContainers,
   transformALifeDirectorScenarioPrototypes,
   transformArmorPrototypes,
   transformArtifactPrototypes,

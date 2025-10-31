@@ -2,7 +2,7 @@ import { ItemGeneratorPrototype, Struct } from "s2cfgtojson";
 import { semiRandom } from "./semi-random.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
 export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorPrototype> = async (struct, context) => {

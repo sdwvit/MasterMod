@@ -1,6 +1,6 @@
-import { NPCWeaponSettingsPrototype, WeaponGeneralSetupPrototype, WeaponPrototype } from "s2cfgtojson";
+import { NPCWeaponSettingsPrototype, WeaponPrototype } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 
 const playerWeaponSettingsPrototypesBySID = Object.fromEntries(

@@ -139,6 +139,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = asyn
     if (GeneralNPCTradePrototypesMoneyMult.has(struct.SID)) {
       fork.ArmorSellMinDurability = 1;
       fork.WeaponSellMinDurability = 1;
+      fork.removeNode("BuyLimitations");
     }
     if (tg.BuyModifier !== 0.3) {
       fork.BuyModifier = 0.3;
@@ -151,20 +152,6 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = asyn
 
 transformTradePrototypes._name = "Restrict trader buy limitations";
 transformTradePrototypes.files = ["/TradePrototypes.cfg"];
-
-const allBuyLimitations = new Set([
-  "EItemType::Ammo",
-  "EItemType::Armor",
-  "EItemType::Artifact",
-  "EItemType::Attach",
-  "EItemType::Consumable",
-  "EItemType::Detector",
-  "EItemType::Grenade",
-  "EItemType::MutantLoot",
-  "EItemType::Other",
-  "EItemType::Weapon",
-  "EItemType::NightVisionGoggles",
-]);
 
 const bartenders = new Set([
   "Bartender_Zalesie_TradePrototype",
@@ -225,11 +212,6 @@ export const technicianTradePrototypeSIDs = new Set([
 ]);
 
 export const generalTraders = new Set([
-  "BaseTraderNPC_Template",
-  "BasicTrader",
-  "TraderNPC",
-  "AllTraderNPC",
-  "RC_TraderNPC",
   "Trader_Zalesie_TradePrototype",
   "Trader_ChemicalPlant_TradePrototype",
   "Trader_Terikon_TradePrototype",

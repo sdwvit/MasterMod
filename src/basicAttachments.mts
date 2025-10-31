@@ -64,7 +64,7 @@ export const allCompatibleAttachmentDefs: Record<string, WeaponGeneralSetupProto
 
 (await readFileAndGetStructs("WeaponData/WeaponGeneralSetupPrototypes.cfg")).forEach((struct: WeaponGeneralSetupPrototype) => {
   if (struct.CompatibleAttachments) {
-    struct.CompatibleAttachments.forEach(([k, e]) => {
+    struct.CompatibleAttachments.forEach(([_k, e]) => {
       const newE = e.clone();
       delete newE.BlockingUpgradeIDs;
       delete newE.RequiredUpgradeIDs;

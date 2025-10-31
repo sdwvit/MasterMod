@@ -1,10 +1,8 @@
 import { DialogPrototype, Struct } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaType } from "./metaType.mjs";
-import { logger } from "./logger.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { DialogRewardMap, rewardFormula } from "./rewardFormula.mjs";
 import { deepMerge } from "./deepMerge.mjs";
-import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
 const MALACHITE_BRIBE = 50000;
 
