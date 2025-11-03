@@ -62,14 +62,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `Gamepass_ItemGenerators`
 - `QuestRewardsPrototypes`:
   - `RSQ00_Reward`
-  - `RSQ01_Reward`
-  - `RSQ04_Reward`
-  - `RSQ05_Reward`
-  - `RSQ06_Reward`
-  - `RSQ07_Reward`
-  - `RSQ08_Reward`
-  - `RSQ09_Reward`
-  - `RSQ10_Reward`
 - `ItemPrototypes`:
   - `ArmorPrototypes`
   - `ArtifactPrototypes`
@@ -95,8 +87,23 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `Snork`
   - `Tushkan`
 - `QuestNodePrototypes`:
+  - `ANCQ01`
+  - `ANCQ01_P`
+  - `ANCQ27`
   - `BodyParts_Malahit`
-  - `E03_SQ01_C1`
+  - `E03_MQ05`
+  - `E05_SQ01`
+  - `E07_MQ01`
+  - `E07_SQ01`
+  - `E09_EQ02`
+  - `E10_MQ01_C01`
+  - `E11_MQ01`
+  - `E14_MQ01_C02`
+  - `E14_MQ02`
+  - `EQ110_P`
+  - `EQ150`
+  - `EQ48`
+  - `EQ67`
   - `RSQ01`
   - `RSQ01_C01`
   - `RSQ01_C02`
@@ -174,6 +181,13 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ10_C07_B_A`
   - `RSQ10_C08_B_A`
   - `RSQ10_C09_S_P`
+  - `Rostok_L_ScarTemp_Camp`
+  - `SEQ09`
+  - `SQ03_P`
+  - `SQ25`
+  - `SQ87_P`
+  - `SQ94`
+  - `Swamp_L_E05_MQ03`
 - `CharacterWeaponSettingsPrototypes`:
   - `NPCWeaponSettingsPrototypes`
 - `WeaponData`:

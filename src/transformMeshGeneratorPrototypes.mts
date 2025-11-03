@@ -17,6 +17,7 @@ type MeshGeneratorPrototype = GetStructType<{
 export const transformMeshGeneratorPrototypes: EntriesTransformer<MeshGeneratorPrototype> = async (struct, c) => {
   if (struct.SID === "BAN_03_a_MeshGenerator" || struct.SID === "BAN_04_a_MeshGenerator") {
     const fork = struct.fork();
+
     const newMesh = deepMerge(fork, {
       SID: `${struct.SID}_Player`,
       Attachments: struct.Attachments.filter((e): e is any => e[0] === "BodyArmor" || e[0] === "Clo").map((e) => e[1].fork(true)),
@@ -29,7 +30,7 @@ export const transformMeshGeneratorPrototypes: EntriesTransformer<MeshGeneratorP
       CustomData: struct.CustomData,
     });
     newMesh.Attachments.__internal__.bpatch = false;
-    c.extraStructs.push(newMesh);
+    return newMesh;
   }
   return null;
 };

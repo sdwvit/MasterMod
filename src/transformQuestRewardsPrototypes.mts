@@ -1,31 +1,27 @@
-import { ItemGeneratorPrototype } from "s2cfgtojson";
+import { ItemGeneratorPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
-import { rewardFormula, SIDRewardMap } from "./rewardFormula.mjs";
+import { QuestDataTable, rewardFormula } from "./rewardFormula.mjs";
 
+let oncePerTransformer = false;
 /**
  * Increase reward for repeatable quests
  */
-export const transformQuestRewardsPrototypes: EntriesTransformer<ItemGeneratorPrototype> = async (struct: ItemGeneratorPrototype) => {
-  if (struct.MoneyGenerator) {
-    const minmax = SIDRewardMap[struct.SID] as number;
-    return Object.assign(struct.fork(), {
-      MoneyGenerator: Object.assign(struct.MoneyGenerator.fork(), {
-        MinCount: rewardFormula(minmax, minmax)[0],
-        MaxCount: rewardFormula(minmax, minmax)[1],
-      }),
+export const transformQuestRewardsPrototypes: EntriesTransformer<ItemGeneratorPrototype> = async (struct, context) => {
+  if (!oncePerTransformer) {
+    oncePerTransformer = true;
+    const extraStructs: ItemGeneratorPrototype[] = [];
+    QuestDataTable.forEach((qv) => {
+      const rewardStruct = struct.fork();
+      rewardStruct.SID = qv["Reward Gen SID"];
+      rewardStruct.__internal__.rawName = qv["Reward Gen SID"];
+      const [min, max] = rewardFormula(parseInt(qv["Suggested Reward"], 10));
+      rewardStruct.MoneyGenerator = new Struct({ MinCount: min, MaxCount: max }) as any;
+      extraStructs.push(rewardStruct);
     });
+    return extraStructs;
   }
+  return null;
 };
-transformQuestRewardsPrototypes.files = [
-  "/QuestRewardsPrototypes/RSQ00_Reward.cfg",
-  "/QuestRewardsPrototypes/RSQ01_Reward.cfg", // zalissya
-  "/QuestRewardsPrototypes/RSQ04_Reward.cfg",
-  "/QuestRewardsPrototypes/RSQ05_Reward.cfg",
-  "/QuestRewardsPrototypes/RSQ06_Reward.cfg",
-  "/QuestRewardsPrototypes/RSQ07_Reward.cfg",
-  "/QuestRewardsPrototypes/RSQ08_Reward.cfg",
-  "/QuestRewardsPrototypes/RSQ09_Reward.cfg",
-  "/QuestRewardsPrototypes/RSQ10_Reward.cfg",
-];
+transformQuestRewardsPrototypes.files = ["/QuestRewardsPrototypes/RSQ00_Reward.cfg"];
 transformQuestRewardsPrototypes._name = "Increase reward for repeatable quests";

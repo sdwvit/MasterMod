@@ -8,6 +8,11 @@ const L1CacheFileName = ".l1.cache.gzip";
 export const L1CacheState = {
   needsUpdate: false,
 };
+/**
+ * L1 Cache for storing parsed Structs.
+ * Key: absolute file path of .cfg file
+ * Value: array of parsed Struct objects
+ */
 export const L1Cache: Record<string, Struct[]> = fs.existsSync(path.join(L1CacheFileName))
   ? Object.fromEntries(
       JSON.parse(await readWithUnzip(path.join(L1CacheFileName))).map(([k, v]: [string, any]) => [k, v.map((e: any) => Struct.fromJson(e, true))]),

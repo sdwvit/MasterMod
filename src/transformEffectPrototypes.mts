@@ -7,9 +7,10 @@ const oncePerFile = new Set<string>();
  * Also negates KillVolumeEffect (borderguard instakill)
  */
 export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = async (struct, context) => {
+  const extraStructs: EffectPrototype[] = [];
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
-    context.extraStructs.push(
+    extraStructs.push(
       new Struct({
         __internal__: {
           rawName: "AimingFOVX16Effect",
@@ -26,13 +27,16 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = as
   }
 
   if (struct.SID === "KillVolumeEffect") {
-    return Object.assign(struct.fork(), {
-      ApplyExtraEffectPrototypeSIDs: struct.ApplyExtraEffectPrototypeSIDs.map(() => "empty").fork(true),
-    });
+    extraStructs.push(
+      Object.assign(struct.fork(), {
+        ApplyExtraEffectPrototypeSIDs: struct.ApplyExtraEffectPrototypeSIDs.map(() => "empty").fork(true),
+      }),
+    );
   }
   if (consumables.has(struct.SID)) {
-    return Object.assign(struct.fork(), { Duration: struct.Duration * 10 });
+    extraStructs.push(Object.assign(struct.fork(), { Duration: struct.Duration * 10 }));
   }
+  return extraStructs;
 };
 transformEffectPrototypes.files = ["/EffectPrototypes.cfg"];
 transformEffectPrototypes._name = "Make some consumables last longer";

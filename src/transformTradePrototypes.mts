@@ -10,9 +10,10 @@ const oncePerFile = new Set<string>();
  * Don't allow traders to buy weapons and armor.
  */
 export const transformTradePrototypes: EntriesTransformer<TradePrototype> = async (struct, context) => {
+  const extraStructs: TradePrototype[] = [];
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
-    context.extraStructs.push(
+    extraStructs.push(
       new Struct({
         __internal__: {
           rawName: "Guide_TradePrototype",
@@ -65,7 +66,7 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = asyn
   }
 
   if (!struct.TradeGenerators || ignoreSIDs.has(struct.SID)) {
-    return;
+    return extraStructs.length ? extraStructs : null;
   }
   const fork = struct.fork();
   if (GeneralNPCTradePrototypesMoneyMult.has(struct.SID)) {
@@ -147,7 +148,9 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = asyn
     return fork;
   });
   TradeGenerators.__internal__.bpatch = true;
-  return Object.assign(fork, { TradeGenerators });
+  Object.assign(fork, { TradeGenerators });
+  extraStructs.push(fork);
+  return extraStructs;
 };
 
 transformTradePrototypes._name = "Restrict trader buy limitations";

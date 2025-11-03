@@ -1,7 +1,7 @@
 import { DialogPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
-import { DialogRewardMap, rewardFormula } from "./rewardFormula.mjs";
+import { QuestDataTableByDialogSID, rewardFormula } from "./rewardFormula.mjs";
 import { deepMerge } from "./deepMerge.mjs";
 
 const MALACHITE_BRIBE = 50000;
@@ -60,14 +60,25 @@ function adjustQuestRewards(struct: DialogPrototype) {
   const fork = struct.fork();
 
   const mapper = ([_k, v]) => {
-    if (v.DialogAction === "EDialogAction::ShowMoney" && typeof v.DialogActionParam === "object") {
-      const minmax = DialogRewardMap[struct.SID] as number;
-      return Object.assign(v.fork(), {
-        DialogActionParam: Object.assign(v.DialogActionParam.fork(), {
-          VariableValue: rewardFormula(minmax, minmax).reduce((a, b) => a + b, 0) / 2,
-        }),
-      });
+    if (!(v.DialogAction === "EDialogAction::ShowMoney" && typeof v.DialogActionParam === "object")) {
+      return;
     }
+    const qvs = QuestDataTableByDialogSID[struct.SID];
+    if (!qvs) {
+      return;
+    }
+    const DialogActionParam = new Struct({
+      VariableValue:
+        rewardFormula(
+          Math.round(
+            qvs.reduce((mem, qvs) => {
+              return mem + parseInt(qvs["Suggested Reward"], 10);
+            }, 0) / qvs.length,
+          ),
+        ).reduce((a, b) => a + b, 0) / 2,
+    });
+    DialogActionParam.__internal__.bpatch = true;
+    return Object.assign(v.fork(), { DialogActionParam });
   };
 
   const DialogActions = struct.DialogActions?.map?.(mapper);

@@ -18,6 +18,7 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
   if (bannedids.has(struct.SID)) {
     return null;
   }
+  const extraStructs: ArmorPrototype[] = [];
 
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
@@ -49,11 +50,11 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
       if (!newArmors[newSID]) {
         newArmor.Invisible = true;
       }
-      context.extraStructs.push(newArmor.clone());
+      extraStructs.push(newArmor.clone());
     });
   }
 
-  return null;
+  return extraStructs;
 };
 transformArmorPrototypes.files = ["/ArmorPrototypes.cfg"];
 transformArmorPrototypes._name = "transformArmorPrototypes";

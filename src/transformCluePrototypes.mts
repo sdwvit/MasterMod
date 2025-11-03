@@ -13,16 +13,16 @@ type CluePrototype = GetStructType<{
 let oncePerFile = false;
 export const getGeneratedStashSID = (i: number) => `Gen_Stash${i}`;
 /**
- * Injects 100 generated stash prototype structs into `context.extraStructs` once per file.
+ * Injects 100 generated stash clue prototypes into CluePrototypes.cfg
  * Each generated struct uses `SID` = `Gen_Stash{n}` and minimal internal metadata.
  * Returns `null` to indicate no modification to the original entries.
  */
-export const transformCluePrototypes: EntriesTransformer<CluePrototype> = async (_, context) => {
+export const transformCluePrototypes: EntriesTransformer<CluePrototype> = async (_) => {
   if (!oncePerFile) {
     oncePerFile = true;
-
+    const extraStructs: CluePrototype[] = [];
     for (let i = 1; i <= 100; i++) {
-      context.extraStructs.push(
+      extraStructs.push(
         new Struct({
           __internal__: {
             refkey: "[0]",
@@ -33,6 +33,7 @@ export const transformCluePrototypes: EntriesTransformer<CluePrototype> = async 
         }) as CluePrototype,
       );
     }
+    return extraStructs;
   }
 
   return null;

@@ -2,12 +2,21 @@ import fs from "node:fs";
 import path from "node:path";
 import { logger } from "./logger.mjs";
 import { readWithUnzip, writeWithZip } from "./zip.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 
 export const L2CacheFileName = ".l2.cache.gzip";
 export const L2CacheState = {
   needsUpdate: false,
 };
+
+/**
+ * L2 Cache for storing transformer file lists
+ * Key: see getL2CacheKey()
+ * Value: List of .cfg files to be processed by that transformer
+ */
 export const L2Cache = fs.existsSync(path.join(L2CacheFileName)) ? JSON.parse(await readWithUnzip(path.join(L2CacheFileName))) : {};
+export const getL2CacheKey = (transformer: EntriesTransformer<any>) =>
+  `${transformer.files.sort().join()}:${transformer.contains}:${transformer.contents ? transformer.contents.sort().join() : ""}`;
 
 export const onL2Finish = () => {
   if (!L2CacheState.needsUpdate) return;

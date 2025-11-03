@@ -7,6 +7,11 @@ const L3CacheFileName = ".l3.cache.gzip";
 export const L3CacheState = {
   needsUpdate: false,
 };
+/**
+ * L3 Cache for storing .cfg file lists
+ * Key: file suffix
+ * Value: array of absolute .cfg file paths
+ */
 export const L3Cache: Record<string, string[]> = fs.existsSync(L3CacheFileName)
   ? Object.fromEntries(JSON.parse(await readWithUnzip(L3CacheFileName)))
   : {};

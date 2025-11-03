@@ -6,16 +6,17 @@ const oncePerFile = new Set<string>();
  * Increases the cost of Attachments by 10x.
  */
 export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = async (struct, context) => {
-  if (struct.SID === "GunThreeLine_Scope") {
-    struct.Cost = 4500;
-  }
-  if (struct.Cost) {
-    return Object.assign(struct.fork(), { Cost: struct.Cost * 10 });
+  const extraStructs: AttachPrototype[] = [];
+  if (struct.Cost || struct.SID === "GunThreeLine_Scope") {
+    if (struct.SID === "GunThreeLine_Scope") {
+      struct.Cost = 4500;
+    }
+    extraStructs.push(Object.assign(struct.fork(), { Cost: struct.Cost * 10 }));
   }
 
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
-    context.extraStructs.push(
+    extraStructs.push(
       new Struct({
         __internal__: {
           rawName: "EN_X16Scope_1",
@@ -39,7 +40,7 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = as
         Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Attach/T_inv_icon_en_x16scope_1.T_inv_icon_en_x16scope_1'`,
       }) as AttachPrototype,
     );
-    context.extraStructs.push(
+    extraStructs.push(
       new Struct({
         __internal__: {
           rawName: "UA_X16Scope_1",
@@ -66,7 +67,7 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = as
     );
   }
 
-  return null;
+  return extraStructs;
 };
 
 transformAttachPrototypes.files = ["/AttachPrototypes.cfg"];

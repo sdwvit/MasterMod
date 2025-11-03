@@ -4,11 +4,10 @@ export type MetaContext<T> = {
   fileIndex: number;
   index: number;
   array: T[];
-  extraStructs: T[];
   filePath: string;
   structsById: Record<string, T>;
 };
-export type EntriesTransformer<T> = ((entries: T, context: MetaContext<T>) => Promise<Struct | null>) & {
+export type EntriesTransformer<T, O = Struct | Struct[] | null> = ((entries: T, context: MetaContext<T>) => Promise<O>) & {
   contains?: true;
   contents?: string[];
   _name: string;

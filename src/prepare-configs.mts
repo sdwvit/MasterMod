@@ -1,3 +1,5 @@
+console.time();
+
 import * as fs from "node:fs";
 import { meta } from "./meta.mts";
 import { spawnSync } from "child_process";
@@ -8,7 +10,6 @@ import { onL3Finish } from "./l3-cache.mjs";
 import { onL1Finish } from "./l1-cache.mjs";
 import { processOneTransformer } from "./process-one-transformer.mjs";
 
-console.time();
 if (fs.existsSync(modFolderRaw)) fs.rmSync(modFolderRaw, { recursive: true, force: true });
 if (!fs.existsSync(modFolderSteam)) fs.mkdirSync(modFolderSteam, { recursive: true });
 

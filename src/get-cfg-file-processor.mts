@@ -30,25 +30,38 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
     }
     const array = L1Cache[filePath] as T[];
     const structsById: Record<string, T> = Object.fromEntries(array.map((s) => [s.__internal__.rawName, s as T]));
-    const extraStructs = [];
-    const processedStructs: Struct[] = [];
+
+    const promises: Promise<(T | Struct) | (T | Struct)[]>[] = [];
 
     for (let index = 0; index < array.length; index++) {
       const s = array[index];
       const id = s.__internal__.rawName;
       if (!id) continue;
 
-      const processedStruct = await transformer(s as T, { index, fileIndex, array, filePath, structsById, extraStructs });
-
-      s.__internal__.refurl = "../" + pathToSave.base;
-      if (processedStruct) {
-        delete processedStruct.__internal__.refkey;
-        delete processedStruct.__internal__.refurl;
-        processedStructs.push(processedStruct);
-      }
+      promises.push(
+        transformer(s as T, { index, fileIndex, array, filePath, structsById }).then((ps) => {
+          s.__internal__.refurl = "../" + pathToSave.base;
+          return ps;
+        }),
+      );
     }
 
-    processedStructs.push(...extraStructs.filter(Boolean));
+    const processedStructs = (await Promise.all(promises))
+      .map((pss) => {
+        let psa = pss;
+        if (!Array.isArray(psa)) {
+          psa = [psa];
+        }
+        const filtered = psa.flat().filter(Boolean);
+        /* filtered.forEach((ps) => { // todo patch structs don't need refkey/refurl, but new structs do. So we need to distinguish between them somehow. For example checking for bpatch.
+          // delete ps.__internal__.refkey;
+          // delete ps.__internal__.refurl;
+        });*/
+        return filtered;
+      })
+      .flat()
+      .filter(Boolean);
+
     if (processedStructs.length) {
       const cfgEnclosingFolder = path.join(modFolderRaw, rawCfgEnclosingFolder, pathToSave.dir, pathToSave.name);
 
