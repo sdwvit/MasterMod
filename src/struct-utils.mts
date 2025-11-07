@@ -22,6 +22,6 @@ export const getConditions = (conditions: Partial<Condition>[]) =>
           return [i, new Struct({ 0: new Struct(condition) })];
         }),
       ),
-    ) as GetStructType<Condition[][]>,
+    ) as GetStructType<QuestNodePrototype["Conditions"]>,
     { ConditionCheckType: "EConditionCheckType::And" },
   ).fork(true);

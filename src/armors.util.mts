@@ -61,6 +61,7 @@ export type ArmorDescriptor = {
   };
 } & DeeplyPartial<ArmorPrototype>;
 
+// todo make this a table
 export const newArmors = {
   BattleExoskeleton_Varta_Armor_MasterMod_headless: {
     __internal__: {

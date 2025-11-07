@@ -72,39 +72,40 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [Challenge] NPCs bodies don't give stash clues, instead you have to do recurring vendor quests to receive stashes 
  [*] [Challenge] No enemy markers. No threat indicators.
  [*] [Challenge] Armors don't take head slot (except for SEVA's), but also don't protect from PSY damage, so you need to use helmets.
- [*] [QoL] Prevents Player and NPCs from being knocked down.
- [*] [QoL] Removes Fall damage for Player and NPCs.
- [*] [QoL] Water no longer slows you down or drains your stamina.
- [*] [QoL] X8 Scope compatible with more weapons (more compatibility fixes to come).
- [*] [QoL] Allows buying/selling/dropping quest items.
- [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
- [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
- [*] [QoL/Balance] There is now no cooldown between repeatable quests.
- [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
- [*] [Balance] Increases cost of Attachments to 1000%.
- [*] [Balance] Repeatable Quest Rewards are increased to 400%, but are made random with 25% spread both ways.
- [*] [Balance] Rifles default scopes can now be detached and sold.
- [*] [QoL] Unlocks blocking upgrades. 
- [*] [QoL] Unique weapons are now compatible with basic scopes.
- [*] [Challenge] Traders are not allowed to sell gear.
- [*] [Challenge] Traders or Bartenders are not allowed to buy gear.
- [*] [Challenge / Balance] 🔪🗡🦟️ Increase given and taken damage on Hard difficulty to 400%.
- [*] [Challenge] Enemy's weapons damage is increased to be on par with player's weapons.
- [*] [Balance] Makes some consumables last longer, with the same value (antirad removes radiation slowly, 10x longer, but with the same value).
- [*] [Balance] Removes armor from vanilla mutants.
- [*] [Balance] NPCs drop armor, but it is damaged and will cost a lot to repair.
  [*] [Challenge] Reduced 💊 Consumables, 🔫 Ammo, and 💣 Grenades drops from bodies and stashes.
  [*] [Challenge] 🥠 7674 destructible objects now don't drop items (🍔 Wooden Boxes, 🍔 Plywood Crates, 🩹 Metal Crates, 🔫 Wooden Ammo Crates).
  [*] [Challenge] 🪃 431 instances of preplaced weapons or armor were removed (no more falcon / exo rush).
  [*] [Challenge] 💊 97 instances of preplaced medkits were removed.
  [*] [Challenge] 🧰 1166 instances of stashes were nerfed. 
+ [*] [Challenge] Traders are not allowed to sell gear.
+ [*] [Challenge] Increases cost of everything to 400% (💣 ammo, 🛠️ repair, ⚙️ upgrade, 🍺 consumables, 🛡️ armor, 🔫 weapon, 🔮 artifact).
+ [*] [Challenge] Traders or Bartenders are not allowed to buy gear.
+ [*] [Challenge] Enemy's weapons damage is increased to be on par with player's weapons.
+ [*] [Challenge / Balance] 🔪🗡🦟️ Increase given and taken damage on Hard difficulty to 400%.
+ [*] [Challenge / QoL] Way more lively zone, now spawning all mutant bosses and bigger battles.
+ [*] [QoL] Prevents Player and NPCs from being knocked down.
+ [*] [QoL] Removes Fall damage for Player and NPCs.
+ [*] [QoL] Water no longer slows you down or drains your stamina.
+ [*] [QoL] X8 Scope compatible with more weapons (more compatibility fixes to come).
+ [*] [QoL] Unlocks blocking upgrades. 
+ [*] [QoL] Unique weapons are now compatible with basic scopes.
+ [*] [QoL] Allows buying/selling/dropping quest items.
+ [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
+ [*] [QoL/Balance] There is now no cooldown between repeatable quests.
+ [*] [Balance] Makes some consumables last longer, with the same value (antirad removes radiation slowly, 10x longer, but with the same value).
+ [*] [Balance] Removes armor from vanilla mutants.
+ [*] [Balance] NPCs drop armor, but it is damaged and will cost a lot to repair.
+ [*] [Balance] Increases cost of Attachments to 1000%.
+ [*] [Balance] Repeatable Quest Rewards are increased to 400%, but are made random with 25% spread both ways.
+ [*] [Balance] Rifles default scopes can now be detached and sold.
+ [*] [Balance] Unique and fair rewards for each possible variant of repeating quests.
 [/list]
 [hr][/hr]
 [h3]Source code:[/h3]
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: "NPCs bodies don't give stash clues, instead you have to do recurring vendor quests to receive stashes. Fix GunThreeLine_Scope price.",
+  changenote: "Fix issue with barman quest to bring package not giving reward",
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

@@ -29,10 +29,7 @@ export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeD
       }
       return v;
     }),
-    ProhibitedAgentTypes: struct.ProhibitedAgentTypes.map(([key, v]) => {
-      struct.ProhibitedAgentTypes[key] = "EAgentType::RatSwarm";
-      return v;
-    }),
+    ProhibitedAgentTypes: struct.ProhibitedAgentTypes.fork(true),
     Scenarios: struct.Scenarios.map(([_, v]) => {
       if (!v.ExpansionSquadNumMin && !v.ExpansionSquadNumMax) {
         return null;
@@ -63,7 +60,7 @@ export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeD
       });
     }),
   });
-
+  newStruct.ProhibitedAgentTypes.forEach(([key, v]) => newStruct.ProhibitedAgentTypes.removeNode(key));
   return markAsForkRecursively(newStruct);
 };
 transformALifeDirectorScenarioPrototypes._name = "Transform ALifeDirectorScenarioPrototypes";

@@ -1,6 +1,6 @@
 import { QuestNodePrototype, Struct } from "s2cfgtojson";
 
-import { EntriesTransformer, MetaContext } from "./metaType.mjs";
+import { EntriesTransformer } from "./metaType.mjs";
 import { finishedTransformers } from "./meta.mjs";
 import { transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.mjs";
 import { waitFor } from "./waitFor.mjs";
@@ -15,7 +15,6 @@ import { logger } from "./logger.mjs";
 let oncePerTransformer = false;
 const RandomStashQuestName = `RandomStashQuest`; // if you change this, also change Blueprint in SDK
 const RandomStashQuestNodePrefix = `${modName}_RandomStashQuest`;
-
 /**
  * Removes timeout for repeating quests.
  */
@@ -43,6 +42,10 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
 
     if (struct.InGameHours) {
       promises.push(Promise.resolve(Object.assign(struct.fork(), { InGameHours: 0 })));
+    }
+
+    if (struct.SID === "RSQ08_C01_K_M_Random_3") {
+      promises.push(Promise.resolve(Object.assign(struct.fork(), { PinWeights: Object.assign(struct.PinWeights.fork(), { 0: 0.5 }) })));
     }
   }
 
@@ -166,7 +169,7 @@ function replaceRewards(struct: QuestNodePrototype) {
       newRewardNode.Launchers = getLaunchers([{ SID: struct.SID, Name: "" }]);
       extraStructs.push(newRewardNode);
 
-      if (qv["Spawn NPC Quest Node SID"]) {
+      if (qv["Spawn NPC Quest Node SID"].trim()) {
         const conditionNode = new Struct() as QuestNodePrototype;
         conditionNode.SID = `${qv["Reward Gen SID"]}_Condition`;
         conditionNode.__internal__.rawName = conditionNode.SID;

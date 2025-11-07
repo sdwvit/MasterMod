@@ -37,7 +37,7 @@
 36	Boozer (Slug Heap)	Get Artifact	12000	0	12000	Steak	RSQ04_C07	RSQ04_Dialog_Drabadan_RSQ_quest_7_32965		RSQ04_C07_reward_36
 37	Boozer (Slug Heap)	Get Artifact	12000	0	12000	Horn	RSQ04_C08	RSQ04_Dialog_Drabadan_RSQ_quest_8_32966		RSQ04_C08_reward_37
 38	Boozer (Slug Heap)	Get Artifact	12000	0	12000	Sapphire	RSQ04_C09	RSQ04_Dialog_Drabadan_RSQ_quest_9_32967		RSQ04_C09_reward_38
-39	Boozer (Slug Heap)	Kill squad	3000	250	3250	4 GeneralNPC_Bandit_CloseCombat + 8 GeneralNPC_Bandit_Recon	RSQ04_C10	RSQ04_Dialog_Drabadan_RSQ_special_task_63727	""	RSQ04_C10_reward_39
+39	Boozer (Slug Heap)	Kill squad	3000	250	3250	4 GeneralNPC_Bandit_CloseCombat + 8 GeneralNPC_Bandit_Recon	RSQ04_C10	RSQ04_Dialog_Drabadan_RSQ_special_task_63727		RSQ04_C10_reward_39
 40	Owl (Sultansk)	Pick up a package	925	750	1675	1 Pseudodog	RSQ05_C01	RSQ05_Dialog_Sich_RSQ_quest_1_36380	RSQ05_C01_SpawnObjectNPCMonster_BP_SquadPlaceholder_V1	RSQ05_C01_reward_40
 41	Owl (Sultansk)	Pick up a package	1000	750	1750	2 GeneralNPC_Bandit_CloseCombat + 2 GeneralNPC_Bandit_Recon	RSQ05_C01	RSQ05_Dialog_Sich_RSQ_quest_1_36380	RSQ05_C01_SpawnObjectNPCMonster_BP_SquadPlaceholder_V3	RSQ05_C01_reward_41
 42	Owl (Sultansk)	Kill squad	1500	375	1875	2 GeneralNPC_Bandit_CloseCombat + 2 GeneralNPC_Bandit_Stormtrooper + 2 GeneralNPC_Bandit_Recon	RSQ05_C02	RSQ05_Dialog_Sich_RSQ_quest_2_36381	RSQ05_C02_SpawnObjectNPCMonster_BP_SquadPlaceholder_V1	RSQ05_C02_reward_42
@@ -54,7 +54,7 @@
 53	Owl (Sultansk)	Get Artifact	20000	0	20000	Ciliate	RSQ05_C07	RSQ05_Dialog_Sich_RSQ_quest_7_36386		RSQ05_C07_reward_53
 54	Owl (Sultansk)	Get Artifact	12000	0	12000	Rat King	RSQ05_C08	RSQ05_Dialog_Sich_RSQ_quest_8_36387		RSQ05_C08_reward_54
 55	Owl (Sultansk)	Get Artifact	20000	0	20000	Crown	RSQ05_C09	RSQ05_Dialog_Sich_RSQ_quest_9_36388		RSQ05_C09_reward_55
-56	Owl (Sultansk)	Find 3 bodies and bring PDA	3125	1500	4625	2 GeneralNPC_Mercenaries_Stormtrooper + 1 GeneralNPC_Mercenaries_Sniper + 4 GeneralNPC_Mercenaries_Recon + 4 Flesh	RSQ05_C10	RSQ05_Dialog_Sich_RSQ_special_task_63823	""	RSQ05_C10_reward_56
+56	Owl (Sultansk)	Find 3 bodies and bring PDA	3125	1500	4625	2 GeneralNPC_Mercenaries_Stormtrooper + 1 GeneralNPC_Mercenaries_Sniper + 4 GeneralNPC_Mercenaries_Recon + 4 Flesh	RSQ05_C10	RSQ05_Dialog_Sich_RSQ_special_task_63823		RSQ05_C10_reward_56
 57	Sidorovych (Rookie village)	Kill Squad	1675	125	1800	3 GeneralZombie_Neutral_Stormtrooper + 4 GeneralZombie_Neutral_Recon + 1 GeneralZombie_Neutral_CloseCombat	RSQ06_C01___K_Z	RSQ06_Dialog_Sidorovich_RSQ_quest_1_41221	RSQ06_C01___K_Z_SpawnObjectNPCMonster_BP_SquadPlaceholder_Variant_10	RSQ06_C01___K_Z_reward_57
 58	Sidorovych (Rookie village)	Kill Squad	1500	125	1625	3 GeneralZombie_Neutral_Stormtrooper + 3 GeneralZombie_Neutral_Recon + 2 GeneralZombie_Neutral_CloseCombat	RSQ06_C01___K_Z	RSQ06_Dialog_Sidorovich_RSQ_quest_1_41221	RSQ06_C01___K_Z_SpawnObjectNPCMonster_BP_SquadPlaceholder_Variant_11	RSQ06_C01___K_Z_reward_58
 59	Sidorovych (Rookie village)	Kill Squad	1875	125	2000	4 GeneralZombie_Neutral_Stormtrooper + 3 GeneralZombie_Neutral_Recon + 3 GeneralZombie_Neutral_CloseCombat	RSQ06_C01___K_Z	RSQ06_Dialog_Sidorovich_RSQ_quest_1_41221	RSQ06_C01___K_Z_SpawnObjectNPCMonster_BP_SquadPlaceholder_Variant_4	RSQ06_C01___K_Z_reward_59
@@ -151,11 +151,11 @@
 150	Barkeep (Rostok Bar)	Kill squad	1200	250	1450	2 GeneralNPC_Neutral_CloseCombat + 2 GeneralNPC_Neutral_Recon + 2 GeneralNPC_Neutral_Stormtrooper	RSQ08_C03_K_S	RSQ08_Dialog_Barmen_RSQ_quest_3_59233	RSQ08_C03_K_S_SpawnObjectNPCMonster_BP_SquadPlaceholder_Variant_5	RSQ08_C03_K_S_reward_150
 151	Barkeep (Rostok Bar)	Kill squad	1200	250	1450	2 GeneralNPC_Neutral_CloseCombat + 1 GeneralNPC_Neutral_Recon + 3 GeneralNPC_Neutral_Stormtrooper	RSQ08_C03_K_S	RSQ08_Dialog_Barmen_RSQ_quest_3_59233	RSQ08_C03_K_S_SpawnObjectNPCMonster_BP_SquadPlaceholder_Variant_6	RSQ08_C03_K_S_reward_151
 152	Barkeep (Rostok Bar)	Kill squad	1200	250	1450	2 GeneralNPC_Neutral_CloseCombat + 2 GeneralNPC_Neutral_Recon + 2 GeneralNPC_Neutral_Stormtrooper	RSQ08_C03_K_S	RSQ08_Dialog_Barmen_RSQ_quest_3_59233	RSQ08_C03_K_S_SpawnObjectNPCMonster_BP_SquadPlaceholder_Variant_7	RSQ08_C03_K_S_reward_152
-153	Barkeep (Rostok Bar)	Pick up a package	875	500	1375	7 Snork (1/5 probability)	RSQ08_C04_B_B	RSQ08_Dialog_Barmen_RSQ_quest_4_59235	RSQ08_C04_B_B_SpawnObjectNPCMonster__BP_ItemContainerPlaceholder_V3_12	RSQ08_C04_B_B_reward_153
-154	Barkeep (Rostok Bar)	Pick up a package	1000	500	1500	4 Snork	RSQ08_C05_B_B	RSQ08_Dialog_Barmen_RSQ_quest_5_59237	""	RSQ08_C05_B_B_reward_154
+153	Barkeep (Rostok Bar)	Pick up a package	875	500	1375	7 Snork (1/5 probability)	RSQ08_C04_B_B	RSQ08_Dialog_Barmen_RSQ_quest_4_59235		RSQ08_C04_B_B_reward_153
+154	Barkeep (Rostok Bar)	Pick up a package	1000	500	1500	4 Snork	RSQ08_C05_B_B	RSQ08_Dialog_Barmen_RSQ_quest_5_59237		RSQ08_C05_B_B_reward_154
 155	Barkeep (Rostok Bar)	Get Artifact	70000	0	70000	Magic Cube	RSQ08_C06_B_A	RSQ08_Dialog_Barmen_RSQ_quest_6_59239		RSQ08_C06_B_A_reward_155
 156	Barkeep (Rostok Bar)	Get Artifact	20000	0	20000	Dead Sponge	RSQ08_C07_B_A	RSQ08_Dialog_Barmen_RSQ_quest_7_59241		RSQ08_C07_B_A_reward_156
-157	Barkeep (Rostok Bar)	Get Artifact	36000	0	36000	Petal	RSQ08_C08_B_A	RSQ08_Dialog_Barmen_RSQ_quest_8		RSQ08_C08_B_A_reward_157
+157	Barkeep (Rostok Bar)	Get Artifact	36000	0	36000	Petal	RSQ08_C08_B_A	RSQ08_Dialog_Barmen_RSQ_quest_8_63558		RSQ08_C08_B_A_reward_157
 158	Barkeep (Rostok Bar)	Kill squad	950	500	1450	3 GeneralNPC_Duty_Recon	RSQ08_C09_S_P	RSQ08_Dialog_Barmen_RSQ_special_task_59227	RSQ08_C09_S_P_SpawnObjectNPCMonster_BP_SquadPlaceholder_S_P_C09	RSQ08_C09_S_P_reward_158
 159	Barkeep (Rostok Bar)	Kill squad	1875	500	2375	1 GeneralNPC_Duty_CloseCombat + 2 GeneralNPC_Duty_Heavy + 3 GeneralNPC_Duty_Stormtrooper	RSQ08_C09_S_P	RSQ08_Dialog_Barmen_RSQ_special_task_59227	RSQ08_C09_S_P_SpawnObjectNPCMonster_BP_SquadPlaceholder_S_P_C09_1	RSQ08_C09_S_P_reward_159
 160	Needle (Malachite)	Kill squad	1875	375	2250	5 Rat	RSQ09_C01_K_M	RSQ09_Dialog_Spica_RSQ_quest_1_60448	RSQ09_C01_K_M_SpawnObjectNPCMonster_BP_SquadPlaceholder_Variant_10	RSQ09_C01_K_M_reward_160
