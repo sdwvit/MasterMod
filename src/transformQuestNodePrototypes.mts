@@ -47,6 +47,20 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
     if (struct.SID === "RSQ08_C01_K_M_Random_3") {
       promises.push(Promise.resolve(Object.assign(struct.fork(), { PinWeights: Object.assign(struct.PinWeights.fork(), { 0: 0.5 }) })));
     }
+    if (struct.SID === "RSQ08_C01_K_M_Technical_STL4939_Pin_0") {
+      const newConditions = Object.assign(struct.fork(), {
+        Conditions: getConditions([
+          {
+            ConditionType: "EQuestConditionType::NodeState",
+            ConditionComparance: "EConditionComparance::Equal",
+            TargetNode: "RSQ08_C01_K_M_SetDialog_RSQ08_Dialog_Barmen_C01_Finish",
+            NodeState: "EQuestNodeState::Finished",
+          },
+        ]),
+      });
+      newConditions.Conditions.__internal__.bpatch = false;
+      promises.push(Promise.resolve(newConditions));
+    }
   }
 
   return Promise.all(promises).then((results) => results.flat());
