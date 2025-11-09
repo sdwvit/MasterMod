@@ -3,14 +3,22 @@ import path from "node:path";
 import { readFile } from "node:fs/promises";
 import { L1Cache, L1CacheState } from "./l1-cache.mjs";
 import { baseCfgDir } from "./base-paths.mjs";
+import { existsSync } from "node:fs";
+import { getCfgFiles } from "./get-cfg-files.mjs";
 
 export const readFileAndGetStructs = async <T extends Struct>(filePath: string, filePreprocess?: (fileContents: string) => string): Promise<T[]> => {
-  const fullPath = path.join(baseCfgDir, "GameData", filePath);
+  let fullPath = path.join(baseCfgDir, "GameData", filePath);
 
   if (L1Cache[fullPath] && !filePreprocess) {
     console.log(`Using L1 cache for file: ${fullPath}`);
     return L1Cache[fullPath] as T[];
   } else {
+    if (!existsSync(fullPath)) {
+      fullPath = (await getCfgFiles(filePath, true))[0];
+      if (!fullPath) {
+        throw new Error(`File not found: ${filePath}`);
+      }
+    }
     const fileContents = await readFile(fullPath, "utf8");
     const processed = filePreprocess ? filePreprocess(fileContents) : fileContents;
     const parsed = Struct.fromString<T>(processed);
