@@ -37,4 +37,3 @@ export const transformObjPrototypes: EntriesTransformer<ObjPrototype> = async (s
   }
 };
 transformObjPrototypes.files = ["/GameData/ObjPrototypes.cfg", "/ObjPrototypes/GeneralNPCObjPrototypes.cfg"];
-transformObjPrototypes._name = "Prevent NPCs from being knocked down";

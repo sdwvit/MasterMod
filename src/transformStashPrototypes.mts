@@ -53,5 +53,4 @@ export const transformStashPrototypes: EntriesTransformer<StashPrototype> = asyn
   return Object.assign(struct.fork(), { ItemGenerators });
 };
 
-transformStashPrototypes._name = "Reduce stash consumables";
 transformStashPrototypes.files = ["/StashPrototypes.cfg"];

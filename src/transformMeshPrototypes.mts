@@ -41,5 +41,4 @@ export const transformMeshPrototypes: EntriesTransformer<MeshPrototype> = async 
   return null;
 };
 
-transformMeshPrototypes._name = "Add x16 scope mesh prototype";
 transformMeshPrototypes.files = ["/MeshPrototypes.cfg"];

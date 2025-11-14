@@ -68,6 +68,8 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `AttachPrototypes`
   - `QuestItemPrototypes`
   - `WeaponPrototypes`
+- `LairPrototypes`:
+  - `GenericLairPrototypes`
 - `ObjPrototypes`:
   - `BlindDog`
   - `Bloodsucker`

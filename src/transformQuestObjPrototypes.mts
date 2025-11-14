@@ -24,7 +24,6 @@ export const transformQuestObjPrototypes: EntriesTransformer<ObjPrototype> = asy
   }
 };
 transformQuestObjPrototypes.files = ["/QuestObjPrototypes.cfg"];
-transformQuestObjPrototypes._name = "Make all technicians sell better attachments";
 
 const techniciansAndTheirTradePrototypes = new Map([
   ["RostokTechnician", "Technician_ChemicalPlant_TradePrototype"],

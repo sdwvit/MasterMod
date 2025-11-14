@@ -11,4 +11,3 @@ export const transformQuestArtifactPrototypes: EntriesTransformer<ArtifactProtot
   return null;
 };
 transformQuestArtifactPrototypes.files = ["/QuestArtifactPrototypes.cfg"];
-transformQuestArtifactPrototypes._name = "Remove an essential flag from QuestArtifactPrototypes";

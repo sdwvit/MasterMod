@@ -1,6 +1,7 @@
 import { EGlobalVariableType, GetStructType, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
+import { QuestDataTable } from "./rewardFormula.mjs";
 
 type CluePrototype = GetStructType<{
   ID: number;
@@ -21,6 +22,17 @@ export const transformCluePrototypes: EntriesTransformer<CluePrototype> = async 
   if (!oncePerFile) {
     oncePerFile = true;
     const extraStructs: CluePrototype[] = [];
+    [...new Set(QuestDataTable.map((q) => `${q.Vendor.replace(/\W/g, "")}_latest_quest_variant`))].forEach((SID) => {
+      extraStructs.push(
+        new Struct(`
+          ${SID} : struct.begin {refkey=[0]}
+             SID = ${SID}
+             Type = EGlobalVariableType::Int
+             DefaultValue = -1
+          struct.end
+      `) as CluePrototype,
+      );
+    });
     for (let i = 1; i <= 100; i++) {
       extraStructs.push(
         new Struct({
@@ -40,4 +52,3 @@ export const transformCluePrototypes: EntriesTransformer<CluePrototype> = async 
 };
 
 transformCluePrototypes.files = ["/CluePrototypes.cfg"];
-transformCluePrototypes._name = "CluePrototypes";

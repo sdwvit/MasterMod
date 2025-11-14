@@ -6,7 +6,6 @@ import { transformSpawnActorPrototypes } from "./transformSpawnActorPrototypes.m
 import { waitFor } from "./waitFor.mjs";
 import { allStashes } from "./stashes.mjs";
 import { modName } from "./base-paths.mjs";
-import { questItemSIDs } from "./questItemSIDs.mjs";
 import { precision } from "./precision.mjs";
 import { getConditions, getLaunchers } from "./struct-utils.mjs";
 import { QuestDataTableByQuestSID } from "./rewardFormula.mjs";
@@ -27,7 +26,6 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
 
   if (!oncePerTransformer) {
     oncePerTransformer = true;
-    // injectUtilQuestNodes(context);
     promises.push(injectMassiveRNGQuestNodes());
   }
 
@@ -68,7 +66,6 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
 
 const recurringQuestsFilenames = ["BodyParts_Malahit", "RSQ01", "RSQ04", "RSQ05", "RSQ06", "RSQ07", "RSQ08", "RSQ09", "RSQ10"];
 
-transformQuestNodePrototypes._name = "removes timeouts from quest nodes and injects random stash quest nodes";
 transformQuestNodePrototypes.files = ["/QuestNodePrototypes/"];
 transformQuestNodePrototypes.contents = ["EQuestNodeType::ItemAdd", "EQuestNodeType::SetItemGenerator", "InGameHours"];
 transformQuestNodePrototypes.contains = true;
@@ -76,7 +73,7 @@ transformQuestNodePrototypes.contains = true;
 export const getStashSpawnerSID = (stashKey: string) => `${RandomStashQuestNodePrefix}_Random_${stashKey}_Spawn`;
 
 async function injectMassiveRNGQuestNodes() {
-  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes._name));
+  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes.name));
   const extraStructs: QuestNodePrototype[] = [];
   const stashes = Object.keys(allStashes);
   const randomNode = new Struct(`
@@ -141,7 +138,7 @@ function hookRewardStashClue(struct: QuestNodePrototype) {
 }
 
 async function hookStashSpawners(struct: QuestNodePrototype) {
-  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes._name));
+  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes.name));
 
   // only quest stashes that are hidden by this mod are interesting here
   if (!allStashes[struct.TargetQuestGuid]) {
@@ -165,7 +162,8 @@ async function hookStashSpawners(struct: QuestNodePrototype) {
 
 const oncePerQuestSID = new Set<string>();
 
-function replaceRewards(struct: QuestNodePrototype) {
+function replaceRewards(structR: Struct) {
+  const struct = structR as QuestNodePrototype;
   const extraStructs: QuestNodePrototype[] = [];
 
   if (!oncePerQuestSID.has(struct.QuestSID)) {
@@ -184,6 +182,19 @@ function replaceRewards(struct: QuestNodePrototype) {
       extraStructs.push(newRewardNode);
 
       if (qv["Spawn NPC Quest Node SID"].trim()) {
+        const varName = `${qv.Vendor.replace(/\W/g, "")}_latest_quest_variant`;
+        const setLatestQuestVarNode = new Struct({
+          SID: `Set_${varName}`,
+          QuestSID: struct.QuestSID,
+          NodeType: "EQuestNodeType::SetGlobalVariable",
+          GlobalVariablePrototypeSID: varName,
+          ChangeValueMode: "EChangeValueMode::Set",
+          VariableValue: qv["#"],
+          Launchers: getLaunchers([{ SID: qv["Spawn NPC Quest Node SID"].trim(), Name: "" }]),
+        }) as QuestNodePrototype;
+        setLatestQuestVarNode.__internal__.rawName = setLatestQuestVarNode.SID;
+        extraStructs.push(setLatestQuestVarNode);
+
         const conditionNode = new Struct() as QuestNodePrototype;
         conditionNode.SID = `${qv["Reward Gen SID"]}_Condition`;
         conditionNode.__internal__.rawName = conditionNode.SID;
@@ -192,10 +203,11 @@ function replaceRewards(struct: QuestNodePrototype) {
         conditionNode.QuestSID = struct.QuestSID;
         conditionNode.Conditions = getConditions([
           {
-            ConditionType: "EQuestConditionType::Bridge",
+            ConditionType: "EQuestConditionType::GlobalVariable",
             ConditionComparance: "EConditionComparance::Equal",
-            LinkedNodePrototypeSID: qv["Spawn NPC Quest Node SID"],
-            CompletedNodeLauncherNames: new Struct({ 0: "" }) as any,
+            GlobalVariablePrototypeSID: varName,
+            ChangeValueMode: "EChangeValueMode::Set",
+            VariableValue: qv["#"],
           },
         ]);
         conditionNode.Launchers = getLaunchers([{ SID: struct.SID, Name: "" }]);
@@ -205,39 +217,5 @@ function replaceRewards(struct: QuestNodePrototype) {
     });
   }
   extraStructs.push(Object.assign(struct.fork(), { ItemGeneratorSID: "empty" }));
-  return extraStructs;
-}
-
-const getQuestNodeStruct = (itemPrototypeSID: string, startSID: string) => {
-  const switchItemState = new Struct(`
-      ${RandomStashQuestNodePrefix}_SwitchQuestItemState_${itemPrototypeSID} : struct.begin
-         SID = ${RandomStashQuestNodePrefix}_SwitchQuestItemState_${itemPrototypeSID}
-         QuestSID = ${RandomStashQuestName}
-         NodeType = EQuestNodeType::SwitchQuestItemState
-         ItemPrototypeSID = ${itemPrototypeSID}
-         QuestItem = false
-      struct.end
-    `) as QuestNodePrototype;
-  switchItemState.Launchers = getLaunchers([{ SID: startSID, Name: "" }]);
-  return switchItemState;
-};
-
-function injectUtilQuestNodes() {
-  const startSID = `${RandomStashQuestNodePrefix}_SwitchQuestItemState_Start`;
-  const extraStructs: QuestNodePrototype[] = [];
-  extraStructs.push(
-    new Struct(`
-      ${startSID} : struct.begin
-         SID = ${startSID}
-         QuestSID = ${RandomStashQuestName}
-         NodeType = EQuestNodeType::Technical
-         StartDelay = 0 
-      struct.end
-    `) as QuestNodePrototype,
-  );
-
-  questItemSIDs.forEach((questItemSID) => {
-    extraStructs.push(getQuestNodeStruct(questItemSID, startSID));
-  });
   return extraStructs;
 }

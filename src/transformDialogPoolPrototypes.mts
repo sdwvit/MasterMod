@@ -13,7 +13,6 @@ export const transformDialogPoolPrototypes: EntriesTransformer<DialogPoolPrototy
 
   return null;
 };
-transformDialogPoolPrototypes._name = 'Transforms DialogPoolPrototype structs to replace "SpeakToLeader" dialog events with "Hello" topics.';
 transformDialogPoolPrototypes.files = [
   "/GroupAgnostic_Army.cfg",
   "/GroupAgnostic_Bandits.cfg",

@@ -39,7 +39,6 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = as
   return extraStructs;
 };
 transformEffectPrototypes.files = ["/EffectPrototypes.cfg"];
-transformEffectPrototypes._name = "Make some consumables last longer";
 
 const consumables = new Set([
   "EnergeticStamina",

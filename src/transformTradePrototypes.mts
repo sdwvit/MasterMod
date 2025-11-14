@@ -153,7 +153,6 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = asyn
   return extraStructs;
 };
 
-transformTradePrototypes._name = "Restrict trader buy limitations";
 transformTradePrototypes.files = ["/TradePrototypes.cfg"];
 
 const bartenders = new Set([

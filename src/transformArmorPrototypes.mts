@@ -57,7 +57,6 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
   return extraStructs;
 };
 transformArmorPrototypes.files = ["/ArmorPrototypes.cfg"];
-transformArmorPrototypes._name = "transformArmorPrototypes";
 
 const bannedids = new Set([
   "NPC_Richter_Armor",

@@ -24,4 +24,3 @@ export const transformQuestRewardsPrototypes: EntriesTransformer<ItemGeneratorPr
   return null;
 };
 transformQuestRewardsPrototypes.files = ["/QuestRewardsPrototypes/RSQ00_Reward.cfg"];
-transformQuestRewardsPrototypes._name = "Increase reward for repeatable quests";

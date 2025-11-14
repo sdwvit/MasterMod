@@ -40,4 +40,3 @@ export const transformRelationPrototypes: EntriesTransformer<RelationPrototype> 
 };
 
 transformRelationPrototypes.files = ["/RelationPrototypes.cfg"];
-transformRelationPrototypes._name = "Fixes some of the relationships";

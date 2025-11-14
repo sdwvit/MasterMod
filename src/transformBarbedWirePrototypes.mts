@@ -16,4 +16,3 @@ export const transformBarbedWirePrototypes: EntriesTransformer<BarbedWirePrototy
 };
 
 transformBarbedWirePrototypes.files = ["/BarbedWirePrototypes.cfg"];
-transformBarbedWirePrototypes._name = "Remove barbed wire bleeding and armor damage";

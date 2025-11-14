@@ -357,7 +357,6 @@ export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenera
   return transformCombat(struct);
 };
 transformDynamicItemGenerator.files = ["/DynamicItemGenerator.cfg"];
-transformDynamicItemGenerator._name = "Transform DynamicItemGenerator prototypes";
 type PossibleItem = {
   ItemGeneratorPrototypeSID?: string;
   ItemPrototypeSID: string;

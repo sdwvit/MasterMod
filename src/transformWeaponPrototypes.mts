@@ -15,4 +15,3 @@ export const transformWeaponPrototypes: EntriesTransformer<WeaponPrototype> = as
   return fork;
 };
 transformWeaponPrototypes.files = ["/WeaponPrototypes.cfg"];
-transformWeaponPrototypes._name = "Remove an essential flag from WeaponPrototypes & align NPCWeaponAttributes with PlayerWeaponAttributes";

@@ -10,7 +10,6 @@ export type MetaContext<T> = {
 export type EntriesTransformer<T, O = Struct | Struct[] | null> = ((entries: T, context: MetaContext<T>) => Promise<O>) & {
   contains?: true;
   contents?: string[];
-  _name: string;
   files: string[];
 };
 export type MetaType<T> = {

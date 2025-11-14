@@ -162,4 +162,3 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
   return fork;
 };
 transformWeaponGeneralSetupPrototypes.files = ["/WeaponGeneralSetupPrototypes.cfg"];
-transformWeaponGeneralSetupPrototypes._name = "Make unique weapons moddable";

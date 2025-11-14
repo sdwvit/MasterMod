@@ -29,6 +29,7 @@ import { transformBarbedWirePrototypes } from "./transformBarbedWirePrototypes.m
 import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
 import { transformDialogPoolPrototypes } from "./transformDialogPoolPrototypes.mjs";
 import { transformCluePrototypes } from "./transformCluePrototypes.mjs";
+import { transformLairPrototypes } from "./transformLairPrototypes.mjs";
 
 const structTransformers = [
   transformALifeDirectorScenarioPrototypes,
@@ -43,6 +44,7 @@ const structTransformers = [
   transformDynamicItemGenerator,
   transformEffectPrototypes,
   transformItemGeneratorPrototypes,
+  transformLairPrototypes,
   transformMeshGeneratorPrototypes,
   transformMeshPrototypes,
   transformMobs,
@@ -111,6 +113,6 @@ All changes have been tested against fresh save file. Some of these changes won'
     logger.log("Removed preplaced items:", spawnTotals);
   },
   onTransformerFinish(transformer) {
-    finishedTransformers.add(transformer._name);
+    finishedTransformers.add(transformer.name);
   },
 };

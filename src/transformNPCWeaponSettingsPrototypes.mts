@@ -64,4 +64,3 @@ export const transformNPCWeaponSettingsPrototypes: EntriesTransformer<NPCWeaponS
   }
 };
 transformNPCWeaponSettingsPrototypes.files = ["/NPCWeaponSettingsPrototypes.cfg"];
-transformNPCWeaponSettingsPrototypes._name = "Set default BaseDamage for Guard NPCs";

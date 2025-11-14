@@ -23,13 +23,13 @@ export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeD
       });
       return e;
     }),
-    RestrictedObjPrototypeSIDs: struct.RestrictedObjPrototypeSIDs.map(([k, v]) => {
+    RestrictedObjPrototypeSIDs: struct.RestrictedObjPrototypeSIDs.fork(true).map(([k, v]) => {
       if (v.startsWith("GeneralNPC_Spark") || v.startsWith("GeneralNPC_Scientists")) {
         struct.RestrictedObjPrototypeSIDs[k] = "GuardNPC_Duty_CloseCombat";
       }
       return v;
     }),
-    ProhibitedAgentTypes: struct.ProhibitedAgentTypes.fork(true),
+    ProhibitedAgentTypes: struct.ProhibitedAgentTypes.fork(true).map(() => "EAgentType::RatSwarm"),
     Scenarios: struct.Scenarios.map(([_, v]) => {
       if (!v.ExpansionSquadNumMin && !v.ExpansionSquadNumMax) {
         return null;
@@ -60,8 +60,7 @@ export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeD
       });
     }),
   });
-  newStruct.ProhibitedAgentTypes.forEach(([key, v]) => newStruct.ProhibitedAgentTypes.removeNode(key));
   return markAsForkRecursively(newStruct);
 };
-transformALifeDirectorScenarioPrototypes._name = "Transform ALifeDirectorScenarioPrototypes";
+
 transformALifeDirectorScenarioPrototypes.files = ["/ALifeDirectorScenarioPrototypes.cfg"];

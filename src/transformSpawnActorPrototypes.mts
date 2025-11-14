@@ -86,7 +86,6 @@ const containers = new Set([
 transformSpawnActorPrototypes.files = ["GameLite/GameData/SpawnActorPrototypes/WorldMap_WP/"];
 transformSpawnActorPrototypes.contains = true;
 transformSpawnActorPrototypes.contents = [...preplacedDestructibleItems, "Medkit", ...preplacedGear, ...containers];
-transformSpawnActorPrototypes._name = "Remove preplaced items from the map";
 
 function transformDestructibleObjects(struct: SpawnActorPrototype, fork: SpawnActorPrototype) {
   if (!(preplacedDestructibleItems.some((i) => struct.SpawnedPrototypeSID?.includes(i)) && struct.ItemGeneratorSettings)) {

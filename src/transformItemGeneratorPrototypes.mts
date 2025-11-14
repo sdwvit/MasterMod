@@ -51,7 +51,6 @@ export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorP
   return markAsForkRecursively(Object.assign(struct.fork(), { ItemGenerator }));
 };
 transformItemGeneratorPrototypes.files = ["/ItemGeneratorPrototypes.cfg", "/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg"];
-transformItemGeneratorPrototypes._name = "Reduce consumable and ammo spawns";
 const prohibitedIds = ["Arena"];
 
 const ammoPrototypes = new Set((await readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/AmmoPrototypes.cfg")).map((e) => e.SID));

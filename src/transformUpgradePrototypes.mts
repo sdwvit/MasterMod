@@ -28,5 +28,4 @@ export const transformUpgradePrototypes: EntriesTransformer<UpgradePrototype> = 
     return fork;
   }
 };
-transformUpgradePrototypes._name = "Unlock blocking upgrades";
 transformUpgradePrototypes.files = ["/UpgradePrototypes.cfg"];

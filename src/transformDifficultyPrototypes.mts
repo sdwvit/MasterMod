@@ -24,4 +24,3 @@ export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototy
   } as DifficultyPrototype);
 };
 transformDifficultyPrototypes.files = ["/DifficultyPrototypes.cfg"];
-transformDifficultyPrototypes._name = "Increase cost and damage on Hard difficulty";

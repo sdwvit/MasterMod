@@ -71,4 +71,3 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = as
 };
 
 transformAttachPrototypes.files = ["/AttachPrototypes.cfg"];
-transformAttachPrototypes._name = "Increase attachment cost by 10x";

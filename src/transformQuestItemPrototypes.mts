@@ -11,4 +11,3 @@ export const transformQuestItemPrototypes: EntriesTransformer<QuestItemPrototype
   return null;
 };
 transformQuestItemPrototypes.files = ["/QuestItemPrototypes.cfg"];
-transformQuestItemPrototypes._name = "Remove an essential flag from QuestItemPrototypes";

@@ -35,5 +35,4 @@ export const transformMeshGeneratorPrototypes: EntriesTransformer<MeshGeneratorP
   return null;
 };
 
-transformMeshGeneratorPrototypes._name = "Add player versions of bandit meshes";
 transformMeshGeneratorPrototypes.files = ["/MeshGeneratorPrototypes.cfg"];

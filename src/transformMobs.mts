@@ -35,4 +35,3 @@ transformMobs.files = [
   "/Snork.cfg",
   "/Tushkan.cfg",
 ];
-transformMobs._name = "Set bullet (Strike) protection to 0 for all mobs";

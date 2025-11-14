@@ -35,8 +35,6 @@ transformDialogPrototypes.files = [
   "/DialogPrototypes/Malahit_Hub_DialogueOnEntrance.cfg",
 ];
 
-transformDialogPrototypes._name = "Show the correct money reward for repeatable quests";
-
 function adjustMalahitBribe(struct: DialogPrototype) {
   const fork = struct.fork();
 

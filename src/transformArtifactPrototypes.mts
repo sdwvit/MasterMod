@@ -11,4 +11,3 @@ export const transformArtifactPrototypes: EntriesTransformer<ArtifactPrototype> 
   return null;
 };
 transformArtifactPrototypes.files = ["/ArtifactPrototypes.cfg"];
-transformArtifactPrototypes._name = "Remove an essential flag from artifact items";
