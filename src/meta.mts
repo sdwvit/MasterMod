@@ -88,7 +88,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [QoL] Prevents Player and NPCs from being knocked down.
  [*] [QoL] Removes Fall damage for Player and NPCs.
  [*] [QoL] Water no longer slows you down or drains your stamina.
- [*] [QoL] X8 Scope compatible with more weapons (more compatibility fixes to come).
+ [*] [QoL] X8 Scope compatible with more weapons (more compatibility fixes to come). Added X16 scopes.
  [*] [QoL] Unlocks blocking upgrades. 
  [*] [QoL] Unique weapons are now compatible with basic scopes.
  [*] [QoL] Allows buying/selling/dropping quest items.

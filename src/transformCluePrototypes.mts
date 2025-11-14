@@ -28,7 +28,7 @@ export const transformCluePrototypes: EntriesTransformer<CluePrototype> = async 
           ${SID} : struct.begin {refkey=[0]}
              SID = ${SID}
              Type = EGlobalVariableType::Int
-             DefaultValue = -1
+             DefaultValue = 0
           struct.end
       `) as CluePrototype,
       );

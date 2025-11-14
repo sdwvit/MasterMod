@@ -184,7 +184,7 @@ function replaceRewards(structR: Struct) {
       if (qv["Spawn NPC Quest Node SID"].trim()) {
         const varName = `${qv.Vendor.replace(/\W/g, "")}_latest_quest_variant`;
         const setLatestQuestVarNode = new Struct({
-          SID: `Set_${varName}`,
+          SID: `Set_${varName}_${qv["#"]}`,
           QuestSID: struct.QuestSID,
           NodeType: "EQuestNodeType::SetGlobalVariable",
           GlobalVariablePrototypeSID: varName,
@@ -193,6 +193,7 @@ function replaceRewards(structR: Struct) {
           Launchers: getLaunchers([{ SID: qv["Spawn NPC Quest Node SID"].trim(), Name: "" }]),
         }) as QuestNodePrototype;
         setLatestQuestVarNode.__internal__.rawName = setLatestQuestVarNode.SID;
+        setLatestQuestVarNode.__internal__.isRoot = true;
         extraStructs.push(setLatestQuestVarNode);
 
         const conditionNode = new Struct() as QuestNodePrototype;
