@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { baseCfgDir } from "./base-paths.mjs";
+import { deepMerge } from "./deepMerge.mjs";
 
 export const allDefaultArmorDefs = Object.fromEntries(
   (
@@ -77,7 +78,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_BattleExoskeleton_Varta_Armor_headless.T_IFI_BattleExoskeleton_Varta_Armor_headless'",
     Weight: 8.5,
     Cost: 58000,
-    Protection: { Radiation: 25, PSY: 0 },
+    Protection: { /*Radiation: 25,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Exoskeleton_Mercenaries_Armor_MasterMod_headless: {
     __internal__: {
@@ -93,7 +94,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Mercenaries_Armor_headless.T_IFI_Exoskeleton_Mercenaries_Armor_headless'",
     Weight: 7.5,
     Cost: 50500,
-    Protection: { Radiation: 20, PSY: 0 },
+    Protection: { /*Radiation: 20,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Exoskeleton_Monolith_Armor_MasterMod_headless: {
     __internal__: {
@@ -109,7 +110,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Monolith_Armor_headless.T_IFI_Exoskeleton_Monolith_Armor_headless'",
     Weight: 7.5,
     Cost: 53000,
-    Protection: { Radiation: 30, PSY: 0 },
+    Protection: { /*Radiation: 30,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Exoskeleton_Neutral_Armor_MasterMod_headless: {
     __internal__: {
@@ -125,7 +126,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Neutral_Armor_headless.T_IFI_Exoskeleton_Neutral_Armor_headless'",
     Weight: 12,
     Cost: 55500,
-    Protection: { Radiation: 20, PSY: 0 },
+    Protection: { /*Radiation: 20,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Exoskeleton_Svoboda_Armor_MasterMod_headless: {
     __internal__: {
@@ -141,7 +142,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Exoskeleton_Svoboda_Armor_headless.T_IFI_Exoskeleton_Svoboda_Armor_headless'",
     Weight: 7.5,
     Cost: 80000,
-    Protection: { Radiation: 25, PSY: 0 },
+    Protection: { /*Radiation: 25,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Heavy_Dolg_Armor_MasterMod_headless: {
     __internal__: {
@@ -157,7 +158,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_DOL_03_headless.T_IFI_FOL_DOL_03_headless'",
     Weight: 7,
     Cost: 35000,
-    Protection: { Radiation: 10, PSY: 0 },
+    Protection: { /*Radiation: 10,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Heavy2_Military_Armor_MasterMod_headless: {
     __internal__: {
@@ -173,7 +174,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MIL_04_headless.T_IFI_FOL_MIL_04_headless'",
     Weight: 6,
     Cost: 32000,
-    Protection: { Radiation: 10, PSY: 0 },
+    Protection: { /*Radiation: 10,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   HeavyAnomaly_Monolith_Armor_MasterMod_headless: {
     __internal__: {
@@ -189,7 +190,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_MON_04_headless.T_IFI_FOL_MON_04_headless'",
     Weight: 7,
     Cost: 42500,
-    Protection: { Radiation: 15, PSY: 0 },
+    Protection: { /*Radiation: 15,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Exoskeleton_Dolg_Armor_MasterMod_headless: {
     __internal__: {
@@ -205,7 +206,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_STA_05_headless.T_IFI_FOL_STA_05_headless'",
     Weight: 8.5,
     Cost: 70000,
-    Protection: { Radiation: 20, PSY: 0 },
+    Protection: { /*Radiation: 20,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Heavy_Svoboda_Armor_MasterMod_headless: {
     __internal__: {
@@ -221,7 +222,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_FOL_SVO_02_headless.T_IFI_FOL_SVO_02_headless'",
     Weight: 7,
     Cost: 37000,
-    Protection: { Radiation: 15, PSY: 0 },
+    Protection: { /*Radiation: 15,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Heavy_Mercenaries_Armor_MasterMod_headless: {
     __internal__: {
@@ -237,7 +238,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_Heavy_Mercenaries_Armor_headless.T_IFI_Heavy_Mercenaries_Armor_headless'",
     Weight: 5,
     Cost: 25500,
-    Protection: { Radiation: 10, PSY: 0 },
+    Protection: { /*Radiation: 10,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   HeavyBattle_Spark_Armor_MasterMod_headless: {
     __internal__: {
@@ -253,7 +254,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyBattle_Spark_Armor_headless.T_IFI_HeavyBattle_Spark_Armor_headless'",
     Weight: 7,
     Cost: 40500,
-    Protection: { Radiation: 15, PSY: 0 },
+    Protection: { /*Radiation: 15,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   HeavyExoskeleton_Dolg_Armor_MasterMod_headless: {
     __internal__: {
@@ -269,7 +270,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Dolg_Armor_headless.T_IFI_HeavyExoskeleton_Dolg_Armor_headless'",
     Weight: 16,
     Cost: 51000,
-    Protection: { Radiation: 20, PSY: 0 },
+    Protection: { /*Radiation: 20,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   HeavyExoskeleton_Monolith_Armor_MasterMod_headless: {
     __internal__: {
@@ -285,7 +286,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Monolith_Armor_headless.T_IFI_HeavyExoskeleton_Monolith_Armor_headless'",
     Weight: 16,
     Cost: 55000,
-    Protection: { Radiation: 30, PSY: 0 },
+    Protection: { /*Radiation: 30,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   HeavyExoskeleton_Svoboda_Armor_MasterMod_headless: {
     __internal__: {
@@ -301,7 +302,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Svoboda_Armor_headless.T_IFI_HeavyExoskeleton_Svoboda_Armor_headless'",
     Weight: 16,
     Cost: 50000,
-    Protection: { Radiation: 25, PSY: 0 },
+    Protection: { /*Radiation: 25,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   HeavyExoskeleton_Varta_Armor_MasterMod_headless: {
     __internal__: {
@@ -317,7 +318,7 @@ export const newArmors = {
     Icon: "Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_HeavyExoskeleton_Varta_Armor_headless.T_IFI_HeavyExoskeleton_Varta_Armor_headless'",
     Weight: 12,
     Cost: 45500,
-    Protection: { Radiation: 25, PSY: 0 },
+    Protection: { /*Radiation: 25,*/ PSY: 0 },
   } satisfies ArmorDescriptor,
   Exoskeleton_Mercenaries_Helmet_MasterMod: {
     __internal__: {
