@@ -125,7 +125,7 @@ const transformTrade = (struct: DynamicItemGenerator) => {
       case "EItemGenerationCategory::WeaponPistol":
       case "EItemGenerationCategory::WeaponSecondary":
         return Object.assign(e.fork(), { ReputationThreshold: 1000000 });
-      case "EItemGenerationCategory::SubItemGenerator":
+      case "EItemGenerationCategory::SubItemGenerator": {
         const PossibleItems = (e.PossibleItems as DynamicItemGenerator["ItemGenerator"]["0"]["PossibleItems"]).map(([_k, pi]) => {
           if (
             generalTradersTradeItemGenerators.has(struct.SID) &&
@@ -139,11 +139,15 @@ const transformTrade = (struct: DynamicItemGenerator) => {
             return Object.assign(pi.fork(), { Chance: 0 }); // Disable gun sell
           }
         });
+        if (struct.SID === "YanovTrader_TradeItemGenerator") {
+          PossibleItems.addNode(new Struct({ ItemGeneratorPrototypeSID: "Trader_T2_Ammo_ItemGenerator", Chance: 1 }), "Trader_T2_Ammo_ItemGenerator");
+        }
         if (!PossibleItems.entries().length) {
           return;
         }
         PossibleItems.__internal__.bpatch = true;
         return Object.assign(e.fork(), { PossibleItems });
+      }
     }
   });
   if (!ItemGenerator.entries().length) {
@@ -174,7 +178,7 @@ const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"]["0"], i: numb
   const fork = e.fork();
   const minMaxAmmo = (pi, j) => ({
     AmmoMinCount: 0,
-    AmmoMaxCount: Math.min(Math.floor(1 + 10 * semiRandom(i + j)), pi.AmmoMaxCount),
+    AmmoMaxCount: Math.min(Math.floor(1 + 10 * semiRandom(i + j)), pi.AmmoMaxCount || 1),
   });
   const PossibleItems = e.PossibleItems.map(([_k, pi], j) => Object.assign(pi.fork(), minMaxAmmo(pi, j)));
 

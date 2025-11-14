@@ -87,6 +87,7 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `Snork`
   - `Tushkan`
 - `QuestNodePrototypes`:
+  - `ANCQ01`
   - `ANCQ01_P`
   - `ANCQ27`
   - `BodyParts_Malahit`
