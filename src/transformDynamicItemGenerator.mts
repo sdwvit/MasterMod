@@ -72,7 +72,7 @@ const allRanks = new Set<ERank>(["ERank::Newbie", "ERank::Experienced", "ERank::
 
 const transformTrade = (struct: DynamicItemGenerator) => {
   const fork = struct.fork();
-  if (technicianTradeTradeItemGenerators.has(struct.SID)) {
+  if (!struct.RefreshTime) {
     fork.RefreshTime = "1d";
   }
   const ItemGenerator = struct.ItemGenerator.map(([_k, e]) => {
