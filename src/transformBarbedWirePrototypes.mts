@@ -8,9 +8,9 @@ export const transformBarbedWirePrototypes: EntriesTransformer<BarbedWirePrototy
   if (struct.SID !== "Empty") return null;
   const fork = struct.fork();
 
-  if (struct.BleedingChance) fork.BleedingChance = 0;
-  if (struct.BleedingValue) fork.BleedingValue = 0;
-  if (struct.ArmorDamage) fork.ArmorDamage = 0;
+  if (struct.BleedingChance) fork.BleedingChance = 0.0001;
+  if (struct.BleedingValue) fork.BleedingValue = 0.0001;
+  if (struct.ArmorDamage) fork.ArmorDamage = 0.0001;
 
   return fork;
 };
