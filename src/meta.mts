@@ -30,6 +30,7 @@ import { transformMeshPrototypes } from "./transformMeshPrototypes.mjs";
 import { transformDialogPoolPrototypes } from "./transformDialogPoolPrototypes.mjs";
 import { transformCluePrototypes } from "./transformCluePrototypes.mjs";
 import { transformLairPrototypes } from "./transformLairPrototypes.mjs";
+import { MergedStructs } from "./merged-structs.mjs";
 
 const structTransformers = [
   transformALifeDirectorScenarioPrototypes,
@@ -92,6 +93,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [QoL] Unlocks blocking upgrades. 
  [*] [QoL] Unique weapons are now compatible with basic scopes.
  [*] [QoL] Allows buying/selling/dropping quest items.
+ [*] [QoL] Allow unlimited saves on Master (Stalker) difficulty (same as Veteran (Hard)). Re-enables compass, and unlocks settings.
  [*] [QoL] Removes instakill effect from invisible border guards as well as spawned guards.
  [*] [QoL/Balance] There is now no cooldown between repeatable quests.
  [*] [Balance] Makes some consumables last longer, with the same value (antirad removes radiation slowly, 10x longer, but with the same value).
@@ -107,14 +109,11 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: `Added T2 ammo to Yaniv trader 
-Implemented refresh time for all traders 
-Increased radiation protection for headless armors 
-Increased zombie population in lairs and spawn controllers
-Fixed issue with multiple money rewards being granted for the same quest`,
+  changenote: `1.7 support; Allow unlimited saves on Master (Stalker) difficulty (same as Veteran (Hard))`,
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);
+    logger.log("Merged structs:", Object.keys(MergedStructs).length);
   },
   onTransformerFinish(transformer) {
     finishedTransformers.add(transformer.name);

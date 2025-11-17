@@ -6,6 +6,8 @@ import { baseCfgDir, modFolderRaw, modName, rawCfgEnclosingFolder } from "./base
 import { promisify } from "node:util";
 import { logger } from "./logger.mjs";
 import { L1Cache, L1CacheState } from "./l1-cache.mjs";
+import { MergedStructs } from "./merged-structs.mjs";
+import { deepMerge } from "./deepMerge.mjs";
 
 const readFile = promisify(fs.readFile);
 const exists = promisify(fs.exists);
@@ -35,6 +37,19 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
 
     for (let index = 0; index < array.length; index++) {
       const s = array[index];
+
+      if (
+        !filePath.includes("SpawnActorPrototypes/") &&
+        !filePath.includes("DialogChainPrototypes") &&
+        !filePath.includes("DialogPoolPrototypes") &&
+        !filePath.includes("DialogPrototypes") &&
+        !filePath.includes("JournalQuestPrototypes") &&
+        !filePath.includes("QuestNodePrototypes") &&
+        !filePath.includes("QuestPrototypes")
+      ) {
+        MergedStructs[pathToSave.name] ||= new Struct();
+        deepMerge(MergedStructs[pathToSave.name], s);
+      }
       const id = s.__internal__.rawName;
       if (!id) continue;
 
@@ -52,12 +67,7 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
         if (!Array.isArray(psa)) {
           psa = [psa];
         }
-        const filtered = psa.flat().filter(Boolean);
-        /* filtered.forEach((ps) => { // todo patch structs don't need refkey/refurl, but new structs do. So we need to distinguish between them somehow. For example checking for bpatch.
-          // delete ps.__internal__.refkey;
-          // delete ps.__internal__.refurl;
-        });*/
-        return filtered;
+        return psa.flat().filter(Boolean);
       })
       .flat()
       .filter(Boolean);

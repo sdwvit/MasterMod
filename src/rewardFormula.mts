@@ -23,14 +23,45 @@ export const QuestDataTable = parseCsv<{
   "#": string;
   Vendor: string;
   "Quest idea": string;
-  Target: string;
   "Containered Quest SID": string;
   "Dialog SID": string;
-  "Spawn NPC Quest Node SID": string;
-  "Vanilla ~Reward": string;
+  "Variant Quest Node SID": string;
+  "Reward Gen SID": string;
+  "Base ~Reward": string;
   "Cost of travel": string;
   "Suggested Reward": string;
-  "Reward Gen SID": string;
+  TargetX: string;
+  TargetY: string;
+  TargetZ: string;
+  VendorX: string;
+  VendorY: string;
+  VendorZ: string;
+  "Price per unit travelled": string;
+  Distance: string;
+  "Danger / Chore Factor": string;
+  Target: string;
+  Bandit: string;
+  BlindDog: string;
+  Bloodsucker: string;
+  Boar: string;
+  Burer: string;
+  Cat: string;
+  Chimera: string;
+  Controller: string;
+  Deer: string;
+  Duty: string;
+  Flesh: string;
+  Freedom: string;
+  Mercenaries: string;
+  Package: string;
+  Poltergeist: string;
+  PseudoDog: string;
+  Pseudogiant: string;
+  Rat: string;
+  Snork: string;
+  Stalker: string;
+  Tushkan: string;
+  Zombie: string;
 }>(readFileSync("./QuestDataTable.tsv", "utf-8"));
 export const QuestDataTableByQuestSID = QuestDataTable.reduce(
   (acc, curr) => {
@@ -48,40 +79,6 @@ export const QuestDataTableByDialogSID = QuestDataTable.reduce(
   },
   {} as Record<string, typeof QuestDataTable>,
 );
-
-export const SIDRewardMap = {
-  RSQ00_reward_var1: 1,
-  RSQ00_reward_var2: 2,
-  RSQ00_reward_var3: 3,
-  RSQ01_reward_var1: 4,
-  RSQ01_reward_var2: 5,
-  RSQ01_reward_var3: 6,
-  RSQ01_reward_var4: 7,
-  RSQ04_reward_var1: 8,
-  RSQ04_reward_var2: 9,
-  RSQ04_reward_var3: 10,
-  RSQ04_reward_var4: 11,
-  RSQ05_reward_var1: 12,
-  RSQ05_reward_var2: 13,
-  RSQ05_reward_var3: 14,
-  RSQ05_reward_var4: 15,
-  RSQ06_reward_var1: 16,
-  RSQ06_reward_var2: 17,
-  RSQ06_reward_var3: 18,
-  RSQ06_reward_var4: 19,
-  RSQ07_reward_var1: 20,
-  RSQ07_reward_var2: 21,
-  RSQ07_reward_var3: 22,
-  RSQ08_reward_var1: 23,
-  RSQ08_reward_var2: 24,
-  RSQ08_reward_var3: 25,
-  RSQ09_reward_var1: 26,
-  RSQ09_reward_var2: 27,
-  RSQ09_reward_var3: 28,
-  RSQ10_reward_var1: 29,
-  RSQ10_reward_var2: 30,
-  RSQ10_reward_var3: 31,
-};
 
 const spread = [0.8, 1.2];
 

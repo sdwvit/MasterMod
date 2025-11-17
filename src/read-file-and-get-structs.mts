@@ -16,7 +16,8 @@ export const readFileAndGetStructs = async <T extends Struct>(filePath: string, 
     if (!existsSync(fullPath)) {
       fullPath = (await getCfgFiles(filePath, true))[0];
       if (!fullPath) {
-        throw new Error(`File not found: ${filePath}`);
+        console.error(`File not found: ${filePath}`);
+        return [];
       }
     }
     const fileContents = await readFile(fullPath, "utf8");

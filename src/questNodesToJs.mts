@@ -32,8 +32,10 @@ const EVENTS = [
   "OnPlayerNoticedEvent",
   "OnSignalReceived",
 ];
-
+const QuestItemPrototypes = await readFileAndGetStructs<SpawnActorPrototype>(`/QuestItemPrototypes.cfg`);
+const ArtifactPrototypes = await readFileAndGetStructs<SpawnActorPrototype>(`/ArtifactPrototypes.cfg`);
 const EVENTS_INTERESTING_PROPS = new Set(["ExpectedItemsCount", "ItemsCount"]);
+const EVENTS_INTERESTING_SIDS = new Set(["TargetQuestGuid", "ItemPrototypeSID", "ItemSID", "SignalSenderGuid"]);
 
 export async function questNodesToJs(context: MetaContext<Struct>) {
   const contextT = context as MetaContext<
@@ -47,124 +49,14 @@ export async function questNodesToJs(context: MetaContext<Struct>) {
   const questActors = new Set<string>();
   const launchOnQuestStart = [];
   questActors.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"); // Skif
-  globalVars.add(`getFunctionBody = (fn) => fn.toString().split('\\n').slice(4, -1).map(line => line.trim()).filter(l=>l).join('\\n'); // `);
 
-  const subscriptions = Object.fromEntries(EVENTS.map((e) => [e, getEventHandler(e)]));
+  const content = getContent(context, globalVars, globalFunctions, questActors, launchOnQuestStart);
 
-  const content = contextT.array
-    .map((struct) => {
-      if (!struct.Launchers) {
-        return struct;
-      }
-      struct.Launchers.forEach(([_k, launcher]) => {
-        launcher.Connections.forEach(([_k, item]) => {
-          contextT.structsById[item.SID].Launches ||= [];
-          contextT.structsById[item.SID].Launches.push({
-            SID: struct.SID,
-            Name: item.Name,
-          });
-          struct.LaunchersBySID ||= new Struct() as any;
-          struct.LaunchersBySID[item.SID] ||= launcher.Connections;
-        });
-      });
-      return struct;
-    })
-    .map((struct) => {
-      let launches = "";
-      if (struct.Launches) {
-        const useSwitch = struct.Launches.some(({ Name }) => Name);
-        if (useSwitch) {
-          launches = struct.Launches.map(({ Name, SID }) => {
-            const isBool = Name === "True" || Name === "False";
-            return `if (${isBool ? (Name === "True" ? "result" : "!result") : `result === "${Name}"`}) ${SID}('${struct.SID}', '${Name || ""}');`;
-          }).join("\n");
-        } else {
-          launches = struct.Launches.map(({ SID, Name }) => `${SID}('${struct.SID}', '${Name || ""}');`).join("\n");
-        }
-        delete struct.Launches;
-      }
-      const atLeastSomeLaunchersAreCodependent =
-        struct.LaunchersBySID && struct.LaunchersBySID.entries().length && struct.LaunchersBySID.entries().some(([_k, v]) => v.entries().length > 1);
-
-      const subscription = subscriptions[struct.NodeType.split("::").pop()];
-      if (struct.LaunchOnQuestStart && !subscription) {
-        launchOnQuestStart.push(struct.SID);
-      }
-
-      /**
-       * @param {string} caller - SID of the quest node that called this node.
-       * @param {string} name - Name of the quest node output pin that called this node.
-       */
-      const content = `
-     function ${struct.SID}(caller, name) {         
-         ${struct.SID}.Conditions ??= ${JSON.stringify(struct.LaunchersBySID, (key, value) => (key === "__internal__" ? undefined : value)) || "{}"}
-         ${struct.SID}.State ??= {};
-         ${struct.SID}.State[caller] = name || true;
-         ${atLeastSomeLaunchersAreCodependent ? `waitForCallers(1000, ${struct.SID}, caller).then(() => {` : ""}
-           ${questNodeToJavascript(struct, globalVars, globalFunctions, questActors)}
-           ${launches}
-           console.log('// ${struct.SID}(${atLeastSomeLaunchersAreCodependent ? "', caller, ',', name, '" : ""});');
-         ${atLeastSomeLaunchersAreCodependent ? "}).catch(e => console.log(e))" : ""} 
-     }
-    `.trim();
-      if (subscription) {
-        const args = new Set(
-          struct
-            .entries()
-            .filter(([k]) => EVENTS_INTERESTING_PROPS.has(k))
-            .map(([_k, v]) => v),
-        );
-        if (struct.TargetQuestGuid) {
-          questActors.add(struct.TargetQuestGuid);
-          args.delete("TargetQuestGuid");
-          args.add(`questActors['${struct.TargetQuestGuid}']`);
-        }
-        if (struct.ItemPrototypeSID) {
-          questActors.add(struct.ItemPrototypeSID);
-          args.delete("ItemPrototypeSID");
-          args.add(`questActors['${struct.ItemPrototypeSID}']`);
-        }
-
-        return `${content}\n${subscription(struct.SID, [...args].join(", "))}`;
-      }
-      return content;
-    })
-    .join("\n");
   return `
   const intervals = [];
   const Skif = 'Skif';
   const spawnedActors = {};
-  const questActors = ${JSON.stringify(
-    Object.fromEntries(
-      [["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Skif"]].concat(
-        (
-          await Promise.all(
-            [...questActors]
-              .filter((e) => e !== "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-              .map(async (qa) => {
-                let res: SpawnActorPrototype[];
-                try {
-                  res = await readFileAndGetStructs(`${qa}.cfg`);
-                } catch (e) {
-                  res = await readFileAndGetStructs(`QuestItemPrototypes.cfg`, (content) => (content.includes(qa) ? content : ""));
-                  if (res.length === 0) {
-                    throw e;
-                  }
-                }
-
-                return res.find((s) => s.SID === qa);
-              }),
-          )
-        ).map((sap: SpawnActorPrototype) => {
-          const squadInfo = sap.SpawnedGenericMembers?.entries()
-            .map(([_k, v]) => `${v.SpawnedSquadMembersCount} ${v.SpawnedPrototypeSID}`)
-            .join(", ");
-          const maybeContainer = sap.SpawnedPrototypeSID;
-          return [sap.SID, squadInfo || maybeContainer || sap.__internal__.refkey?.toString() || sap.SID];
-        }),
-      ),
-    ),
-  )}
+  const questActors = ${await getQuestActorsStr(questActors)}
   ${hasQuestNodeExecuted.toString()}
   ${waitForCallers.toString()}
   ${[...globalVars]
@@ -214,6 +106,33 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
       return `despawn(questActors['${struct.TargetQuestGuid}']);`;
     case "End":
       return "";
+    case "OnAbilityEndedEvent":
+    case "OnAbilityUsedEvent":
+    case "OnDialogStartEvent":
+    case "OnEmissionFinishEvent":
+    case "OnEmissionStageActivated":
+    case "OnEmissionStageFinished":
+    case "OnEmissionStartEvent":
+    case "OnFactionBecomeEnemyEvent":
+    case "OnFactionBecomeFriendEvent":
+    case "OnGetCompatibleAttachEvent":
+    case "OnHitEvent":
+    case "OnInfotopicFinishEvent":
+    case "OnInteractEvent":
+    case "OnJournalQuestEvent":
+    case "OnKillerCheckEvent":
+    case "OnMoneyAmountReachedEvent":
+    case "OnNPCDeathEvent":
+    case "OnNPCBecomeEnemyEvent":
+    case "OnNPCBecomeFriendEvent":
+    case "OnNPCCreateEvent":
+    case "OnNPCDefeatEvent":
+    case "OnPlayerGetItemEvent":
+    case "OnPlayerLostItemEvent":
+    case "OnPlayerNoticedEvent":
+      globalFunctions.set(subType, "");
+      return "";
+
     case "ConsoleCommand":
     case "LookAt":
     case "ALifeDirectorZoneSwitch":
@@ -285,30 +204,7 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "LoadAsset":
     case "MoveInventory":
     case "NPCBark":
-    case "OnAbilityEndedEvent":
-    case "OnAbilityUsedEvent":
-    case "OnDialogStartEvent":
-    case "OnEmissionFinishEvent":
-    case "OnEmissionStageActivated":
-    case "OnEmissionStageFinished":
-    case "OnEmissionStartEvent":
-    case "OnFactionBecomeEnemyEvent":
-    case "OnFactionBecomeFriendEvent":
-    case "OnGetCompatibleAttachEvent":
-    case "OnHitEvent":
-    case "OnInfotopicFinishEvent":
-    case "OnInteractEvent":
-    case "OnJournalQuestEvent":
-    case "OnKillerCheckEvent":
-    case "OnMoneyAmountReachedEvent":
-    case "OnNPCDeathEvent":
-    case "OnNPCBecomeEnemyEvent":
-    case "OnNPCBecomeFriendEvent":
-    case "OnNPCCreateEvent":
-    case "OnNPCDefeatEvent":
-    case "OnPlayerGetItemEvent":
-    case "OnPlayerLostItemEvent":
-    case "OnPlayerNoticedEvent":
+    case "SwitchQuestItemState":
     case "OnSignalReceived":
     case "SpawnAnomaly":
     case "SpawnAnomalySpawner":
@@ -320,12 +216,11 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "SpawnSingleObj":
     case "SpawnSquad":
     case "SpawnTrigger":
-    case "SwitchQuestItemState":
       globalFunctions.set(subType, "");
       return `${subType}(${struct
         .entries()
         .map(([k]) => {
-          if (k === "TargetQuestGuid" || k === "ItemPrototypeSID" || k === "ItemSID") {
+          if (EVENTS_INTERESTING_SIDS.has(k)) {
             questActors.add(struct[k]);
             return `questActors['${struct[k]}']`;
           }
@@ -428,7 +323,16 @@ function getConditionComparance(ConditionComparance: string) {
       return "!==";
   }
 }
-function waitForCallers(timeout: number, struct: { State: any; Conditions: { [x: string]: any }; name: any }, caller: string | number) {
+
+function waitForCallers(
+  timeout: number,
+  struct: {
+    State: any;
+    Conditions: { [x: string]: any };
+    name: any;
+  },
+  caller: string | number,
+) {
   return new Promise((resolve: (_: void) => void, reject: (r: string) => void) => {
     const state = struct.State;
     const conditions = Object.values(struct.Conditions[caller] ?? {});
@@ -474,19 +378,19 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
           const subType = c.ConditionType.split("::").pop();
           switch (subType) {
             case "Weather":
-              break;
+              return 0;
             case "Random":
-              break;
+              return 0;
             case "Trigger":
-              break;
+              return 0;
             case "Emission":
-              break;
+              return 0;
             case "Money":
-              break;
+              return 0;
             case "Rank":
-              break;
+              return 0;
             case "JournalState":
-              break;
+              return 0;
             case "NodeState":
               globalFunctions.set("getQuestNodeState", "");
               globalVars.add(c.TargetNode);
@@ -501,23 +405,23 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
                 }
               })()}'`;
             case "Bleeding":
-              break;
+              return 0;
             case "HP":
-              break;
+              return 0;
             case "HPPercent":
-              break;
+              return 0;
             case "HungerPoints":
-              break;
+              return 0;
             case "InventoryWeight":
-              break;
+              return 0;
             case "Radiation":
-              break;
+              return 0;
             case "AITarget":
-              break;
+              return 0;
             case "ArmorState":
-              break;
+              return 0;
             case "Awareness":
-              break;
+              return 0;
             case "Bridge":
               globalFunctions.set(c.LinkedNodePrototypeSID, "");
               c.CompletedNodeLauncherNames.entries().forEach(([_k, v]) => globalVars.add(v));
@@ -525,62 +429,68 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
                 .map(([_k, v]) => v)
                 .join(", ")}]) ${getConditionComparance(c.ConditionComparance)} true`;
             case "ContextualAction":
-              break;
+              return 0;
             case "CorpseCarry":
-              break;
+              return 0;
             case "DistanceToNPC":
-              break;
+              return 0;
             case "DistanceToPoint":
-              break;
+              return 0;
             case "Effect":
-              break;
+              return 0;
             case "EquipmentInHands":
-              break;
+              return 0;
             case "FactionRelationship":
-              break;
+              return 0;
             case "FastTravelMoney":
-              break;
+              return 0;
             case "GlobalVariable":
-              break;
+              return 0;
             case "HasItemInQuickSlot":
-              break;
+              return 0;
             case "IsAlive":
-              break;
+              globalFunctions.set(
+                "IsAlive",
+                "(actor) => { const isAlive = !!spawnedActors[actor]; console.log(`IsAlive(\${actor}) === \${isAlive}`); return isAlive; };",
+              );
+              questActors.add(c.TargetCharacter);
+              return `${getConditionComparance(c.ConditionComparance) === "===" ? "" : "!"}IsAlive(questActors['${c.TargetCharacter}'])`;
+
             case "IsCreated":
               globalFunctions.set(
-                "isObjectCreated",
-                "(actor) => { const created = !!spawnedActors[actor]; console.log(`isObjectCreated(\${actor}) === \${created}`); return created; };",
+                "IsCreated",
+                "(actor) => { const created = !!spawnedActors[actor]; console.log(`IsCreated(\${actor}) === \${created}`); return created; };",
               );
               questActors.add(c.TargetPlaceholder);
-              return `${getConditionComparance(c.ConditionComparance) === "===" ? "" : "!"}isObjectCreated(questActors['${c.TargetPlaceholder}'])`;
+              return `${getConditionComparance(c.ConditionComparance) === "===" ? "" : "!"}IsCreated(questActors['${c.TargetPlaceholder}'])`;
             case "IsDialogMemberValid":
-              break;
+              return 0;
             case "IsEnoughAmmo":
-              break;
+              return 0;
             case "IsOnline":
-              break;
+              return 0;
             case "IsWeaponJammed":
-              break;
+              return 0;
             case "IsWounded":
-              break;
+              return 0;
             case "ItemInContainer":
-              break;
+              return 0;
             case "ItemInInventory":
               globalFunctions.set("isItemInInventory", "");
               globalVars.add(c.ItemPrototypeSID.VariableValue);
               return `isItemInInventory(${c.ItemPrototypeSID.VariableValue}) ${getConditionComparance(c.ConditionComparance)} ${c.ItemsCount.VariableValue}`;
             case "LookAtAngle":
-              break;
+              return 0;
             case "Note":
-              break;
+              return 0;
             case "PersonalRelationship":
-              break;
+              return 0;
             case "PlayerOverload":
-              break;
+              return 0;
             case "Psy":
-              break;
+              return 0;
             case "Stamina":
-              break;
+              return 0;
           }
         })
         .join(andOr);
@@ -589,33 +499,236 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
 }
 
 await Promise.all(
-  [
-    "/QuestNodePrototypes/RSQ08_C03_K_S.cfg",
-    "/QuestNodePrototypes/RSQ08_C04_B_B.cfg",
-    "/QuestNodePrototypes/RSQ08_C05_B_B.cfg",
-    "/QuestNodePrototypes/RSQ08_C06_B_A.cfg",
-    "/QuestNodePrototypes/RSQ08_C07_B_A.cfg",
-    "/QuestNodePrototypes/RSQ08_C08_B_A.cfg",
-    "/QuestNodePrototypes/RSQ08_C09_S_P.cfg",
-  ].map(async (filePath) => {
-    const context = {
-      fileIndex: 0,
-      index: 0,
-      array: [],
-      filePath,
-      structsById: {},
-    };
+  `
+RSQ01_C01.cfg
+RSQ01_C02.cfg
+RSQ01_C03.cfg
+RSQ01_C04.cfg
+RSQ01_C05.cfg
+RSQ01_C06.cfg
+RSQ04_C01.cfg
+RSQ04_C02.cfg
+RSQ04_C03.cfg
+RSQ04_C04.cfg
+RSQ04_C05.cfg
+RSQ04_C06.cfg
+RSQ04_C07.cfg
+RSQ04_C08.cfg
+RSQ04_C09.cfg
+RSQ04_C10.cfg
+RSQ05_C01.cfg
+RSQ05_C02.cfg
+RSQ05_C04.cfg
+RSQ05_C05.cfg
+RSQ05_C07.cfg
+RSQ05_C08.cfg
+RSQ05_C09.cfg
+RSQ05_C10.cfg
+RSQ06_C01___K_Z.cfg
+RSQ06_C02___K_M.cfg
+RSQ06_C03___K_B.cfg
+RSQ06_C04___K_S.cfg
+RSQ06_C05___B_B.cfg
+RSQ06_C06___B_A.cfg
+RSQ06_C07___B_A.cfg
+RSQ06_C08___B_A.cfg
+RSQ06_C09___S_P.cfg
+RSQ07_C01_K_Z.cfg
+RSQ07_C02_K_M.cfg
+RSQ07_C03_K_M.cfg
+RSQ07_C04_K_B.cfg
+RSQ07_C05_B_B.cfg
+RSQ07_C06_B_A.cfg
+RSQ07_C07_B_A.cfg
+RSQ07_C08_B_A.cfg
+RSQ07_C09_S_P.cfg
+RSQ08_C01_K_M.cfg
+RSQ08_C02_K_B.cfg
+RSQ08_C03_K_S.cfg
+RSQ08_C04_B_B.cfg
+RSQ08_C05_B_B.cfg
+RSQ08_C06_B_A.cfg
+RSQ08_C07_B_A.cfg
+RSQ08_C08_B_A.cfg
+RSQ08_C09_S_P.cfg
+RSQ09_C01_K_M.cfg
+RSQ09_C02_K_M.cfg
+RSQ09_C03_K_M.cfg
+RSQ09_C04_K_S.cfg
+RSQ09_C05_B_B.cfg
+RSQ09_C06_B_A.cfg
+RSQ09_C07_B_A.cfg
+RSQ09_C08_B_A.cfg
+RSQ09_C09_S_P.cfg
+RSQ10_C01_K_M.cfg
+RSQ10_C02_K_M.cfg
+RSQ10_C03_K_S.cfg
+RSQ10_C04_K_S.cfg
+RSQ10_C05_B_B.cfg
+RSQ10_C06_B_A.cfg
+RSQ10_C07_B_A.cfg
+RSQ10_C08_B_A.cfg
+RSQ10_C09_S_P.cfg
+  `
+    .trim()
+    .split("\n")
+    .map((f) => f.trim())
+    .map(async (filePath) => {
+      const context = {
+        fileIndex: 0,
+        index: 0,
+        array: [],
+        filePath: "/QuestNodePrototypes/" + filePath,
+        structsById: {},
+      };
 
-    context.array = await readFileAndGetStructs<QuestNodePrototype>(filePath);
-    context.structsById = Object.fromEntries(context.array.map((s) => [s.__internal__.rawName, s as QuestNodePrototype]));
+      context.array = await readFileAndGetStructs<QuestNodePrototype>("/QuestNodePrototypes/" + filePath);
+      context.structsById = Object.fromEntries(context.array.map((s) => [s.__internal__.rawName, s as QuestNodePrototype]));
 
-    const r = (await questNodesToJs(context)).replaceAll(`${(context.array[0] as QuestNodePrototype).QuestSID}_`, "");
-    writeFileSync(`/home/sdwvit/.config/JetBrains/IntelliJIdea2025.1/scratches/${context.array[0].SID}.js`, r);
-    // console.log(`\n\nExecuting quest node script for ${filePath}`);
-    // await eval(r);
-  }),
+      const r = await questNodesToJs(context);
+      writeFileSync(`/home/sdwvit/.config/JetBrains/IntelliJIdea2025.1/scratches/${context.array[0].SID}.js`, r);
+      // console.log(`\n\nExecuting quest node script for ${filePath}`);
+      // await eval(r);
+    }),
 ).then(onL1Finish);
 
 function getEventHandler(eventName: string) {
   return (target: string, content?: string) => `${eventName}(${target}${content ? `, ${content}` : ""});`;
+}
+
+function getStructBody(struct: any, globalVars: Set<string>, globalFunctions: Map<string, string>, questActors: Set<string>) {
+  let launches = "";
+  if (struct.Launches) {
+    const useSwitch = struct.Launches.some(({ Name }) => Name);
+    if (useSwitch) {
+      launches = struct.Launches.map(({ Name, SID }) => {
+        const isBool = Name === "True" || Name === "False";
+        return `if (${isBool ? (Name === "True" ? "result" : "!result") : `result === "${Name}"`}) ${SID}('${struct.SID}', '${Name || ""}');`;
+      }).join("\n");
+    } else {
+      launches = struct.Launches.map(({ SID, Name }) => `${SID}('${struct.SID}', '${Name || ""}');`).join("\n");
+    }
+    delete struct.Launches;
+  }
+  const atLeastSomeLaunchersAreCodependent =
+    struct.LaunchersBySID && struct.LaunchersBySID.entries().length && struct.LaunchersBySID.entries().some(([_k, v]) => v.entries().length > 1);
+  return `
+     function ${struct.SID}(caller, name) {         
+         ${struct.SID}.Conditions ??= ${JSON.stringify(struct.LaunchersBySID, (key, value) => (key === "__internal__" ? undefined : value)) || "{}"}
+         ${struct.SID}.State ??= {};
+         ${struct.SID}.State[caller] = name || true;
+         ${atLeastSomeLaunchersAreCodependent ? `waitForCallers(1000, ${struct.SID}, caller).then(() => {` : ""}
+           ${questNodeToJavascript(struct, globalVars, globalFunctions, questActors)}
+           ${launches}
+           console.log('// ${struct.SID}(${atLeastSomeLaunchersAreCodependent ? "', caller, ',', name, '" : ""});');
+         ${atLeastSomeLaunchersAreCodependent ? "}).catch(e => console.log(e))" : ""} 
+     }
+    `.trim();
+}
+
+async function getQuestActorsStr(questActors: Set<string>) {
+  const relevantStructs = await Promise.all(
+    [...questActors]
+      .filter((e) => e !== "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+      .map(async (SID) => {
+        let res: SpawnActorPrototype;
+        try {
+          const structs = await readFileAndGetStructs<SpawnActorPrototype>(`${SID}.cfg`);
+          return structs[0] || ({ SID } as SpawnActorPrototype);
+        } catch (e) {
+          res = QuestItemPrototypes.find((s) => s.SID === SID) || ArtifactPrototypes.find((s) => s.SID === SID) || ({ SID } as SpawnActorPrototype);
+          if (res) {
+            return res;
+          }
+          console.warn(`Quest actor prototype not found: ${SID}.cfg`);
+          return { SID };
+        }
+      }),
+  );
+  return JSON.stringify(
+    Object.fromEntries(
+      [["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Skif"]].concat(
+        relevantStructs.map((sap: SpawnActorPrototype) => {
+          sap ||= {} as SpawnActorPrototype;
+          const pos = sap.PositionX ? ` @ ${sap.PositionX.toFixed(1)}\t${sap.PositionY.toFixed(1)}\t${sap.PositionZ.toFixed(1)}` : "";
+          const squadInfo = sap.SpawnedGenericMembers?.entries()
+            .map(([_k, v]) => `${v.SpawnedSquadMembersCount} ${v.SpawnedPrototypeSID}`)
+            .join(" + ");
+          if (squadInfo) {
+            return [sap.SID, `${squadInfo}${pos}`];
+          }
+          const maybeContainer = sap.SpawnedPrototypeSID && `${sap.SpawnedPrototypeSID}`;
+          if (maybeContainer) {
+            return [sap.SID, `${maybeContainer}${pos}`];
+          }
+          return [sap.SID, sap.__internal__?.refkey?.toString() || sap.SID];
+        }),
+      ),
+    ),
+  );
+}
+
+function getContent(
+  context: MetaContext<Struct>,
+  globalVars: Set<string>,
+  globalFunctions: Map<string, string>,
+  questActors: Set<string>,
+  launchOnQuestStart: any[],
+) {
+  const contextT = context as MetaContext<
+    QuestNodePrototype & {
+      LaunchersBySID: GetStructType<Record<string, { SID: string; Name: string }[]>>;
+      Launches: { SID: string; Name: string }[];
+    }
+  >;
+  const subscriptions = Object.fromEntries(EVENTS.map((e) => [e, getEventHandler(e)]));
+  return contextT.array
+    .map((struct) => {
+      struct.SID = struct.SID.replace(/[!.]/g, "_");
+      if (!struct.Launchers) {
+        return struct;
+      }
+      struct.Launchers.forEach(([_k, launcher]) => {
+        launcher.Connections.forEach(([_k, item]) => {
+          contextT.structsById[item.SID].Launches ||= [];
+          contextT.structsById[item.SID].Launches.push({
+            SID: struct.SID,
+            Name: item.Name,
+          });
+          struct.LaunchersBySID ||= new Struct() as any;
+          struct.LaunchersBySID[item.SID] ||= launcher.Connections;
+        });
+      });
+      return struct;
+    })
+    .map((struct) => {
+      const subscription = subscriptions[struct.NodeType.split("::").pop()];
+      if (struct.LaunchOnQuestStart && !subscription) {
+        launchOnQuestStart.push(struct.SID);
+      }
+
+      /**
+       * @param {string} caller - SID of the quest node that called this node.
+       * @param {string} name - Name of the quest node output pin that called this node.
+       */
+      const structBody = getStructBody(struct, globalVars, globalFunctions, questActors);
+      if (!subscription) {
+        return structBody;
+      }
+      const args = new Set(
+        struct
+          .entries()
+          .filter(([k]) => EVENTS_INTERESTING_PROPS.has(k) || EVENTS_INTERESTING_SIDS.has(k))
+          .map(([_k, v]) => {
+            if (EVENTS_INTERESTING_SIDS.has(_k)) {
+              questActors.add(v);
+              return `questActors['${v}']`;
+            }
+            return v;
+          }),
+      );
+
+      return `${structBody}\n${subscription(struct.SID, [...args].join(", "))}`;
+    })
+    .join("\n");
 }
