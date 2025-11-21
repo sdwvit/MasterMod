@@ -3,7 +3,11 @@ import { allDefaultArmorDefs } from "./consts.mjs";
 
 const defaultKeys = new Set(["__internal__"]);
 
-export function backfillArmorDef<T>(armorT: T): T & ArmorPrototype {
+export function backfillArmorDef<T>(armorT: T, referenceArmor = null): T & ArmorPrototype {
+  referenceArmor ||= JSON.parse(
+    // @ts-expect-error im lazy to write types here
+    JSON.stringify(allDefaultArmorDefs[armorT.__internal__.refkey] || allDefaultArmorDefs.HeavyExoskeleton_Svoboda_Armor),
+  );
   const armor = armorT instanceof Struct ? armorT.clone() : JSON.parse(JSON.stringify(armorT));
   const deepWalk = (obj: ArmorPrototype, cb: (s: string[]) => void, path: string[] = []) =>
     Object.entries(obj)
@@ -22,7 +26,7 @@ export function backfillArmorDef<T>(armorT: T): T & ArmorPrototype {
       parent[lastKey] = value;
     }
   };
-  deepWalk(allDefaultArmorDefs.HeavyExoskeleton_Svoboda_Armor, (path: string[]) => {
+  deepWalk(referenceArmor, (path: string[]) => {
     let a = armor;
     while (get(a, path) === undefined) {
       a = allDefaultArmorDefs[a.__internal__.refkey];

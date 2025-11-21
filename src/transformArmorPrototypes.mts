@@ -36,10 +36,13 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
       }
 
       const newArmor = new Struct(
-        backfillArmorDef({
-          SID: newSID,
-          __internal__: { rawName: newSID, refkey: original, refurl: `../${path.parse(context.filePath).base}` },
-        }),
+        backfillArmorDef(
+          {
+            SID: newSID,
+            __internal__: { rawName: newSID, refkey: original, refurl: `../${path.parse(context.filePath).base}` },
+          },
+          newSID.toLowerCase().includes("helmet") ? allDefaultArmorDefs.LightHelmet_Svoboda_Helmet : armor,
+        ),
       ) as ArmorPrototype;
       const overrides = { ...newArmors[newSID as keyof typeof newArmors] };
       if (overrides.__internal__?._extras && "keysForRemoval" in overrides.__internal__._extras) {
@@ -55,7 +58,7 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
         });
       }
       deepMerge(newArmor, overrides);
-      if (!newArmors[newSID] || !newArmors[newSID].__internal__._extras.isDroppable) {
+      if (!(newArmors[newSID] && newArmors[newSID].__internal__._extras.isDroppable)) {
         newArmor.Invisible = true;
       }
       extraStructs.push(newArmor.clone());

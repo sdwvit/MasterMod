@@ -67,7 +67,10 @@ export const allItemRank = Object.fromEntries(
   })
     .filter((armor) => !armor.SID.includes("Template"))
     .map((armor) => {
-      const backfilled = backfillArmorDef(armor) as ArmorPrototype;
+      const backfilled = backfillArmorDef(
+        armor,
+        armor.SID.toLowerCase().includes("helmet") ? allDefaultArmorDefs.Heavy_Svoboda_Helmet : undefined,
+      ) as ArmorPrototype;
       return [armor.SID, calculateArmorScore(backfilled)] as [string, number];
     })
     .sort((a, b) => a[0].localeCompare(b[0])),

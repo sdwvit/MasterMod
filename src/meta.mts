@@ -109,7 +109,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: `1.7 support; Allow unlimited saves on Master (Stalker) difficulty (same as Veteran (Hard))`,
+  changenote: `Fixed armor backfilling and droppable flag for headless armor`,
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);

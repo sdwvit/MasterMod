@@ -11,6 +11,7 @@ const getHeadlessArmorCommonProps = (refkey: string) => ({
   __internal__: {
     refkey,
     _extras: {
+      isDroppable: true,
       keysForRemoval: {
         UpgradePrototypeSIDs: backfillArmorDef(allDefaultArmorDefs[refkey])
           .UpgradePrototypeSIDs.entries()
@@ -25,6 +26,7 @@ const getHeadlessArmorCommonProps = (refkey: string) => ({
   },
   SID: `${refkey}_MasterMod_headless`,
   LocalizationSID: refkey,
+  Protection: { PSY: 0 },
   bBlockHead: false,
   Icon: `Texture2D'/Game/GameLite/FPS_Game/UIRemaster/UITextures/Inventory/Armor/T_IFI_${refkey}_headless.T_IFI_${refkey}_headless'`,
 });
