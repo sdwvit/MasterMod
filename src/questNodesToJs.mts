@@ -3,6 +3,7 @@ import { GetStructType, QuestNodePrototype, SpawnActorPrototype, Struct } from "
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { writeFileSync } from "node:fs";
 import { onL1Finish } from "./l1-cache.mjs";
+import { allDefaultArtifactPrototypes, allDefaultQuestItemPrototypes } from "./consts.mjs";
 
 const EVENTS = [
   "OnAbilityEndedEvent",
@@ -32,8 +33,7 @@ const EVENTS = [
   "OnPlayerNoticedEvent",
   "OnSignalReceived",
 ];
-const QuestItemPrototypes = await readFileAndGetStructs<SpawnActorPrototype>(`/QuestItemPrototypes.cfg`);
-const ArtifactPrototypes = await readFileAndGetStructs<SpawnActorPrototype>(`/ArtifactPrototypes.cfg`);
+
 const EVENTS_INTERESTING_PROPS = new Set(["ExpectedItemsCount", "ItemsCount"]);
 const EVENTS_INTERESTING_SIDS = new Set(["TargetQuestGuid", "ItemPrototypeSID", "ItemSID", "SignalSenderGuid"]);
 
@@ -500,75 +500,7 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
 
 await Promise.all(
   `
-RSQ01_C01.cfg
-RSQ01_C02.cfg
-RSQ01_C03.cfg
-RSQ01_C04.cfg
-RSQ01_C05.cfg
-RSQ01_C06.cfg
-RSQ04_C01.cfg
-RSQ04_C02.cfg
-RSQ04_C03.cfg
-RSQ04_C04.cfg
-RSQ04_C05.cfg
-RSQ04_C06.cfg
-RSQ04_C07.cfg
-RSQ04_C08.cfg
-RSQ04_C09.cfg
-RSQ04_C10.cfg
-RSQ05_C01.cfg
-RSQ05_C02.cfg
-RSQ05_C04.cfg
-RSQ05_C05.cfg
-RSQ05_C07.cfg
-RSQ05_C08.cfg
-RSQ05_C09.cfg
-RSQ05_C10.cfg
-RSQ06_C01___K_Z.cfg
-RSQ06_C02___K_M.cfg
-RSQ06_C03___K_B.cfg
-RSQ06_C04___K_S.cfg
-RSQ06_C05___B_B.cfg
-RSQ06_C06___B_A.cfg
-RSQ06_C07___B_A.cfg
-RSQ06_C08___B_A.cfg
-RSQ06_C09___S_P.cfg
-RSQ07_C01_K_Z.cfg
-RSQ07_C02_K_M.cfg
-RSQ07_C03_K_M.cfg
-RSQ07_C04_K_B.cfg
-RSQ07_C05_B_B.cfg
-RSQ07_C06_B_A.cfg
-RSQ07_C07_B_A.cfg
-RSQ07_C08_B_A.cfg
-RSQ07_C09_S_P.cfg
-RSQ08_C01_K_M.cfg
-RSQ08_C02_K_B.cfg
-RSQ08_C03_K_S.cfg
-RSQ08_C04_B_B.cfg
-RSQ08_C05_B_B.cfg
-RSQ08_C06_B_A.cfg
-RSQ08_C07_B_A.cfg
-RSQ08_C08_B_A.cfg
-RSQ08_C09_S_P.cfg
-RSQ09_C01_K_M.cfg
-RSQ09_C02_K_M.cfg
-RSQ09_C03_K_M.cfg
-RSQ09_C04_K_S.cfg
-RSQ09_C05_B_B.cfg
-RSQ09_C06_B_A.cfg
-RSQ09_C07_B_A.cfg
-RSQ09_C08_B_A.cfg
-RSQ09_C09_S_P.cfg
-RSQ10_C01_K_M.cfg
-RSQ10_C02_K_M.cfg
-RSQ10_C03_K_S.cfg
-RSQ10_C04_K_S.cfg
-RSQ10_C05_B_B.cfg
-RSQ10_C06_B_A.cfg
-RSQ10_C07_B_A.cfg
-RSQ10_C08_B_A.cfg
-RSQ10_C09_S_P.cfg
+RookieVillage_Hub.cfg
   `
     .trim()
     .split("\n")
@@ -636,7 +568,10 @@ async function getQuestActorsStr(questActors: Set<string>) {
           const structs = await readFileAndGetStructs<SpawnActorPrototype>(`${SID}.cfg`);
           return structs[0] || ({ SID } as SpawnActorPrototype);
         } catch (e) {
-          res = QuestItemPrototypes.find((s) => s.SID === SID) || ArtifactPrototypes.find((s) => s.SID === SID) || ({ SID } as SpawnActorPrototype);
+          res =
+            allDefaultQuestItemPrototypes.find((s) => s.SID === SID) ||
+            allDefaultArtifactPrototypes.find((s) => s.SID === SID) ||
+            ({ SID } as SpawnActorPrototype);
           if (res) {
             return res;
           }
