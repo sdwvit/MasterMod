@@ -1,5 +1,6 @@
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { Struct, WeaponGeneralSetupPrototype } from "s2cfgtojson";
+import { allDefaultWeaponGeneralSetupPrototypes } from "./consts.mjs";
 
 export const uniqueAttachmentsToAlternatives: Record<string, string> = {
   UDP_Deadeye_Colim: "EN_ColimScope_1",
@@ -62,7 +63,7 @@ export const allCompatibleAttachmentDefs: Record<string, WeaponGeneralSetupProto
   }) as WeaponGeneralSetupPrototype["CompatibleAttachments"]["0"],
 };
 
-(await readFileAndGetStructs("WeaponData/WeaponGeneralSetupPrototypes.cfg")).forEach((struct: WeaponGeneralSetupPrototype) => {
+allDefaultWeaponGeneralSetupPrototypes.forEach((struct: WeaponGeneralSetupPrototype) => {
   if (struct.CompatibleAttachments) {
     struct.CompatibleAttachments.forEach(([_k, e]) => {
       const newE = e.clone();
