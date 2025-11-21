@@ -7,7 +7,7 @@ import { logger } from "./logger.mjs";
 let allCfgs;
 export async function getCfgFiles(suffix = "", contains = false): Promise<string[]> {
   if (L3Cache[suffix]?.length) {
-    logger.log(`Using cached .cfg files for suffix "${suffix}" (${L3Cache[suffix].length} files)`);
+    logger.log(`Using L3 cache for suffix "${suffix}" (${L3Cache[suffix].length} files)`);
     return L3Cache[suffix];
   }
   L3CacheState.needsUpdate = true;
