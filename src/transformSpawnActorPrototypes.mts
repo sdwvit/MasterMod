@@ -1,10 +1,11 @@
-import { AttachPrototype, SpawnActorPrototype, WeaponPrototype } from "s2cfgtojson";
+import { SpawnActorPrototype, WeaponPrototype } from "s2cfgtojson";
 import { logger } from "./logger.mts";
 
 import { EntriesTransformer, MetaContext } from "./metaType.mjs";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { allStashes } from "./stashes.mjs";
 import { getGeneratedStashSID } from "./transformCluePrototypes.mjs";
+import { allDefaultAttachPrototypes } from "./consts.mjs";
 
 /**
  * Removes preplaced items from the map. Like medkits, destructible items contents, and gear.
@@ -35,7 +36,7 @@ export const transformSpawnActorPrototypes: EntriesTransformer<SpawnActorPrototy
 };
 
 const attachmentsOrQuestItems = new Set([
-  ...(await readFileAndGetStructs<AttachPrototype>("ItemPrototypes/AttachPrototypes.cfg")).map((e) => e?.SID),
+  ...allDefaultAttachPrototypes.map((e) => e?.SID),
   ...(
     await readFileAndGetStructs<WeaponPrototype>("ItemPrototypes/WeaponPrototypes.cfg", (s) =>
       s.split("//--------------UNIQUE-WEAPONS--------------").pop(),

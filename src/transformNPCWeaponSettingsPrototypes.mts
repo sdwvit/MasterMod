@@ -1,15 +1,11 @@
-import { NPCWeaponSettingsPrototype, WeaponPrototype } from "s2cfgtojson";
+import { NPCWeaponSettingsPrototype } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
-import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
+import { allDefaultPlayerWeaponSettingsPrototypes, allDefaultWeaponPrototypes } from "./consts.mjs";
 
-const playerWeaponSettingsPrototypesBySID = Object.fromEntries(
-  (await readFileAndGetStructs<NPCWeaponSettingsPrototype>("WeaponData/CharacterWeaponSettingsPrototypes/PlayerWeaponSettingsPrototypes.cfg")).map(
-    (s) => [s.SID, s],
-  ),
-);
+const playerWeaponSettingsPrototypesBySID = Object.fromEntries(allDefaultPlayerWeaponSettingsPrototypes.map((s) => [s.SID, s]));
 const weaponPrototypesByNPCSettingsMap = Object.fromEntries(
-  (await readFileAndGetStructs<WeaponPrototype>("ItemPrototypes/WeaponPrototypes.cfg"))
+  allDefaultWeaponPrototypes
     .filter((s) => s.SID !== "UA_GLaunch_Weapon_Data_En" && s.SID !== "UA_GLaunch_Weapon_Data_Ru")
     .map((s) => [s.NPCWeaponAttributes, s]),
 );

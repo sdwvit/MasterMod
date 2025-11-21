@@ -1,9 +1,9 @@
-import { ItemGeneratorPrototype, Struct } from "s2cfgtojson";
+import { ItemGeneratorPrototype } from "s2cfgtojson";
 import { semiRandom } from "./semi-random.mjs";
-import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
+import { allDefaultAmmoPrototypes, allDefaultConsumablePrototypes, allDefaultGrenadePrototypes } from "./consts.mjs";
 
 export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorPrototype> = async (struct, context) => {
   if (prohibitedIds.some((id) => struct.SID.includes(id))) {
@@ -15,9 +15,9 @@ export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorP
       if (!possibleItem) {
         return;
       }
-      const isConsumable = consumablePrototypes.has(possibleItem?.ItemPrototypeSID);
-      const isAmmo = ammoPrototypes.has(possibleItem?.ItemPrototypeSID);
-      const isGrenade = grenadePrototypes.has(possibleItem?.ItemPrototypeSID);
+      const isConsumable = consumablePrototypeSIDs.has(possibleItem?.ItemPrototypeSID);
+      const isAmmo = ammoPrototypeSIDs.has(possibleItem?.ItemPrototypeSID);
+      const isGrenade = grenadePrototypeSIDs.has(possibleItem?.ItemPrototypeSID);
       if (!isConsumable && !isAmmo && !isGrenade) {
         return;
       }
@@ -53,8 +53,6 @@ export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorP
 transformItemGeneratorPrototypes.files = ["/ItemGeneratorPrototypes.cfg", "/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg"];
 const prohibitedIds = ["Arena"];
 
-const ammoPrototypes = new Set((await readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/AmmoPrototypes.cfg")).map((e) => e.SID));
-const consumablePrototypes = new Set(
-  (await readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/ConsumablePrototypes.cfg")).map((e) => e.SID),
-);
-const grenadePrototypes = new Set((await readFileAndGetStructs<Struct & { SID: string }>("ItemPrototypes/GrenadePrototypes.cfg")).map((e) => e.SID));
+const ammoPrototypeSIDs = new Set(allDefaultAmmoPrototypes.map((e) => e.SID));
+const consumablePrototypeSIDs = new Set(allDefaultConsumablePrototypes.map((e) => e.SID));
+const grenadePrototypeSIDs = new Set(allDefaultGrenadePrototypes.map((e) => e.SID));
