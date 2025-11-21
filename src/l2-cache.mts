@@ -14,12 +14,12 @@ export const L2CacheState = {
  * Key: see getL2CacheKey()
  * Value: List of .cfg files to be processed by that transformer
  */
-export const L2Cache = fs.existsSync(path.join(L2CacheFileName)) ? JSON.parse(await readWithUnzip(path.join(L2CacheFileName))) : {};
+export const L2Cache = fs.existsSync(L2CacheFileName) ? JSON.parse(await readWithUnzip(L2CacheFileName)) : {};
 export const getL2CacheKey = (transformer: EntriesTransformer<any>) =>
   `${transformer.files.sort().join()}:${transformer.contains}:${transformer.contents ? transformer.contents.sort().join() : ""}`;
 
 export const onL2Finish = () => {
   if (!L2CacheState.needsUpdate) return;
   logger.log("Writing L2 cache to " + L2CacheFileName);
-  return writeWithZip(path.join(L2CacheFileName), JSON.stringify(L2Cache));
+  return writeWithZip(L2CacheFileName, JSON.stringify(L2Cache));
 };

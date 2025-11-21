@@ -21,5 +21,5 @@ export const onL3Finish = () => {
   logger.log("Writing L3 cache to " + L3CacheFileName);
   const L3Entries = Object.entries(L3Cache);
 
-  return writeWithZip(path.join(L3CacheFileName), JSON.stringify(L3Entries));
+  return writeWithZip(L3CacheFileName, JSON.stringify(L3Entries));
 };
