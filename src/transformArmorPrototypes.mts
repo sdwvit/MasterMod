@@ -1,9 +1,11 @@
 import { ArmorPrototype, Struct } from "s2cfgtojson";
-import { allDefaultArmorDefs, allExtraArmors, backfillArmorDef, newArmors } from "./armors.util.mjs";
 import { deepMerge } from "./deepMerge.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import path from "node:path";
+import { backfillArmorDef } from "./backfillArmorDef.mjs";
+import { allDefaultArmorDefs } from "./consts.mjs";
+import { allExtraArmors, newArmors } from "./armors.util.mjs";
 
 const get = (obj: any, path: `${string}.${string}` | string) => {
   return path.split(".").reduce((o, i) => (o || {})[i], obj);
@@ -33,21 +35,27 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
         return;
       }
 
-      const newArmor = new Struct({
-        SID: newSID,
-        __internal__: { rawName: newSID, refkey: original, refurl: `../${path.parse(context.filePath).base}` },
-      }) as ArmorPrototype;
-      backfillArmorDef(newArmor);
+      const newArmor = new Struct(
+        backfillArmorDef({
+          SID: newSID,
+          __internal__: { rawName: newSID, refkey: original, refurl: `../${path.parse(context.filePath).base}` },
+        }),
+      ) as ArmorPrototype;
       const overrides = { ...newArmors[newSID as keyof typeof newArmors] };
       if (overrides.__internal__?._extras && "keysForRemoval" in overrides.__internal__._extras) {
         Object.entries(overrides.__internal__._extras.keysForRemoval).forEach(([p, v]) => {
           const e = get(newArmor, p) || {};
-          const keyToDelete = Object.keys(e).find((k) => e[k] === v) || v;
+          if (!Array.isArray(v)) {
+            throw new Error("Expected array for keysForRemoval values");
+          }
+          const keysV = new Set(v);
+          const keyToDelete = Object.keys(e).find((k) => keysV.has(e[k]));
+
           delete e[keyToDelete];
         });
       }
       deepMerge(newArmor, overrides);
-      if (!newArmors[newSID]) {
+      if (!newArmors[newSID] || !newArmors[newSID].__internal__._extras.isDroppable) {
         newArmor.Invisible = true;
       }
       extraStructs.push(newArmor.clone());

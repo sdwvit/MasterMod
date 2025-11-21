@@ -1,11 +1,11 @@
-import { DifficultyPrototype } from "s2cfgtojson";
+import { DifficultyPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
 export const DIFFICULTY_FACTOR = 4;
 /**
  * Increases cost of everything and damage on Hard and Stalker difficulty.
  */
-export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototype> = async (struct) => {
+export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototype> = async (struct, context) => {
   if (struct.SID !== "Hard" && struct.SID !== "Stalker") {
     return null;
   }
@@ -25,8 +25,8 @@ export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototy
     Reward_MainLine_Money: DIFFICULTY_FACTOR,
     //    Reward_SideLine_Money: DIFFICULTY_FACTOR,
   } as DifficultyPrototype);
-  fork.removeNode("AllowedSaveTypes");
-  fork.removeNode("TotalSaveLimits");
+  fork.AllowedSaveTypes = context.structsById.Hard.AllowedSaveTypes;
+  fork.TotalSaveLimits = new Struct() as any;
   fork.bShouldDisableCompass = false;
   fork.BlockSettings = false;
   return fork;
