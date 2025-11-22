@@ -46,6 +46,7 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `GroupAgnostic_FreeStalkers`
   - `GroupAgnostic_Monolith`
 - `DialogPrototypes`:
+  - `EQ197_QD_Orders`
   - `Malahit_Hub_DialogueOnEntrance`
   - `RSQ01_Dialog_Warlock_RSQ`
   - `RSQ04_Dialog_Drabadan_RSQ`
@@ -55,7 +56,6 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `RSQ08_Dialog_Barmen_RSQ`
   - `RSQ09_Dialog_Spica_RSQ`
   - `RSQ10_Dialog_Harpy_RSQ`
-  - `RookieVillage_Hub_volk_1_InfoTopic_1`
 - `GlobalVariablePrototypes`:
   - `CluePrototypes`
 - `ItemGeneratorPrototypes`:

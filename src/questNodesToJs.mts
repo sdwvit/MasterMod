@@ -35,7 +35,7 @@ const EVENTS = [
 ];
 
 const EVENTS_INTERESTING_PROPS = new Set(["ExpectedItemsCount", "ItemsCount"]);
-const EVENTS_INTERESTING_SIDS = new Set(["TargetQuestGuid", "ItemPrototypeSID", "ItemSID", "SignalSenderGuid"]);
+const EVENTS_INTERESTING_SIDS = new Set(["TargetQuestGuid", "ItemPrototypeSID", "ItemSID", "SignalSenderGuid", "ContaineredQuestPrototypeSID"]);
 
 export async function questNodesToJs(context: MetaContext<Struct>) {
   const contextT = context as MetaContext<
@@ -146,7 +146,6 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "BridgeEvent":
     case "CancelAllSideQuests":
     case "ChangeFaction":
-    case "Container":
     case "DeactivateZone":
     case "PlayEffect":
     case "PlayPostProcess":
@@ -218,6 +217,24 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "SpawnTrigger":
       globalFunctions.set(subType, "");
       return `${subType}(${struct
+        .entries()
+        .map(([k]) => {
+          if (EVENTS_INTERESTING_SIDS.has(k)) {
+            questActors.add(struct[k]);
+            return `questActors['${struct[k]}']`;
+          }
+
+          if (EVENTS_INTERESTING_PROPS.has(k)) {
+            return struct[k];
+          }
+
+          return "";
+        })
+        .filter((k) => k)});`;
+
+    case "Container":
+      globalFunctions.set(subType, "");
+      return `const result = ${subType}(${struct
         .entries()
         .map(([k]) => {
           if (EVENTS_INTERESTING_SIDS.has(k)) {
@@ -500,7 +517,14 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
 
 await Promise.all(
   `
-RookieVillage_Hub.cfg
+RSQ06_C00___SIDOROVICH.cfg
+RSQ07_C00_TSEMZAVOD.cfg
+RSQ08_C00_ROSTOK.cfg
+RSQ09_C00_MALAHIT.cfg
+RSQ10_C00_HARPY.cfg
+RSQ05.cfg
+RSQ04.cfg
+RSQ01.cfg
   `
     .trim()
     .split("\n")
@@ -544,15 +568,17 @@ function getStructBody(struct: any, globalVars: Set<string>, globalFunctions: Ma
   }
   const atLeastSomeLaunchersAreCodependent =
     struct.LaunchersBySID && struct.LaunchersBySID.entries().length && struct.LaunchersBySID.entries().some(([_k, v]) => v.entries().length > 1);
+  const consoleLog = `console.log('// ${struct.SID}(${atLeastSomeLaunchersAreCodependent ? "', caller, ',', name, '" : ""});');`;
   return `
      function ${struct.SID}(caller, name) {         
          ${struct.SID}.Conditions ??= ${JSON.stringify(struct.LaunchersBySID, (key, value) => (key === "__internal__" ? undefined : value)) || "{}"}
          ${struct.SID}.State ??= {};
          ${struct.SID}.State[caller] = name || true;
+         ${atLeastSomeLaunchersAreCodependent ? "" : consoleLog}
          ${atLeastSomeLaunchersAreCodependent ? `waitForCallers(1000, ${struct.SID}, caller).then(() => {` : ""}
            ${questNodeToJavascript(struct, globalVars, globalFunctions, questActors)}
            ${launches}
-           console.log('// ${struct.SID}(${atLeastSomeLaunchersAreCodependent ? "', caller, ',', name, '" : ""});');
+           ${atLeastSomeLaunchersAreCodependent ? consoleLog : ""}
          ${atLeastSomeLaunchersAreCodependent ? "}).catch(e => console.log(e))" : ""} 
      }
     `.trim();

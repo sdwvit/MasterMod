@@ -1,17 +1,17 @@
-import { Condition, DialogPrototype, Struct } from "s2cfgtojson";
+import { DialogPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import { QuestDataTableByDialogSID, rewardFormula } from "./rewardFormula.mjs";
 import { deepMerge } from "./deepMerge.mjs";
-import { newArmors } from "./armors.util.mjs";
-import { getConditions } from "./struct-utils.mjs";
+import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
 
 const MALACHITE_BRIBE = rewardFormula(50000).reduce((a, b) => a + b, 0) / 2;
+const mutantPartsVarSet = new Set(["MutantLootQuestWeak", "MutantLootQuestMedium", "MutantLootQuestStrong"]);
 
 /**
  * Show the correct money reward for repeatable quests
  */
-export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = async (struct) => {
+export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = async (struct, context) => {
   if (struct.SID === "Malahit_Hub_DialogueOnEntrance_Bribe_62758") {
     return adjustMalahitBribe(struct);
   }
@@ -19,7 +19,38 @@ export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = as
     return adjustMalahitBribeDialogValue(struct);
   }
 
-  if (struct.SID === "RookieVillage_Hub_volk_1_InfoTopic_1_1_62358") {
+  if (context.filePath.endsWith("EQ197_QD_Orders.cfg")) {
+    /**
+     * Show all dialog options for mutant parts quests regardless of what devs intended lol
+     */
+    if (struct.SID === "EQ197_QD_Orders_WaitForReply") {
+      const fork = struct.fork();
+      fork.NextDialogOptions = new Struct() as any;
+      struct.NextDialogOptions.forEach(([k, option]) => {
+        const optionFork = option.fork();
+        optionFork.Conditions = new Struct({
+          "0": new Struct({
+            "0": new Struct({
+              ConditionComparance: "EConditionComparance::NotEqual",
+              VariableValue: -1,
+            }),
+          }),
+        }) as any;
+        fork.NextDialogOptions.addNode(optionFork, k);
+      });
+      return markAsForkRecursively(fork);
+    }
+
+    if (mutantPartsVarSet.has(struct.Conditions?.["0"]["0"].GlobalVariablePrototypeSID)) {
+      const fork = struct.fork();
+      deepMerge(fork, { Conditions: new Struct({ "0": new Struct({ "0": new Struct({}) }) }) });
+      fork.Conditions["0"]["0"].ConditionComparance = "EConditionComparance::NotEqual";
+      fork.Conditions["0"]["0"].VariableValue = -1;
+      return markAsForkRecursively(fork);
+    }
+  }
+
+  /*  if (struct.SID === "RookieVillage_Hub_volk_1_InfoTopic_1_1_62358") {
     const extraStructs: DialogPrototype[] = [];
     const commonProps = {
       DialogChainPrototypeSID: "RookieVillage_Hub_Exchange_Armor_SetDialog",
@@ -139,7 +170,7 @@ export const transformDialogPrototypes: EntriesTransformer<DialogPrototype> = as
       });
 
     return extraStructs;
-  }
+  }*/
 
   const fork = adjustQuestRewards(struct);
 
@@ -158,6 +189,7 @@ transformDialogPrototypes.files = [
   "/DialogPrototypes/RSQ01_Dialog_Warlock_RSQ.cfg",
   "/DialogPrototypes/Malahit_Hub_DialogueOnEntrance.cfg",
   "/DialogPrototypes/RookieVillage_Hub_volk_1_InfoTopic_1.cfg",
+  "/DialogPrototypes/EQ197_QD_Orders.cfg",
 ];
 
 function adjustMalahitBribe(struct: DialogPrototype) {
