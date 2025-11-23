@@ -462,7 +462,8 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
             case "FastTravelMoney":
               return 0;
             case "GlobalVariable":
-              return 0;
+              globalVars.add(c.GlobalVariablePrototypeSID);
+              return `${c.GlobalVariablePrototypeSID} ${getConditionComparance(c.ConditionComparance)} ${c.VariableValue}`;
             case "HasItemInQuickSlot":
               return 0;
             case "IsAlive":
@@ -518,6 +519,7 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
 await Promise.all(
   `
 RSQ06_C00___SIDOROVICH.cfg
+RSQ06_C09___S_P.cfg
 RSQ07_C00_TSEMZAVOD.cfg
 RSQ08_C00_ROSTOK.cfg
 RSQ09_C00_MALAHIT.cfg

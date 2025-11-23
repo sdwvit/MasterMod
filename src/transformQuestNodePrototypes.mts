@@ -1,4 +1,4 @@
-import { EOverrideDialogTopic, QuestNodePrototype, Struct } from "s2cfgtojson";
+import { QuestNodePrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import { finishedTransformers } from "./meta.mjs";
@@ -10,6 +10,9 @@ import { precision } from "./precision.mjs";
 import { getConditions, getLaunchers } from "./struct-utils.mjs";
 import { QuestDataTableByQuestSID } from "./rewardFormula.mjs";
 import { logger } from "./logger.mjs";
+import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
+import { deepMerge } from "./deepMerge.mjs";
+import { RSQLessThan3QuestNodesSIDs, RSQRandomizerQuestNodesSIDs, RSQSetDialogQuestNodesSIDs } from "./consts.mjs";
 
 let oncePerTransformer = false;
 const RandomStashQuestName = `RandomStashQuest`; // if you change this, also change Blueprint in SDK
@@ -29,7 +32,7 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
     promises.push(injectMassiveRNGQuestNodes());
   }
 
-  if (struct.SID === "RookieVillage_Hub_OnNPCCreateEvent_BP_NPC_RookieVillageGuider") {
+  /*if (struct.SID === "RookieVillage_Hub_OnNPCCreateEvent_BP_NPC_RookieVillageGuider") {
     promises.push(
       Promise.resolve(
         new Struct({
@@ -60,7 +63,7 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
         }) as QuestNodePrototype,
       ),
     );
-  }
+  }*/
 
   // applies only to recurring quests
   if (recurringQuestsFilenames.some((p) => context.filePath.includes(p))) {
@@ -91,6 +94,47 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
       });
       newConditions.Conditions.__internal__.bpatch = false;
       promises.push(Promise.resolve(newConditions));
+    }
+
+    if (RSQLessThan3QuestNodesSIDs.has(struct.SID)) {
+      const total = context.structsById[RSQRandomizerQuestNodesSIDs.find((key) => !!context.structsById[key])].OutputPinNames.entries().length;
+      promises.push(
+        Promise.resolve(
+          markAsForkRecursively(
+            deepMerge(struct.fork(), {
+              Conditions: new Struct({
+                // as of 1.7 all of them are [0][0]
+                0: new Struct({
+                  0: new Struct({ VariableValue: total }),
+                }),
+              }),
+            }),
+          ),
+        ),
+      );
+    }
+    if (RSQSetDialogQuestNodesSIDs.has(struct.SID)) {
+      let connectionIndex: string;
+      const [launcherIndex] = struct.Launchers.entries().find((e) => {
+        return e[1].Connections.entries().find((e1) => {
+          connectionIndex = e1[0];
+          return RSQLessThan3QuestNodesSIDs.has(e1[1].SID);
+        });
+      });
+      const fork = markAsForkRecursively(
+        deepMerge(struct.fork(), {
+          Launchers: new Struct({
+            [launcherIndex]: new Struct({
+              Connections: new Struct({
+                [connectionIndex]: new Struct({
+                  Name: "True",
+                }),
+              }),
+            }),
+          }),
+        }),
+      );
+      promises.push(Promise.resolve(fork));
     }
   }
 

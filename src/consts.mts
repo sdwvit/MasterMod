@@ -154,3 +154,34 @@ export const allDefaultDroppableArmorsByFaction: {
     getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.BattleExoskeleton_Varta_Armor, VETERAN_MASTER_RANK),
   ],
 };
+
+export const RSQLessThan3QuestNodesSIDs = new Set([
+  "RSQ01_If_LessThen3Tasks",
+  "RSQ04_If_LessThen3Tasks",
+  "RSQ05_If_LessThen3Tasks",
+  "RSQ06_C00___SIDOROVICH_If_LessThen3Tasks",
+  "RSQ07_C00_TSEMZAVOD_If_LessThen3Tasks",
+  "RSQ08_C00_ROSTOK_If_LessThen3Tasks",
+  "RSQ09_C00_MALAHIT_If_LessThen3Tasks",
+  "RSQ10_C00_HARPY_If_LessThen3Tasks",
+]);
+export const RSQSetDialogQuestNodesSIDs = new Set([
+  "RSQ01_SetDialog_WarlockRSQ",
+  "RSQ04_SetDialog_DrabadanRSQ_1",
+  "RSQ05_SetDialog_SichRSQ",
+  "RSQ06_C00___SIDOROVICH_SetDialog_SichRSQ",
+  "RSQ07_C00_TSEMZAVOD_SetDialog_SichRSQ",
+  "RSQ08_C00_ROSTOK_SetDialog_SichRSQ",
+  "RSQ09_C00_MALAHIT_SetDialog_SichRSQ",
+  "RSQ10_C00_HARPY_SetDialog_SichRSQ",
+]);
+export const RSQRandomizerQuestNodesSIDs = [
+  "RSQ01_Random",
+  "RSQ04_Random",
+  "RSQ05_Random",
+  "RSQ06_C00___SIDOROVICH_Random",
+  "RSQ07_C00_TSEMZAVOD_Random",
+  "RSQ08_C00_ROSTOK_Random",
+  "RSQ09_C00_MALAHIT_Random",
+  "RSQ10_C00_HARPY_Random",
+];
