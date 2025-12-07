@@ -7,8 +7,12 @@ const oncePerFile = new Set<string>();
  */
 export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = async (struct, context) => {
   const extraStructs: AttachPrototype[] = [];
+  const fork = struct.fork();
   if (struct.Cost) {
-    extraStructs.push(Object.assign(struct.fork(), { Cost: struct.Cost * 10 }));
+    fork.Cost = struct.Cost * 10;
+  }
+  if (struct.CanHoldBreath === false) {
+    fork.CanHoldBreath = true;
   }
 
   if (!oncePerFile.has(context.filePath)) {
@@ -62,6 +66,10 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = as
         Icon: `Texture2D'/Game/_Stalker_2/weapons/attachments/ss/SM_ss01_ua_x16scope_1/T_inv_icon_ua_x16scope.T_inv_icon_ua_x16scope'`,
       }) as AttachPrototype,
     );
+  }
+
+  if (fork.entries().length) {
+    extraStructs.push(fork);
   }
 
   return extraStructs;

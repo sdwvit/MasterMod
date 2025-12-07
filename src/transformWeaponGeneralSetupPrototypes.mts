@@ -140,6 +140,11 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
     fork.CompatibleAttachments["UA_X16Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
   }
 
+  if (struct.SID === "TemplateWeapon") {
+    fork.OffsetAimingConditionSID = "ConstTrue";
+    fork.ToggleOffsetAimingConditionSID = "ConstTrue";
+  }
+
   /*
 
   if (struct.SID === "GunSVDM_SP" || struct.SID === "Gun_Lynx_SR_GS") {
