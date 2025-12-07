@@ -20,8 +20,6 @@ export const uniqueAttachmentsToAlternatives: Record<string, string> = {
   SVDM_Scope: "RU_X4Scope_1",
   Gvintar_Scope: "RU_X4Scope_1",
   SVU_Scope: "RU_X8Scope_1",
-
-  GunThreeLine_Scope: "GunThreeLine_Scope",
 };
 
 export const allCompatibleAttachmentDefsByWeaponGeneralSetupPrototypeSID: Record<

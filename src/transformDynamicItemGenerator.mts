@@ -31,7 +31,7 @@ const technicianTradeTradeItemGenerators = new Set([
   "AsylumTechnician_TradeItemGenerator",
 ]);
 
-const transformTrade = (struct: DynamicItemGenerator) => {
+function transformTrade(struct: DynamicItemGenerator) {
   const fork = struct.fork();
   if (!struct.RefreshTime) {
     fork.RefreshTime = "1d";
@@ -46,36 +46,11 @@ const transformTrade = (struct: DynamicItemGenerator) => {
         if (struct.SID === "Trader_Attachments_T4_ItemGenerator") {
           return Object.assign(e.fork(), {
             PossibleItems: Object.assign(e.PossibleItems.fork(), {
-              RU_X4Scope_1: new Struct({
-                ItemPrototypeSID: "RU_X4Scope_1",
-                Chance: 0.7,
-                MinCount: 1,
-                MaxCount: 1,
-              }),
-              RU_X8Scope_1: new Struct({
-                ItemPrototypeSID: "RU_X8Scope_1",
-                Chance: 0.3,
-                MinCount: 1,
-                MaxCount: 1,
-              }),
-              EN_X8Scope_1: new Struct({
-                ItemPrototypeSID: "EN_X8Scope_1",
-                Chance: 0.3,
-                MinCount: 1,
-                MaxCount: 1,
-              }),
-              EN_X16Scope_1: new Struct({
-                ItemPrototypeSID: "EN_X16Scope_1",
-                Chance: 0.2,
-                MinCount: 1,
-                MaxCount: 1,
-              }),
-              UA_X16Scope_1: new Struct({
-                ItemPrototypeSID: "UA_X16Scope_1",
-                Chance: 0.2,
-                MinCount: 1,
-                MaxCount: 1,
-              }),
+              RU_X4Scope_1: new Struct({ ItemPrototypeSID: "RU_X4Scope_1", Chance: 0.7, MinCount: 1, MaxCount: 1 }),
+              RU_X8Scope_1: new Struct({ ItemPrototypeSID: "RU_X8Scope_1", Chance: 0.3, MinCount: 1, MaxCount: 1 }),
+              EN_X8Scope_1: new Struct({ ItemPrototypeSID: "EN_X8Scope_1", Chance: 0.3, MinCount: 1, MaxCount: 1 }),
+              EN_X16Scope_1: new Struct({ ItemPrototypeSID: "EN_X16Scope_1", Chance: 0.2, MinCount: 1, MaxCount: 1 }),
+              UA_X16Scope_1: new Struct({ ItemPrototypeSID: "UA_X16Scope_1", Chance: 0.2, MinCount: 1, MaxCount: 1 }),
             }),
           });
         }
@@ -101,7 +76,13 @@ const transformTrade = (struct: DynamicItemGenerator) => {
           }
         });
         if (struct.SID === "YanovTrader_TradeItemGenerator") {
-          PossibleItems.addNode(new Struct({ ItemGeneratorPrototypeSID: "Trader_T2_Ammo_ItemGenerator", Chance: 1 }), "Trader_T2_Ammo_ItemGenerator");
+          PossibleItems.addNode(
+            new Struct({
+              ItemGeneratorPrototypeSID: "Trader_T2_Ammo_ItemGenerator",
+              Chance: 1,
+            }),
+            "Trader_T2_Ammo_ItemGenerator",
+          );
         }
         if (!PossibleItems.entries().length) {
           return;
@@ -116,9 +97,9 @@ const transformTrade = (struct: DynamicItemGenerator) => {
   }
   ItemGenerator.__internal__.bpatch = true;
   return Object.assign(fork, { ItemGenerator });
-};
+}
 
-const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"]["0"], i: number) => {
+function transformConsumables(e: DynamicItemGenerator["ItemGenerator"]["0"], i: number) {
   const fork = e.fork();
   const PossibleItems = e.PossibleItems.filter(([_k, pi]) => !pi.ItemPrototypeSID.toLowerCase().includes("key")).map(([_k, pi], j) => {
     let chance = semiRandom(i + j); // Randomize
@@ -133,9 +114,9 @@ const transformConsumables = (e: DynamicItemGenerator["ItemGenerator"]["0"], i: 
   }
   PossibleItems.__internal__.bpatch = true;
   return Object.assign(fork, { PossibleItems });
-};
+}
 
-const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"]["0"], i: number) => {
+function transformWeapons(e: DynamicItemGenerator["ItemGenerator"]["0"], i: number) {
   const fork = e.fork();
   const minMaxAmmo = (pi, j) => ({
     AmmoMinCount: 0,
@@ -161,9 +142,9 @@ const transformWeapons = (e: DynamicItemGenerator["ItemGenerator"]["0"], i: numb
   }
   PossibleItems.__internal__.bpatch = true;
   return Object.assign(fork, { PossibleItems });
-};
+}
 
-const transformCombat = (struct: DynamicItemGenerator) => {
+function transformCombat(struct: DynamicItemGenerator) {
   const fork = struct.fork();
 
   const categories = new Set(struct.ItemGenerator.entries().map(([_k, ig]) => ig.Category));
@@ -219,13 +200,13 @@ const transformCombat = (struct: DynamicItemGenerator) => {
   }
   ItemGenerator.__internal__.bpatch = true;
   return Object.assign(fork, { ItemGenerator });
-};
+}
 
 /**
  * Does not allow traders to sell gear.
  * Allows NPCs to drop armor.
  */
-export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenerator> = async (struct) => {
+export async function transformDynamicItemGenerator(struct: DynamicItemGenerator) {
   /**
    * Does not allow traders to sell gear.
    */
@@ -233,5 +214,6 @@ export const transformDynamicItemGenerator: EntriesTransformer<DynamicItemGenera
     return transformTrade(struct);
   }
   return transformCombat(struct);
-};
+}
+
 transformDynamicItemGenerator.files = ["/DynamicItemGenerator.cfg", "QuestItemGeneratorPrototypes.cfg"];

@@ -138,15 +138,16 @@ export const transformTradePrototypes: EntriesTransformer<TradePrototype> = asyn
     limitations.forEach((l) => fork.BuyLimitations.addNode(l));
 
     if (GeneralNPCTradePrototypesMoneyMult.has(struct.SID)) {
-      fork.ArmorSellMinDurability = 1;
-      fork.WeaponSellMinDurability = 1;
-      fork.removeNode("BuyLimitations");
+      fork.ArmorSellMinDurability = 0.99;
+      fork.WeaponSellMinDurability = 0.99;
+      fork.BuyLimitations = new Struct() as any;
     }
-    if (tg.BuyModifier !== 0.3) {
+    if (tg.BuyModifier > 0.3) {
       fork.BuyModifier = 0.3;
     }
     return fork;
   });
+  TradeGenerators.__internal__.useAsterisk = struct.TradeGenerators.entries().some(([_k, tg]) => tg.__internal__.rawName === "[*]");
   TradeGenerators.__internal__.bpatch = true;
   Object.assign(fork, { TradeGenerators });
   extraStructs.push(fork);

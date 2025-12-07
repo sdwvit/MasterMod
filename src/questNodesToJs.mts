@@ -518,15 +518,18 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
 
 await Promise.all(
   `
-RSQ06_C00___SIDOROVICH.cfg
-RSQ06_C09___S_P.cfg
-RSQ07_C00_TSEMZAVOD.cfg
-RSQ08_C00_ROSTOK.cfg
-RSQ09_C00_MALAHIT.cfg
-RSQ10_C00_HARPY.cfg
-RSQ05.cfg
-RSQ04.cfg
-RSQ01.cfg
+E06_MQ01.cfg
+E06_MQ01_Audio.cfg
+E06_MQ01_C01.cfg
+E06_MQ01_C02.cfg
+E06_MQ01_C04.cfg
+E06_MQ01_C05.cfg
+E06_MQ01_C06.cfg
+E06_MQ01_C07.cfg
+E06_MQ01_C08.cfg
+E06_MQ01_C09.cfg
+E06_MQ01_C10.cfg
+E06_MQ01_C11.cfg
   `
     .trim()
     .split("\n")
@@ -543,8 +546,9 @@ RSQ01.cfg
       context.array = await readFileAndGetStructs<QuestNodePrototype>("/QuestNodePrototypes/" + filePath);
       context.structsById = Object.fromEntries(context.array.map((s) => [s.__internal__.rawName, s as QuestNodePrototype]));
 
+      console.log(`\n\nProcessing quest node script for ${filePath}`);
       const r = await questNodesToJs(context);
-      writeFileSync(`/home/sdwvit/.config/JetBrains/IntelliJIdea2025.1/scratches/${context.array[0].SID}.js`, r);
+      writeFileSync(`/home/sdwvit/.config/JetBrains/IntelliJIdea2025.1/scratches/${filePath}.js`, r);
       // console.log(`\n\nExecuting quest node script for ${filePath}`);
       // await eval(r);
     }),

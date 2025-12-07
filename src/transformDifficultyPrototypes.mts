@@ -17,7 +17,7 @@ export const transformDifficultyPrototypes: EntriesTransformer<DifficultyPrototy
     Armor_Cost: DIFFICULTY_FACTOR,
     Weapon_Cost: DIFFICULTY_FACTOR,
     Artifact_Cost: DIFFICULTY_FACTOR,
-
+    Effect_Satiety: 1,
     Weapon_BaseDamage: DIFFICULTY_FACTOR,
     NPC_Weapon_BaseDamage: DIFFICULTY_FACTOR,
     Mutant_BaseDamage: DIFFICULTY_FACTOR,

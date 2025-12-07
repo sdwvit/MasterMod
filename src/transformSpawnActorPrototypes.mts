@@ -18,6 +18,7 @@ export const transformSpawnActorPrototypes: EntriesTransformer<SpawnActorPrototy
       fork = transformDestructibleObjects(struct, fork);
       break;
     }
+    case "ESpawnType::PackOfItems":
     case "ESpawnType::Item": {
       fork = transformItems(struct, fork);
       break;

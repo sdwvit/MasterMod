@@ -7,10 +7,7 @@ const oncePerFile = new Set<string>();
  */
 export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = async (struct, context) => {
   const extraStructs: AttachPrototype[] = [];
-  if (struct.Cost || struct.SID === "GunThreeLine_Scope") {
-    if (struct.SID === "GunThreeLine_Scope") {
-      struct.Cost = 4500;
-    }
+  if (struct.Cost) {
     extraStructs.push(Object.assign(struct.fork(), { Cost: struct.Cost * 10 }));
   }
 
