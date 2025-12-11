@@ -83,6 +83,8 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
 
   mapUniqueAttachmentsToGeneric(fork, struct, context);
 
+  fork.OffsetAimingConditionSID = "ConstTrue";
+  fork.ToggleOffsetAimingConditionSID = "ConstTrue";
   if (struct.SID === "GunG37_ST") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
     fork.CompatibleAttachments.addNode(
@@ -104,13 +106,13 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
     fork.CompatibleAttachments["EN_X16Scope_1"].RequiredUpgradeIDs = new Struct({
       0: "GunG37_Upgrade_Attachment_Rail",
     });
-    return fork;
   }
 
   if (struct.SID === "GunUDP_Deadeye_HG") {
     fork.UpgradePrototypeSIDs ??= struct.UpgradePrototypeSIDs.fork();
     fork.UpgradePrototypeSIDs.addNode("GunUDP_Upgrade_Attachment_Laser", "GunUDP_Upgrade_Attachment_Laser");
   }
+
   if (struct.SID === "GunUDP_HG" || struct.SID === "Gun_Krivenko_HG_GS" || struct.SID === "GunUDP_Deadeye_HG") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("EN_ColimScope_1"), "EN_ColimScope_1");
@@ -123,13 +125,11 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinitionByWeaponSetupSID("GunM16_ST", "EN_GoloScope_1"), "EN_GoloScope_1");
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinitionByWeaponSetupSID("GunM16_ST", "EN_X4Scope_1"), "EN_X4Scope_1");
-    return fork;
   }
 
   if (struct.SID === "Gun_Unknown_AR_GS" || struct.SID === "GunM16_ST" || struct.SID === "Gun_SOFMOD_AR_GS") {
     fork.CompatibleAttachments ??= struct.CompatibleAttachments.fork();
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("EN_X8Scope_1"), "EN_X8Scope_1");
-    return fork;
   }
 
   if (struct.SID === "GunGvintar_ST" || struct.SID === "Gun_Merc_AR_GS" || struct.SID === "GunLavina_ST" || struct.SID === "Gun_Trophy_AR_GS") {
@@ -138,11 +138,6 @@ export const transformWeaponGeneralSetupPrototypes: EntriesTransformer<WeaponGen
     fork.CompatibleAttachments["RU_X8Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
     fork.CompatibleAttachments.addNode(getCompatibleAttachmentDefinition("UA_X16Scope_1"), "UA_X16Scope_1");
     fork.CompatibleAttachments["UA_X16Scope_1"].AimMuzzleVFXSocket = "X4ScopeMuzzle";
-  }
-
-  if (struct.SID === "TemplateWeapon") {
-    fork.OffsetAimingConditionSID = "ConstTrue";
-    fork.ToggleOffsetAimingConditionSID = "ConstTrue";
   }
 
   /*

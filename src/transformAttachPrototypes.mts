@@ -11,9 +11,7 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = as
   if (struct.Cost) {
     fork.Cost = struct.Cost * 10;
   }
-  if (struct.CanHoldBreath === false) {
-    fork.CanHoldBreath = true;
-  }
+  fork.CanHoldBreath = true;
 
   if (!oncePerFile.has(context.filePath)) {
     oncePerFile.add(context.filePath);
@@ -29,6 +27,7 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = as
         LocalizationSID: "EN_X8Scope_1",
         Cost: 190000.0,
         Weight: 1.0,
+        CanHoldBreath: true,
         EffectPrototypeSIDs: new Struct({
           "0": "ScopeIdleSwayXModifierEffect",
           "1": "ScopeIdleSwayYModifierEffect",
@@ -49,6 +48,7 @@ export const transformAttachPrototypes: EntriesTransformer<AttachPrototype> = as
           refurl: "../AttachPrototypes.cfg",
           refkey: "RU_X8Scope_1",
         },
+        CanHoldBreath: true,
         SID: "UA_X16Scope_1",
         ItemGridWidth: 3,
         LocalizationSID: "RU_X8Scope_1",

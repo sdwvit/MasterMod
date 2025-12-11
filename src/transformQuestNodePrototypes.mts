@@ -155,7 +155,7 @@ transformQuestNodePrototypes.contains = true;
 export const getStashSpawnerSID = (stashKey: string) => `${RandomStashQuestNodePrefix}_Random_${stashKey}_Spawn`;
 
 async function injectMassiveRNGQuestNodes() {
-  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes.name));
+  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes.name), 180000);
   const extraStructs: QuestNodePrototype[] = [];
   const stashes = Object.keys(allStashes);
   const randomNode = new Struct(`
@@ -220,7 +220,7 @@ function hookRewardStashClue(struct: QuestNodePrototype) {
 }
 
 async function hookStashSpawners(struct: QuestNodePrototype) {
-  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes.name));
+  await waitFor(() => finishedTransformers.has(transformSpawnActorPrototypes.name), 180000);
 
   // only quest stashes that are hidden by this mod are interesting here
   if (!allStashes[struct.TargetQuestGuid]) {

@@ -47,8 +47,9 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
         !filePath.includes("QuestNodePrototypes") &&
         !filePath.includes("QuestPrototypes")
       ) {
-        MergedStructs[pathToSave.name] ||= new Struct();
-        //deepMerge(MergedStructs[pathToSave.name], s.clone());
+        const key = filePath.includes("SpawnActorPrototypes/") ? "SpawnActorPrototype" : pathToSave.name;
+        MergedStructs[key] ||= new Struct();
+        // deepMerge(MergedStructs[key], s.clone());
       }
       const id = s.__internal__.rawName;
       if (!id) continue;

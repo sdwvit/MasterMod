@@ -110,12 +110,7 @@ This mods works well with UBER TOZ mod. It does include Better Ballistics mod ch
 This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
 [h3][/h3]
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
-  changenote: `Refactor attachment and trade prototype handling
-
- - Removed unused scope cost assignment for GunThreeLine_Scope
- - Updated quest node file processing to use dynamic file names
- - Improved readability by changing function declarations to named functions
- - Adjusted armor and weapon sell durability thresholds for trade prototypes`,
+  changenote: `Now can hold breath and offset aim with any weapon any scope at any time.`,
   structTransformers: structTransformers as any,
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);
