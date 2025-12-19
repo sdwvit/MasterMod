@@ -11,7 +11,14 @@ export const transformMobs: EntriesTransformer<MutantBase> = async (struct) => {
     return null;
   }
   const fork = struct.fork();
-  if (struct.SID !== "Rat" && struct.SID !== "MutantBase" && struct.SID !== "Tushkan" && struct.SID !== "Bayun" && struct.SID !== "Blinddog") {
+  if (
+    struct.SID !== "Rat" &&
+    struct.SID !== "MutantBase" &&
+    struct.SID !== "Poltergeist" &&
+    struct.SID !== "Tushkan" &&
+    struct.SID !== "Bayun" &&
+    struct.SID !== "Blinddog"
+  ) {
     fork.VitalParams = Object.assign(struct.VitalParams.fork(), { MaxHP: struct.VitalParams.MaxHP * DIFFICULTY_FACTOR });
   }
   fork.Protection = Object.assign(struct.Protection.fork(), { Strike: 0.0001 }); // Set Strike protection to 0 for all mobs
