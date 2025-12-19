@@ -31,8 +31,13 @@ import { transformDialogPoolPrototypes } from "./transformDialogPoolPrototypes.m
 import { transformCluePrototypes } from "./transformCluePrototypes.mjs";
 import { transformLairPrototypes } from "./transformLairPrototypes.mjs";
 import { MergedStructs } from "./merged-structs.mjs";
+import { transformAIGlobals } from "./transformAIGlobals.mts";
+import { Struct } from "s2cfgtojson";
+import { transformConsumablePrototypes } from "./transformConsumablePrototypes.mts";
 
 const structTransformers = [
+  transformAIGlobals,
+  transformConsumablePrototypes,
   transformALifeDirectorScenarioPrototypes,
   transformArmorPrototypes,
   transformArtifactPrototypes,
@@ -115,6 +120,48 @@ All changes have been tested against fresh save file. Some of these changes won'
   onFinish() {
     logger.log("Removed preplaced items:", spawnTotals);
     logger.log("Merged structs:", Object.keys(MergedStructs).length);
+    const AfterCleanupMergedStructs = {};
+    const walk = <T extends Struct>(node: T, mirror: any) => {
+      node.forEach(([key, value]) => {
+        if (value instanceof Struct) {
+          mirror[key] = {};
+          walk(value, mirror[key]);
+          return;
+        }
+        switch (typeof value) {
+          case "string": {
+            if (value.includes("::")) {
+              mirror[key] = `@@${value.split("::")[0]}`;
+              return;
+            }
+            if (parseFloat(value)) {
+              mirror[key] = "@@number";
+              return;
+            }
+            mirror[key] = "@@string";
+            return;
+          }
+          case "number": {
+            mirror[key] = "@@number";
+            return;
+          }
+          case "boolean": {
+            mirror[key] = "@@boolean";
+            return;
+          }
+
+          default: {
+            logger.log("2");
+          }
+        }
+      });
+    };
+
+    Object.entries(MergedStructs).forEach(([k, e]) => {
+      AfterCleanupMergedStructs[k] = {};
+      walk(e, AfterCleanupMergedStructs[k]);
+    });
+    logger.log(AfterCleanupMergedStructs);
   },
   onTransformerFinish(transformer) {
     finishedTransformers.add(transformer.name);

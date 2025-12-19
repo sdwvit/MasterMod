@@ -24,11 +24,8 @@
 
 Here is a list of extended files (this mod uses new files, so it is compatible with other mods that don't modify the same SIDs):
 
-- `ALifePrototypes`:
-  - `ALifeDirectorScenarioPrototypes`
-- `ArtifactPrototypes`:
-  - `QuestArtifactPrototypes`
 - `GameData`:
+  - `AIGlobals`
   - `BarbedWirePrototypes`
   - `DifficultyPrototypes`
   - `EffectPrototypes`
@@ -40,6 +37,10 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `StashPrototypes`
   - `TradePrototypes`
   - `UpgradePrototypes`
+- `ALifePrototypes`:
+  - `ALifeDirectorScenarioPrototypes`
+- `ArtifactPrototypes`:
+  - `QuestArtifactPrototypes`
 - `DialogPoolPrototypes`:
   - `GroupAgnostic_Army`
   - `GroupAgnostic_Bandits`
@@ -68,6 +69,7 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `ArmorPrototypes`
   - `ArtifactPrototypes`
   - `AttachPrototypes`
+  - `ConsumablePrototypes`
   - `QuestItemPrototypes`
   - `WeaponPrototypes`
 - `LairPrototypes`:
