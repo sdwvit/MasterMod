@@ -38,19 +38,11 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
     for (let index = 0; index < array.length; index++) {
       const s = array[index];
 
-      if (
-        !filePath.includes("SpawnActorPrototypes/") &&
-        !filePath.includes("DialogChainPrototypes") &&
-        !filePath.includes("DialogPoolPrototypes") &&
-        !filePath.includes("DialogPrototypes") &&
-        !filePath.includes("JournalQuestPrototypes") &&
-        !filePath.includes("QuestNodePrototypes") &&
-        !filePath.includes("QuestPrototypes")
-      ) {
-        const key = filePath.includes("SpawnActorPrototypes/") ? "SpawnActorPrototype" : pathToSave.name;
-        MergedStructs[key] ||= new Struct();
-        // deepMerge(MergedStructs[key], s.clone());
-      }
+      const key = getKeyForMergedStructs(filePath, pathToSave);
+
+      MergedStructs[key] ||= new Struct();
+      //deepMerge(MergedStructs[key], s.clone());
+
       const id = s.__internal__.rawName;
       if (!id) continue;
 
@@ -83,3 +75,14 @@ export function getCfgFileProcessor<T extends Struct>(transformer: EntriesTransf
     return processedStructs;
   };
 }
+
+const getKeyForMergedStructs = (filePath: string, pathToSave: { name: string }) => {
+  if (filePath.includes("SpawnActorPrototypes/")) return "SpawnActorPrototypes";
+  if (filePath.includes("DialogChainPrototypes/")) return "DialogChainPrototypes";
+  if (filePath.includes("DialogPoolPrototypes/")) return "DialogPoolPrototypes";
+  if (filePath.includes("DialogPrototypes/")) return "DialogPrototypes";
+  if (filePath.includes("JournalQuestPrototypes/")) return "JournalQuestPrototypes";
+  if (filePath.includes("QuestNodePrototypes/")) return "QuestNodePrototypes";
+  if (filePath.includes("QuestPrototypes/")) return "QuestPrototypes";
+  return pathToSave.name;
+};

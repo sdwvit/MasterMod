@@ -51,12 +51,13 @@ export async function questNodesToJs(context: MetaContext<Struct>) {
   questActors.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"); // Skif
 
   const content = getContent(context, globalVars, globalFunctions, questActors, launchOnQuestStart);
+  const actorInfos = await getQuestActorsInfo(questActors);
 
   return `
   const intervals = [];
   const Skif = 'Skif';
   const spawnedActors = {};
-  const questActors = ${await getQuestActorsStr(questActors)}
+  const questActors = ${JSON.stringify(actorInfos)}
   ${hasQuestNodeExecuted.toString()}
   ${waitForCallers.toString()}
   ${[...globalVars]
@@ -133,6 +134,7 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
       globalFunctions.set(subType, "");
       return "";
 
+    case "ItemAdd":
     case "ConsoleCommand":
     case "LookAt":
     case "ALifeDirectorZoneSwitch":
@@ -198,7 +200,6 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "GiveCache":
     case "HideLoadingScreen":
     case "HideTutorial":
-    case "ItemAdd":
     case "ItemRemove":
     case "LoadAsset":
     case "MoveInventory":
@@ -282,16 +283,12 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "SetGlobalVariable":
       globalVars.add(struct.GlobalVariablePrototypeSID);
       let op = "=";
-      switch (struct.ChangeValueMode) {
-        case "EChangeValueMode::Add":
-          op = "+=";
-          break;
-        case "EChangeValueMode::Subtract":
-          op = "-=";
-          break;
-        case "EChangeValueMode::Set":
-          op = "=";
-          break;
+      if (struct.ChangeValueMode === "EChangeValueMode::Add") {
+        op = "+=";
+      } else if (struct.ChangeValueMode === "EChangeValueMode::Subtract") {
+        op = "-=";
+      } else if (struct.ChangeValueMode === "EChangeValueMode::Set") {
+        op = "=";
       }
       op = `${struct.GlobalVariablePrototypeSID} ${op} ${struct.VariableValue};`;
       return `console.log('${op}');\n${op}`.trim();
@@ -375,8 +372,9 @@ function waitForCallers(
 }
 
 function hasQuestNodeExecuted(fn: { State: {}; name: string }) {
-  console.log(`hasQuestNodeExecuted(${fn.name}) is ${fn.State && !!Object.keys(fn.State).length}`);
-  return fn.State && !!Object.keys(fn.State).length;
+  const cond = fn.State ? !!Object.keys(fn.State).length : false;
+  console.log(`hasQuestNodeExecuted(${fn.name}) is ${fn.State ? "" : "rolled to"} ${cond}`);
+  return cond;
 }
 
 function processConditionNode(structT: Struct, globalVars: Set<string>, globalFunctions: Map<string, string>, questActors: Set<string>) {
@@ -394,78 +392,123 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
         .map(([_k, c]) => {
           const subType = c.ConditionType.split("::").pop();
           switch (subType) {
-            case "Weather":
-              return 0;
-            case "Random":
-              return 0;
-            case "Trigger":
-              return 0;
-            case "Emission":
-              return 0;
-            case "Money":
-              return 0;
-            case "Rank":
-              return 0;
-            case "JournalState":
-              return 0;
-            case "NodeState":
-              globalFunctions.set("getQuestNodeState", "");
-              globalVars.add(c.TargetNode);
-              return `getQuestNodeState(${c.TargetNode}, '${getConditionComparance(c.ConditionComparance)}', '${c.NodeState.split("::").pop()}') ${getConditionComparance(c.ConditionComparance)} '${(() => {
-                const st = c.NodeState.split("::").pop();
-                switch (st) {
-                  case "Activated": // todo extend function state to support these
-                  case "Excluded":
-                  case "Finished":
-                  case "None":
-                    return st;
-                }
-              })()}'`;
-            case "Bleeding":
-              return 0;
-            case "HP":
-              return 0;
-            case "HPPercent":
-              return 0;
-            case "HungerPoints":
-              return 0;
-            case "InventoryWeight":
-              return 0;
-            case "Radiation":
-              return 0;
-            case "AITarget":
-              return 0;
-            case "ArmorState":
-              return 0;
-            case "Awareness":
-              return 0;
-            case "Bridge":
+            case "Weather": {
+              throw new Error("not implemented");
+            }
+            case "Random": {
+              throw new Error("not implemented");
+            }
+            case "Trigger": {
+              throw new Error("not implemented");
+            }
+            case "Emission": {
+              throw new Error("not implemented");
+            }
+            case "Money": {
+              throw new Error("not implemented");
+            }
+            case "Rank": {
+              throw new Error("not implemented");
+            }
+            case "JournalState": {
+              const f = `get${subType}`;
+              const st = c.JournalState.split("::").pop();
+              const sid = c.JournalQuestSID;
+              const comp = getConditionComparance(c.ConditionComparance);
+
+              globalFunctions.set(f, "(s) => true");
+              globalVars.add(sid);
+              globalVars.add(st);
+              return `${f}(${sid}) ${comp} '${st}'`;
+            }
+            case "NodeState": {
+              const f = `get${subType}`;
+              const st = c.NodeState.split("::").pop();
+              const sid = c.TargetNode;
+              const comp = getConditionComparance(c.ConditionComparance);
+
+              globalFunctions.set(f, "(s) => true");
+              globalVars.add(sid);
+              globalVars.add(st);
+              return `${f}(${sid}) ${comp} '${st}'`;
+            }
+            case "Bleeding": {
+              throw new Error("not implemented");
+            }
+            case "HP": {
+              throw new Error("not implemented");
+            }
+            case "HPPercent": {
+              throw new Error("not implemented");
+            }
+            case "HungerPoints": {
+              throw new Error("not implemented");
+            }
+            case "InventoryWeight": {
+              throw new Error("not implemented");
+            }
+            case "Radiation": {
+              throw new Error("not implemented");
+            }
+            case "AITarget": {
+              throw new Error("not implemented");
+            }
+            case "ArmorState": {
+              throw new Error("not implemented");
+            }
+            case "Awareness": {
+              throw new Error("not implemented");
+            }
+            case "Bridge": {
               globalFunctions.set(c.LinkedNodePrototypeSID, "");
               c.CompletedNodeLauncherNames.entries().forEach(([_k, v]) => globalVars.add(v));
               return `hasQuestNodeExecuted(${c.LinkedNodePrototypeSID}, [${c.CompletedNodeLauncherNames.entries()
                 .map(([_k, v]) => v)
                 .join(", ")}]) ${getConditionComparance(c.ConditionComparance)} true`;
-            case "ContextualAction":
-              return 0;
-            case "CorpseCarry":
-              return 0;
-            case "DistanceToNPC":
-              return 0;
-            case "DistanceToPoint":
-              return 0;
-            case "Effect":
-              return 0;
-            case "EquipmentInHands":
-              return 0;
-            case "FactionRelationship":
-              return 0;
-            case "FastTravelMoney":
-              return 0;
+            }
+            case "ContextualAction": {
+              throw new Error("not implemented");
+            }
+            case "CorpseCarry": {
+              throw new Error("not implemented");
+            }
+            case "DistanceToNPC": {
+              const f = `get${subType}`;
+              const val = c.NumericValue;
+              const sid1 = c.TargetCharacter;
+              const sid2 = c.TargetNPC;
+              const comp = getConditionComparance(c.ConditionComparance);
+
+              globalFunctions.set(f, "(s1, s2) => true;");
+              return `${f}('${sid1}', '${sid2}') ${comp} '${val}'`;
+            }
+            case "DistanceToPoint": {
+              const f = `get${subType}`;
+              const st = c.NumericValue;
+              const sid = getCoordsStr(c.TargetPoint.X, c.TargetPoint.Y, c.TargetPoint.Z);
+              const comp = getConditionComparance(c.ConditionComparance);
+
+              globalFunctions.set(f, "(s) => true;");
+              return `${f}('${sid}') ${comp} '${st}'`;
+            }
+            case "Effect": {
+              throw new Error("not implemented");
+            }
+            case "EquipmentInHands": {
+              throw new Error("not implemented");
+            }
+            case "FactionRelationship": {
+              throw new Error("not implemented");
+            }
+            case "FastTravelMoney": {
+              throw new Error("not implemented");
+            }
             case "GlobalVariable":
               globalVars.add(c.GlobalVariablePrototypeSID);
               return `${c.GlobalVariablePrototypeSID} ${getConditionComparance(c.ConditionComparance)} ${c.VariableValue}`;
-            case "HasItemInQuickSlot":
-              return 0;
+            case "HasItemInQuickSlot": {
+              throw new Error("not implemented");
+            }
             case "IsAlive":
               globalFunctions.set(
                 "IsAlive",
@@ -481,34 +524,46 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
               );
               questActors.add(c.TargetPlaceholder);
               return `${getConditionComparance(c.ConditionComparance) === "===" ? "" : "!"}IsCreated(questActors['${c.TargetPlaceholder}'])`;
-            case "IsDialogMemberValid":
-              return 0;
-            case "IsEnoughAmmo":
-              return 0;
-            case "IsOnline":
-              return 0;
-            case "IsWeaponJammed":
-              return 0;
-            case "IsWounded":
-              return 0;
-            case "ItemInContainer":
-              return 0;
+            case "IsDialogMemberValid": {
+              throw new Error("not implemented");
+            }
+            case "IsEnoughAmmo": {
+              throw new Error("not implemented");
+            }
+            case "IsOnline": {
+              throw new Error("not implemented");
+            }
+            case "IsWeaponJammed": {
+              throw new Error("not implemented");
+            }
+            case "IsWounded": {
+              throw new Error("not implemented");
+            }
+            case "ItemInContainer": {
+              throw new Error("not implemented");
+            }
             case "ItemInInventory":
-              globalFunctions.set("isItemInInventory", "");
+              globalFunctions.set("isItemInInventory", "(s) => true;");
               globalVars.add(c.ItemPrototypeSID.VariableValue);
               return `isItemInInventory(${c.ItemPrototypeSID.VariableValue}) ${getConditionComparance(c.ConditionComparance)} ${c.ItemsCount.VariableValue}`;
-            case "LookAtAngle":
-              return 0;
-            case "Note":
-              return 0;
-            case "PersonalRelationship":
-              return 0;
-            case "PlayerOverload":
-              return 0;
-            case "Psy":
-              return 0;
-            case "Stamina":
-              return 0;
+            case "LookAtAngle": {
+              throw new Error("not implemented");
+            }
+            case "Note": {
+              throw new Error("not implemented");
+            }
+            case "PersonalRelationship": {
+              throw new Error("not implemented");
+            }
+            case "PlayerOverload": {
+              throw new Error("not implemented");
+            }
+            case "Psy": {
+              throw new Error("not implemented");
+            }
+            case "Stamina": {
+              throw new Error("not implemented");
+            }
           }
         })
         .join(andOr);
@@ -518,18 +573,83 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
 
 await Promise.all(
   `
-E06_MQ01.cfg
-E06_MQ01_Audio.cfg
-E06_MQ01_C01.cfg
-E06_MQ01_C02.cfg
-E06_MQ01_C04.cfg
-E06_MQ01_C05.cfg
-E06_MQ01_C06.cfg
-E06_MQ01_C07.cfg
-E06_MQ01_C08.cfg
-E06_MQ01_C09.cfg
-E06_MQ01_C10.cfg
-E06_MQ01_C11.cfg
+RSQ01.cfg
+RSQ01_C01.cfg
+RSQ01_C02.cfg
+RSQ01_C03.cfg
+RSQ01_C04.cfg
+RSQ01_C05.cfg
+RSQ01_C06.cfg
+RSQ04.cfg
+RSQ04_C01.cfg
+RSQ04_C02.cfg
+RSQ04_C03.cfg
+RSQ04_C04.cfg
+RSQ04_C05.cfg
+RSQ04_C06.cfg
+RSQ04_C07.cfg
+RSQ04_C08.cfg
+RSQ04_C09.cfg
+RSQ04_C10.cfg
+RSQ05.cfg
+RSQ05_C01.cfg
+RSQ05_C02.cfg
+RSQ05_C04.cfg
+RSQ05_C05.cfg
+RSQ05_C07.cfg
+RSQ05_C08.cfg
+RSQ05_C09.cfg
+RSQ05_C10.cfg
+RSQ06_C00___SIDOROVICH.cfg
+RSQ06_C01___K_Z.cfg
+RSQ06_C02___K_M.cfg
+RSQ06_C03___K_B.cfg
+RSQ06_C04___K_S.cfg
+RSQ06_C05___B_B.cfg
+RSQ06_C06___B_A.cfg
+RSQ06_C07___B_A.cfg
+RSQ06_C08___B_A.cfg
+RSQ06_C09___S_P.cfg
+RSQ07_C00_TSEMZAVOD.cfg
+RSQ07_C01_K_Z.cfg
+RSQ07_C02_K_M.cfg
+RSQ07_C03_K_M.cfg
+RSQ07_C04_K_B.cfg
+RSQ07_C05_B_B.cfg
+RSQ07_C06_B_A.cfg
+RSQ07_C07_B_A.cfg
+RSQ07_C08_B_A.cfg
+RSQ07_C09_S_P.cfg
+RSQ08_C00_ROSTOK.cfg
+RSQ08_C01_K_M.cfg
+RSQ08_C02_K_B.cfg
+RSQ08_C03_K_S.cfg
+RSQ08_C04_B_B.cfg
+RSQ08_C05_B_B.cfg
+RSQ08_C06_B_A.cfg
+RSQ08_C07_B_A.cfg
+RSQ08_C08_B_A.cfg
+RSQ08_C09_S_P.cfg
+RSQ09_C00_MALAHIT.cfg
+RSQ09_C01_K_M.cfg
+RSQ09_C02_K_M.cfg
+RSQ09_C03_K_M.cfg
+RSQ09_C04_K_S.cfg
+RSQ09_C05_B_B.cfg
+RSQ09_C06_B_A.cfg
+RSQ09_C07_B_A.cfg
+RSQ09_C08_B_A.cfg
+RSQ09_C09_S_P.cfg
+RSQ10_C00_HARPY.cfg
+RSQ10_C01_K_M.cfg
+RSQ10_C02_K_M.cfg
+RSQ10_C03_K_S.cfg
+RSQ10_C04_K_S.cfg
+RSQ10_C05_B_B.cfg
+RSQ10_C06_B_A.cfg
+RSQ10_C07_B_A.cfg
+RSQ10_C08_B_A.cfg
+RSQ10_C09_S_P.cfg
   `
     .trim()
     .split("\n")
@@ -548,7 +668,7 @@ E06_MQ01_C11.cfg
 
       console.log(`\n\nProcessing quest node script for ${filePath}`);
       const r = await questNodesToJs(context);
-      writeFileSync(`/home/sdwvit/.config/JetBrains/IntelliJIdea2025.1/scratches/${filePath}.js`, r);
+      writeFileSync(`/home/sdwvit/.config/JetBrains/IntelliJIdea2025.2/scratches/${filePath}.js`, r);
       // console.log(`\n\nExecuting quest node script for ${filePath}`);
       // await eval(r);
     }),
@@ -565,32 +685,33 @@ function getStructBody(struct: any, globalVars: Set<string>, globalFunctions: Ma
     if (useSwitch) {
       launches = struct.Launches.map(({ Name, SID }) => {
         const isBool = Name === "True" || Name === "False";
-        return `if (${isBool ? (Name === "True" ? "result" : "!result") : `result === "${Name}"`}) ${SID}('${struct.SID}', '${Name || ""}');`;
+        return `if (${isBool ? (Name === "True" ? "result" : "!result") : `result === "${Name}"`}) ${SID}(f, '${Name || ""}');`;
       }).join("\n");
     } else {
-      launches = struct.Launches.map(({ SID, Name }) => `${SID}('${struct.SID}', '${Name || ""}');`).join("\n");
+      launches = struct.Launches.map(({ SID, Name }) => `${SID}(f, '${Name || ""}');`).join("\n");
     }
     delete struct.Launches;
   }
-  const atLeastSomeLaunchersAreCodependent =
+  const isCoDep =
     struct.LaunchersBySID && struct.LaunchersBySID.entries().length && struct.LaunchersBySID.entries().some(([_k, v]) => v.entries().length > 1);
-  const consoleLog = `console.log('// ${struct.SID}(${atLeastSomeLaunchersAreCodependent ? "', caller, ',', name, '" : ""});');`;
+  const consoleLog = `console.log('// ' + f.name + '(${isCoDep ? "', caller, ',', name, '" : ""});');`;
   return `
      function ${struct.SID}(caller, name) {         
-         ${struct.SID}.Conditions ??= ${JSON.stringify(struct.LaunchersBySID, (key, value) => (key === "__internal__" ? undefined : value)) || "{}"}
-         ${struct.SID}.State ??= {};
-         ${struct.SID}.State[caller] = name || true;
-         ${atLeastSomeLaunchersAreCodependent ? "" : consoleLog}
-         ${atLeastSomeLaunchersAreCodependent ? `waitForCallers(1000, ${struct.SID}, caller).then(() => {` : ""}
+         const f = ${struct.SID};
+         ${isCoDep ? `f.Conditions ??= ${JSON.stringify(struct.LaunchersBySID, (key, value) => (key === "__internal__" ? undefined : value)) || "{}"}` : ""}
+         f.State ??= {};
+         f.State[caller] = name || true;
+         ${isCoDep ? "" : consoleLog}
+         ${isCoDep ? `waitForCallers(1000, f, caller).then(() => {` : ""}
            ${questNodeToJavascript(struct, globalVars, globalFunctions, questActors)}
            ${launches}
-           ${atLeastSomeLaunchersAreCodependent ? consoleLog : ""}
-         ${atLeastSomeLaunchersAreCodependent ? "}).catch(e => console.log(e))" : ""} 
+           ${isCoDep ? consoleLog : ""}
+         ${isCoDep ? "}).catch(e => console.log(e))" : ""} 
      }
     `.trim();
 }
 
-async function getQuestActorsStr(questActors: Set<string>) {
+async function getQuestActorsInfo(questActors: Set<string>) {
   const relevantStructs = await Promise.all(
     [...questActors]
       .filter((e) => e !== "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
@@ -612,27 +733,29 @@ async function getQuestActorsStr(questActors: Set<string>) {
         }
       }),
   );
-  return JSON.stringify(
-    Object.fromEntries(
-      [["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Skif"]].concat(
-        relevantStructs.map((sap: SpawnActorPrototype) => {
-          sap ||= {} as SpawnActorPrototype;
-          const pos = sap.PositionX ? ` @ ${sap.PositionX.toFixed(1)}\t${sap.PositionY.toFixed(1)}\t${sap.PositionZ.toFixed(1)}` : "";
-          const squadInfo = sap.SpawnedGenericMembers?.entries()
-            .map(([_k, v]) => `${v.SpawnedSquadMembersCount} ${v.SpawnedPrototypeSID}`)
-            .join(" + ");
-          if (squadInfo) {
-            return [sap.SID, `${squadInfo}${pos}`];
-          }
-          const maybeContainer = sap.SpawnedPrototypeSID && `${sap.SpawnedPrototypeSID}`;
-          if (maybeContainer) {
-            return [sap.SID, `${maybeContainer}${pos}`];
-          }
-          return [sap.SID, sap.__internal__?.refkey?.toString() || sap.SID];
-        }),
-      ),
+  return Object.fromEntries(
+    [["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Skif"]].concat(
+      relevantStructs.map((sap: SpawnActorPrototype) => {
+        sap ||= {} as SpawnActorPrototype;
+        const pos = sap.PositionX ? ` @ ${getCoordsStr(sap.PositionX, sap.PositionY, sap.PositionZ)}` : "";
+        const squadInfo = sap.SpawnedGenericMembers?.entries()
+          .map(([_k, v]) => `${v.SpawnedSquadMembersCount} ${v.SpawnedPrototypeSID}`)
+          .join(" + ");
+        if (squadInfo) {
+          return [sap.SID, `${squadInfo}${pos}`];
+        }
+        const maybeContainer = sap.SpawnedPrototypeSID && `${sap.SpawnedPrototypeSID}`;
+        if (maybeContainer) {
+          return [sap.SID, `${maybeContainer}${pos}`];
+        }
+        return [sap.SID, sap.__internal__?.refkey?.toString() || sap.SID];
+      }),
     ),
   );
+}
+
+function getCoordsStr(x: number, y: number, z: number) {
+  return `${x.toFixed(1)} ${y.toFixed(1)} ${z.toFixed(1)}`;
 }
 
 function getContent(
