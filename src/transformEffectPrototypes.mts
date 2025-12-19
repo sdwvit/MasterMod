@@ -1,15 +1,17 @@
 import { EffectPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
-const oncePerFile = new Set<string>();
+let oncePerFile = false;
+export const MovementSpeedEffect5PSID = "MovementSpeedEffect5P";
+
 /**
  * Makes some consumables last longer.
  * Also negates KillVolumeEffect (borderguard instakill)
  */
-export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = async (struct, context) => {
+export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = async (struct) => {
   const extraStructs: EffectPrototype[] = [];
-  if (!oncePerFile.has(context.filePath)) {
-    oncePerFile.add(context.filePath);
+  if (!oncePerFile) {
+    oncePerFile = true;
     extraStructs.push(
       new Struct({
         __internal__: {
@@ -22,6 +24,21 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = as
         ValueMax: "-85%",
         bIsPermanent: true,
         Positive: "EBeneficial::Negative",
+      }) as EffectPrototype,
+    );
+    extraStructs.push(
+      new Struct({
+        __internal__: {
+          rawName: MovementSpeedEffect5PSID,
+          isRoot: true,
+        },
+        SID: MovementSpeedEffect5PSID,
+        Text: "Add Run 5%",
+        Type: "EEffectType::MovementSpeed",
+        ValueMin: "5.0%",
+        ValueMax: "5.0%",
+        bIsPermanent: true,
+        Positive: "EBeneficial::Positive",
       }) as EffectPrototype,
     );
   }

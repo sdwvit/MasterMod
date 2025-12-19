@@ -3,6 +3,7 @@ import { ALifeDirectorScenarioPrototype, Struct } from "s2cfgtojson";
 import { EntriesTransformer } from "./metaType.mjs";
 import { modName } from "./base-paths.mjs";
 import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
+import { SPAWN_BUBBLE_FACTOR } from "./transformAIGlobals.mts";
 
 /**
  * Transforms ALifeDirectorScenarioPrototypes to adjust NPC limits and spawn parameters.
@@ -48,10 +49,10 @@ export const transformALifeDirectorScenarioPrototypes: EntriesTransformer<ALifeD
       }
       const fork = v.fork();
 
-      if (v.SpawnDelayMin) v.SpawnDelayMin = Math.ceil(v.SpawnDelayMin / 5);
-      if (v.SpawnDelayMax) v.SpawnDelayMax = Math.ceil(v.SpawnDelayMax / 5);
-      if (v.PostSpawnDirectorTimeoutMin) v.PostSpawnDirectorTimeoutMin = Math.ceil(v.PostSpawnDirectorTimeoutMin / 5);
-      if (v.PostSpawnDirectorTimeoutMax) v.PostSpawnDirectorTimeoutMax = Math.ceil(v.PostSpawnDirectorTimeoutMax / 5);
+      if (v.SpawnDelayMin) v.SpawnDelayMin = Math.ceil(v.SpawnDelayMin / (5 * SPAWN_BUBBLE_FACTOR ** 2));
+      if (v.SpawnDelayMax) v.SpawnDelayMax = Math.ceil(v.SpawnDelayMax / (5 * SPAWN_BUBBLE_FACTOR ** 2));
+      if (v.PostSpawnDirectorTimeoutMin) v.PostSpawnDirectorTimeoutMin = Math.ceil(v.PostSpawnDirectorTimeoutMin / (5 * SPAWN_BUBBLE_FACTOR ** 2));
+      if (v.PostSpawnDirectorTimeoutMax) v.PostSpawnDirectorTimeoutMax = Math.ceil(v.PostSpawnDirectorTimeoutMax / (5 * SPAWN_BUBBLE_FACTOR ** 2));
       return Object.assign(fork, {
         SpawnDelayMin: v.SpawnDelayMin,
         SpawnDelayMax: v.SpawnDelayMax,
