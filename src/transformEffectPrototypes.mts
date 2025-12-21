@@ -69,6 +69,15 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = as
       }),
     );
   }
+
+  if (struct.SID === "WaterDeadlyDamage") {
+    extraStructs.push(
+      Object.assign(struct.fork(), {
+        Type: "EEffectType::None",
+      }),
+    );
+  }
+
   if (consumables.has(struct.SID)) {
     extraStructs.push(Object.assign(struct.fork(), { Duration: struct.Duration * 10 }));
   }
