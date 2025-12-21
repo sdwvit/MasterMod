@@ -62,7 +62,9 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
       if (!(newArmors[newSID] && newArmors[newSID].__internal__._extras.isDroppable)) {
         newArmor.Invisible = true;
       }
-      extraStructs.push(newArmor.clone());
+      const clone = newArmor.clone();
+      clone.__internal__.isRoot = true;
+      extraStructs.push(clone);
     });
   }
 

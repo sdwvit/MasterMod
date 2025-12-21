@@ -64,6 +64,7 @@ export type ArmorDescriptor = {
 
 const getDefaultDroppableArmorDescriptor = (struct: ArmorPrototype, PlayerRank: ERank) => {
   const clone = struct.clone();
+  clone.__internal__.isRoot = true;
   return Object.assign(clone, {
     __internal__: Object.assign(clone.__internal__, {
       _extras: {
