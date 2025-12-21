@@ -190,9 +190,14 @@ Here is a list of extended files (this mod uses new files, so it is compatible w
   - `Rostok_L_ScarTemp_Camp`
   - `SEQ09`
   - `SQ03_P`
+  - `SQ101_C01`
+  - `SQ101_C02`
+  - `SQ102`
   - `SQ25`
   - `SQ87_P`
   - `SQ94`
+  - `SQ95`
+  - `SQ96_P`
   - `Swamp_L_E05_MQ03`
 - `CharacterWeaponSettingsPrototypes`:
   - `NPCWeaponSettingsPrototypes`

@@ -2,13 +2,11 @@
 *.iml
 package-lock.json
 node_modules/
-SpawnActorPrototypes/
-raw/
 steamworkshop/
 .env
 /src/workshopitem.vdf
 /stats/
-GameLite
+/GameLite
 /src/.l1.cache.gzip
 /src/.l2.cache.gzip
 /src/.l3.cache.gzip

@@ -147,6 +147,10 @@ function transformWeapons(e: DynamicItemGenerator["ItemGenerator"]["0"], i: numb
 function transformCombat(struct: DynamicItemGenerator) {
   const fork = struct.fork();
 
+  if (!struct.ItemGenerator) {
+    return;
+  }
+
   const categories = new Set(struct.ItemGenerator.entries().map(([_k, ig]) => ig.Category));
   categories.add("EItemGenerationCategory::Head");
   categories.add("EItemGenerationCategory::BodyArmor");
