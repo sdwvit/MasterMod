@@ -347,29 +347,45 @@ function waitForCallers(timeout: number, questFn: QuestFunction, caller: QuestFu
   return new Promise((resolve: (_: void) => void, reject: (r: string) => void) => {
     const state = questFn.State;
     const conditions = questFn.Conditions;
-
     const to = setTimeout(() => {
       clearInterval(interval);
       reject(
-        "Timeout waiting for condition(s):\n\t" +
+        "Timeout waiting for condition(s):\n	" +
           conditions[caller.name]
-            .map(({ SID: fnName, Name: outputPin }) =>
-              state[caller.name]?.find(
-                ({ SID: callerName, Name: callerOutputPin }) => callerName === fnName && callerOutputPin === (outputPin || true),
-              )
-                ? ""
-                : `${questFn.name} to be called by ${fnName} ${outputPin ? "with " + outputPin : ""}`,
-            )
+            .map(({ SID: fnName, Name: outputPin }) => {
+              const relevantState = state[fnName];
+              if (relevantState) {
+                const found = relevantState.find(({ SID: callerName, Name: callerOutputPin }) => {
+                  const sidTheSame = callerName === fnName;
+                  const pinTheSame = callerOutputPin === (outputPin || true);
+                  return sidTheSame && pinTheSame;
+                });
+                if (found) {
+                  return;
+                }
+              }
+
+              return `${questFn.name} to be called by ${fnName} ${outputPin ? "with " + outputPin : ""}`;
+            })
             .filter((r) => !!r)
-            .join("\n\t"),
+            .join("\n	"),
       );
     }, timeout);
-
     const interval = setInterval(() => {
+      const relevantConditions = conditions[caller.name];
       if (
-        conditions[caller.name].every(({ SID: fnName, Name: outputPin }) =>
-          state[caller.name]?.find(({ SID: callerName, Name: callerOutputPin }) => callerName === fnName && callerOutputPin === (outputPin || true)),
-        )
+        relevantConditions.every(({ SID: fnName, Name: outputPin }) => {
+          const relevantState = state[fnName];
+          if (!relevantState) {
+            return false;
+          }
+          const found = relevantState.find(({ SID: callerName, Name: callerOutputPin }) => {
+            const sidTheSame = callerName === fnName;
+            const pinTheSame = callerOutputPin === (outputPin || true);
+            return sidTheSame && pinTheSame;
+          });
+          return !!found;
+        })
       ) {
         clearTimeout(to);
         clearInterval(interval);
@@ -382,7 +398,7 @@ function waitForCallers(timeout: number, questFn: QuestFunction, caller: QuestFu
 function hasQuestNodeExecuted(f: QuestFunction, completedOutputPins: string[] = []) {
   const state = f.State || {};
   let result: boolean;
-  result = completedOutputPins.every((pin) => state[f.name].find((e) => e.SID === f.name && e.Name === pin));
+  result = completedOutputPins.every((pin) => state[f.name]?.find((e) => e.SID === f.name && (pin === "None" ? true : e.Name === pin)));
   console.log(`hasQuestNodeExecuted(${f.name}) is ${f.State ? "" : "rolled to"} ${result}`);
   return result;
 }
@@ -702,8 +718,7 @@ RSQ10_C05_B_B.cfg
 RSQ10_C06_B_A.cfg
 RSQ10_C07_B_A.cfg
 RSQ10_C08_B_A.cfg
-RSQ10_C09_S_P.cfg
-SQ01.cfg
+RSQ10_C09_S_P.cfg 
   `
     .trim()
     .split("\n")
