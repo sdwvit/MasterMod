@@ -1,6 +1,7 @@
 import { ObjPrototype } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
+import { guideQuestObjectPrototypeSIDs } from "./consts.mts";
 
 /**
  * Adds trade prototypes to all technicians and guides.
@@ -55,36 +56,7 @@ const techniciansAndTheirTradePrototypes = new Map([
   ["DutySerzantHmaruk", "Technician_ChemicalPlant_TradePrototype"],
   ["CorpusGarpia", "Technician_Yanov_TradePrototype"],
   ["CorpusMedlak", "PowerPlugTechnician_TradeItemGenerator"],
+  ["banzai", "PowerPlugTechnician_TradeItemGenerator"],
 ]);
 
-const guidesAndTheirTradePrototypes = {
-  TerriconGuider: "Guide_TradePrototype", // kukuha
-  ZalesieGuider: "Guide_TradePrototype",
-  ShevchenkoGuider: "Guide_TradePrototype",
-  HimzavodGuider: "Guide_TradePrototype",
-  MalachitGuider: "Guide_TradePrototype",
-  RostokGuider: "Guide_TradePrototype",
-  ConcretePlantGuider: "Guide_TradePrototype",
-  MagnetMemoryPlantGuider: "Guide_TradePrototype",
-  KorogodCampGuider: "Guide_TradePrototype",
-  HoghouseGuider: "Guide_TradePrototype",
-  RookieVillageGuider: "Guide_TradePrototype",
-  LesnikBaseGuider: "Guide_TradePrototype",
-  NoonBaseGuider: "Guide_TradePrototype", // masina
-  SkadovskGuider: "Guide_TradePrototype", // cervonec
-  ShipyardGuider: "Guide_TradePrototype",
-  NeutralVolk: "Guide_TradePrototype",
-  NeutralGarik: "Guide_TradePrototype",
-  NeutralDadaLena: "Guide_TradePrototype",
-  ScientistViktorKoska: "Guide_TradePrototype", // malachite
-  NeutralMuhomor: "Guide_TradePrototype", // eger, Himzavod
-  DutyMarsal: "Guide_TradePrototype", // concrete plant
-  FreedomLaguha: "Guide_TradePrototype", // rostok
-  CorpusTelegraf: "Guide_TradePrototype", // pripyat
-};
-
-/**
- * Technician_ChemicalPlant_TradePrototype // sells T2-T3 attachments
- * PowerPlugTechnician_TradeItemGenerator// T2-T4 attachments
- * Asylum_Technician_TradePrototype // T2
- */
+const guidesAndTheirTradePrototypes = Object.fromEntries([...guideQuestObjectPrototypeSIDs].map((e) => [e, "Guide_TradePrototype"]));

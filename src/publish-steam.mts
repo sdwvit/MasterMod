@@ -22,7 +22,9 @@ const cmd = () => {
   vdfData.workshopitem.contentfolder = path.join(projectRoot, "steamworkshop");
   vdfData.workshopitem.previewfile = path.join(projectRoot, "512.png");
   vdfData.workshopitem.title = sanitize(`${modName.replace(/([A-Z])/g, " $1").trim()} by sdwvit`);
-  vdfData.workshopitem.description = sanitize(meta.description);
+  vdfData.workshopitem.description = sanitize(
+    meta.description + "[hr][/hr]This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]",
+  );
   vdfData.workshopitem.changenote = sanitize(meta.changenote);
 
   fs.writeFileSync(vdfFilePath, VDF.stringify(vdfData), "utf8");

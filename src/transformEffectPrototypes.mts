@@ -1,8 +1,9 @@
-import { EffectPrototype, Struct } from "s2cfgtojson";
+import { EDuplicateResolveType, EffectPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
 let oncePerFile = false;
 export const MovementSpeedEffect5PSID = "MovementSpeedEffect5P";
+export const MovementSpeedEffect5PTmpSID = "MovementSpeedEffect5PTmp";
 
 /**
  * Makes some consumables last longer.
@@ -38,6 +39,24 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = as
         ValueMin: "5.0%",
         ValueMax: "5.0%",
         bIsPermanent: true,
+        DuplicationType: "EDuplicateResolveType::KeepAll" as EDuplicateResolveType,
+        Positive: "EBeneficial::Positive",
+      }) as EffectPrototype,
+    );
+    extraStructs.push(
+      new Struct({
+        __internal__: {
+          rawName: MovementSpeedEffect5PTmpSID,
+          isRoot: true,
+        },
+        SID: MovementSpeedEffect5PTmpSID,
+        Text: "Add Run 5%",
+        Type: "EEffectType::MovementSpeed",
+        ValueMin: "5.0%",
+        ValueMax: "5.0%",
+        bIsPermanent: false,
+        Duration: 450.0, // already 10x
+        DuplicationType: "EDuplicateResolveType::KeepAll",
         Positive: "EBeneficial::Positive",
       }) as EffectPrototype,
     );

@@ -2,7 +2,7 @@ import { DynamicItemGenerator, ERank, GetStructType, Struct } from "s2cfgtojson"
 import { factions } from "./factions.mjs";
 import {
   ALL_RANKS_ARR,
-  allDefaultArmorDefs,
+  allDefaultArmorPrototypesRecord,
   allDefaultArmorPrototypes,
   allDefaultDroppableArmorsByFaction,
   allDefaultNightVisionGogglesPrototypes,
@@ -131,7 +131,11 @@ export const adjustArmorItemGenerator = (struct: DynamicItemGenerator, itemGener
 
       if (fork.Category === (maybeNewArmor?.__internal__._extras?.ItemGenerator?.Category || "EItemGenerationCategory::BodyArmor")) {
         fork.PossibleItems.addNode(dummyPossibleItem, newItemSID);
-        if (maybeNewArmor || descriptor.__internal__._extras.isDroppable || (allDefaultArmorDefs[newItemSID] && !undroppableArmors.has(newItemSID))) {
+        if (
+          maybeNewArmor ||
+          descriptor.__internal__._extras.isDroppable ||
+          (allDefaultArmorPrototypesRecord[newItemSID] && !undroppableArmors.has(newItemSID))
+        ) {
           // todo this shit doesn't drop default armors
           droppableArmors.push(dummyPossibleItem as any);
         } else {

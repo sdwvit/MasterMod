@@ -3,7 +3,14 @@ import { semiRandom } from "./semi-random.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import { markAsForkRecursively } from "./markAsForkRecursively.mjs";
-import { allDefaultAmmoPrototypes, allDefaultConsumablePrototypes, allDefaultGrenadePrototypes } from "./consts.mjs";
+import {
+  allDefaultAmmoPrototypes,
+  allDefaultAmmoPrototypesRecord,
+  allDefaultConsumablePrototypes,
+  allDefaultConsumablePrototypesRecord,
+  allDefaultGrenadePrototypes,
+  allDefaultGrenadePrototypesRecord,
+} from "./consts.mjs";
 
 export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorPrototype> = async (struct, context) => {
   if (prohibitedIds.some((id) => struct.SID.includes(id))) {
@@ -53,6 +60,6 @@ export const transformItemGeneratorPrototypes: EntriesTransformer<ItemGeneratorP
 transformItemGeneratorPrototypes.files = ["/ItemGeneratorPrototypes.cfg", "/ItemGeneratorPrototypes/Gamepass_ItemGenerators.cfg"];
 const prohibitedIds = ["Arena"];
 
-const ammoPrototypeSIDs = new Set(allDefaultAmmoPrototypes.map((e) => e.SID));
-const consumablePrototypeSIDs = new Set(allDefaultConsumablePrototypes.map((e) => e.SID));
-const grenadePrototypeSIDs = new Set(allDefaultGrenadePrototypes.map((e) => e.SID));
+const ammoPrototypeSIDs = new Set(Object.keys(allDefaultAmmoPrototypesRecord));
+const consumablePrototypeSIDs = new Set(Object.keys(allDefaultConsumablePrototypesRecord));
+const grenadePrototypeSIDs = new Set(Object.keys(allDefaultGrenadePrototypesRecord));

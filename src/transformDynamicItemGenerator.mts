@@ -3,33 +3,8 @@ import { semiRandom } from "./semi-random.mjs";
 import { precision } from "./precision.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
-import { ALL_RANKS_SET } from "./consts.mjs";
+import { ALL_RANKS_SET, generalTradersTradeItemGenerators } from "./consts.mjs";
 import { adjustArmorItemGenerator } from "./adjustArmorItemGenerator.mjs";
-
-const generalTradersTradeItemGenerators = new Set([
-  "AsylumTrader_TradeItemGenerator",
-  "IkarTrader_TradeItemGenerator",
-  "SultanskTrader_TradeItemGenerator",
-  "ShevchenkoTrader_TradeItemGenerator",
-  "NewbeeVillageTrader_TradeItemGenerator",
-  "MalakhitTrader_TradeItemGenerator",
-  "CementPlantTrader_TradeItemGenerator",
-  "YanovTrader_TradeItemGenerator",
-  "PripyatTrader_TradeItemGenerator",
-  "RedForestTrader_TradeItemGenerator",
-  "EgerTrader_TradeItemGenerator",
-  "VartaTrader_TradeItemGenerator",
-  "TraderZalesie_TradeItemGenerator",
-  "TraderChemicalPlant_TradeItemGenerator",
-  "TraderTerikon_TradeItemGenerator",
-  "TraderSuska_TradeItemGenerator",
-]);
-
-const technicianTradeTradeItemGenerators = new Set([
-  "TechnicianChemicalPlant_TradeItemGenerator",
-  "PowerPlugTechnician_TradeItemGenerator",
-  "AsylumTechnician_TradeItemGenerator",
-]);
 
 function transformTrade(struct: DynamicItemGenerator) {
   const fork = struct.fork();
@@ -146,7 +121,9 @@ function transformWeapons(e: DynamicItemGenerator["ItemGenerator"]["0"], i: numb
 
 function transformCombat(struct: DynamicItemGenerator) {
   const fork = struct.fork();
-
+  if (!struct.ItemGenerator) {
+    return;
+  }
   const categories = new Set(struct.ItemGenerator.entries().map(([_k, ig]) => ig.Category));
   categories.add("EItemGenerationCategory::Head");
   categories.add("EItemGenerationCategory::BodyArmor");

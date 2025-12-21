@@ -3,8 +3,8 @@ import { deepMerge } from "./deepMerge.mjs";
 
 import { EntriesTransformer } from "./metaType.mjs";
 import path from "node:path";
-import { backfillArmorDef } from "./backfillArmorDef.mjs";
-import { allDefaultArmorDefs } from "./consts.mjs";
+import { backfillDef } from "./backfillDef.mts";
+import { allDefaultArmorPrototypesRecord } from "./consts.mjs";
 import { allExtraArmors, newArmors } from "./armors.util.mjs";
 
 const get = (obj: any, path: `${string}.${string}` | string) => {
@@ -30,18 +30,19 @@ export const transformArmorPrototypes: EntriesTransformer<ArmorPrototype> = asyn
       if (!context.structsById[original]) {
         return;
       }
-      const armor = allDefaultArmorDefs[original];
+      const armor = allDefaultArmorPrototypesRecord[original];
       if (!armor) {
         return;
       }
 
       const newArmor = new Struct(
-        backfillArmorDef(
+        backfillDef(
           {
             SID: newSID,
             __internal__: { rawName: newSID, refkey: original, refurl: `../${path.parse(context.filePath).base}` },
           },
-          newSID.toLowerCase().includes("helmet") ? allDefaultArmorDefs.LightHelmet_Svoboda_Helmet : armor,
+          allDefaultArmorPrototypesRecord,
+          newSID.toLowerCase().includes("helmet") ? "Light_Neutral_Helmet" : armor.SID,
         ),
       ) as ArmorPrototype;
       const overrides = { ...newArmors[newSID as keyof typeof newArmors] };

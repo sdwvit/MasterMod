@@ -1,4 +1,4 @@
-import { ArtifactPrototype } from "s2cfgtojson";
+import { ArtifactPrototype, EEffectDisplayType } from "s2cfgtojson";
 import { EntriesTransformer } from "./metaType.mjs";
 import { MovementSpeedEffect5PSID } from "./transformEffectPrototypes.mts";
 
@@ -16,7 +16,7 @@ export const transformArtifactPrototypes: EntriesTransformer<ArtifactPrototype> 
     fork.ShouldShowEffects = struct.ShouldShowEffects.fork();
     fork.ShouldShowEffects.addNode(true, MovementSpeedEffect5PSID);
     fork.EffectsDisplayTypes = struct.EffectsDisplayTypes.fork();
-    fork.EffectsDisplayTypes.addNode("EEffectDisplayType::EffectLevel", MovementSpeedEffect5PSID);
+    fork.EffectsDisplayTypes.addNode("EEffectDisplayType::EffectLevel" as EEffectDisplayType, MovementSpeedEffect5PSID);
     return fork;
   }
   return null;

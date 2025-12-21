@@ -1,8 +1,15 @@
 import "./ensureDotEnv.mjs";
 import { EItemGenerationCategory, ERank, Internal } from "s2cfgtojson";
 
-import { ALL_RANK, allDefaultArmorDefs, allDefaultDroppableArmorsByFaction, ArmorDescriptor, MASTER_RANK, VETERAN_MASTER_RANK } from "./consts.mts";
-import { backfillArmorDef } from "./backfillArmorDef.mjs";
+import {
+  ALL_RANK,
+  allDefaultArmorPrototypesRecord,
+  allDefaultDroppableArmorsByFaction,
+  ArmorDescriptor,
+  MASTER_RANK,
+  VETERAN_MASTER_RANK,
+} from "./consts.mts";
+import { backfillDef } from "./backfillDef.mts";
 export type DeeplyPartial<T> = {
   [P in Exclude<keyof T, Internal | "toString">]?: T[P] extends object ? DeeplyPartial<T[P]> : T[P];
 };
@@ -13,7 +20,7 @@ const getHeadlessArmorCommonProps = (refkey: string) => ({
     _extras: {
       isDroppable: true,
       keysForRemoval: {
-        UpgradePrototypeSIDs: backfillArmorDef(allDefaultArmorDefs[refkey])
+        UpgradePrototypeSIDs: backfillDef(allDefaultArmorPrototypesRecord[refkey])
           .UpgradePrototypeSIDs.entries()
           .map(([_, k]) => k)
           .filter((k) => !!k.toLowerCase().match(/psyresist|_ps[iy]_/g)),
@@ -220,7 +227,7 @@ export const newArmors = {
       _extras: {
         isDroppable: false,
         keysForRemoval: {
-          UpgradePrototypeSIDs: allDefaultArmorDefs["SkinJacket_Bandit_Armor"].UpgradePrototypeSIDs.entries()
+          UpgradePrototypeSIDs: allDefaultArmorPrototypesRecord["SkinJacket_Bandit_Armor"].UpgradePrototypeSIDs.entries()
             .map(([_, k]) => k)
             .filter((k) => !!k.toLowerCase().match(/psyresist|_ps[iy]_/g)),
         },
