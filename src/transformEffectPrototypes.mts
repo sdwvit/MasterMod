@@ -1,8 +1,8 @@
-import { EDuplicateResolveType, EffectPrototype, Struct } from "s2cfgtojson";
+import { EDuplicateResolveType, EEffectType, EffectPrototype, Struct } from "s2cfgtojson";
 
 import { EntriesTransformer } from "./metaType.mjs";
 let oncePerFile = false;
-export const MovementSpeedEffect5PSID = "MovementSpeedEffect5P";
+export const MovementSpeedEffect5PSID = "MovementSpeedEffect5PSID";
 export const MovementSpeedEffect5PTmpSID = "MovementSpeedEffect5PTmp";
 
 /**
@@ -35,7 +35,7 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = as
         },
         SID: MovementSpeedEffect5PSID,
         Text: "Add Run 5%",
-        Type: "EEffectType::MovementSpeed",
+        Type: "EEffectType::VelocityChange" as EEffectType,
         ValueMin: "5.0%",
         ValueMax: "5.0%",
         bIsPermanent: true,
@@ -51,7 +51,7 @@ export const transformEffectPrototypes: EntriesTransformer<EffectPrototype> = as
         },
         SID: MovementSpeedEffect5PTmpSID,
         Text: "Add Run 5%",
-        Type: "EEffectType::MovementSpeed",
+        Type: "EEffectType::VelocityChange",
         ValueMin: "5.0%",
         ValueMax: "5.0%",
         bIsPermanent: false,
