@@ -1,9 +1,10 @@
 import { MetaContext } from "./metaType.mjs";
-import { GetStructType, QuestNodePrototype, SpawnActorPrototype, Struct } from "s2cfgtojson";
+import { ArtifactPrototype, QuestItemPrototype, QuestNodePrototype, SpawnActorPrototype, Struct } from "s2cfgtojson";
 import { readFileAndGetStructs } from "./read-file-and-get-structs.mjs";
 import { writeFileSync } from "node:fs";
 import { onL1Finish } from "./l1-cache.mjs";
 import { allDefaultArtifactPrototypes, allDefaultQuestItemPrototypes } from "./consts.mjs";
+import { logger } from "./logger.mts";
 
 const EVENTS = [
   "OnAbilityEndedEvent",
@@ -37,23 +38,20 @@ const EVENTS = [
 const EVENTS_INTERESTING_PROPS = new Set(["ExpectedItemsCount", "ItemsCount"]);
 const EVENTS_INTERESTING_SIDS = new Set(["TargetQuestGuid", "ItemPrototypeSID", "ItemSID", "SignalSenderGuid", "ContaineredQuestPrototypeSID"]);
 
-export async function questNodesToJs(context: MetaContext<Struct>) {
-  const contextT = context as MetaContext<
-    QuestNodePrototype & {
-      LaunchersBySID: GetStructType<Record<string, { SID: string; Name: string }[]>>;
-      Launches: { SID: string; Name: string }[];
-    }
-  >;
+export async function questNodesToJs(context: MetaContext<QuestNodeWithExtras>) {
   const globalVars = new Set<string>();
   const globalFunctions = new Map<string, string>();
   const questActors = new Set<string>();
   const launchOnQuestStart = [];
-  questActors.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"); // Skif
+  globalVars.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"); // Skif
+  globalVars.add("None");
 
   const content = getContent(context, globalVars, globalFunctions, questActors, launchOnQuestStart);
   const actorInfos = await getQuestActorsInfo(questActors);
 
   return `
+  // noinspection JSUnusedAssignment
+  
   const intervals = [];
   const Skif = 'Skif';
   const spawnedActors = {};
@@ -61,11 +59,11 @@ export async function questNodesToJs(context: MetaContext<Struct>) {
   ${hasQuestNodeExecuted.toString()}
   ${waitForCallers.toString()}
   ${[...globalVars]
-    .filter((v) => v && !contextT.structsById[v])
+    .filter((v) => v && !context.structsById[v])
     .map((v) => `let ${v} = '${v}';`)
     .join("\n")}
   ${[...globalFunctions]
-    .filter(([v]) => v && !contextT.structsById[v])
+    .filter(([v]) => v && !context.structsById[v])
     .map(([v, i]) =>
       i
         ? `const ${v} = ${i}`
@@ -95,7 +93,7 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
       globalFunctions.set("addFactionRelationship", "");
 
       questActors.add(struct.FirstTargetSID);
-      return `${struct.UseDeltaValue ? "add" : "set"}FactionRelationship(questActors['${struct.FirstTargetSID}'], '${struct.SecondTargetSID}',  ${struct.RelationshipValue});`;
+      return `${struct.UseDeltaValue ? "add" : "set"}FactionRelationship(questActors['${struct.FirstTargetSID}'], questActors['${struct.SecondTargetSID}'],  ${struct.RelationshipValue});`;
 
     case "If":
     case "Condition":
@@ -235,7 +233,7 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
 
     case "Container":
       globalFunctions.set(subType, "");
-      return `const result = ${subType}(${struct
+      return `result = ${subType}(${struct
         .entries()
         .map(([k]) => {
           if (EVENTS_INTERESTING_SIDS.has(k)) {
@@ -253,13 +251,14 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "OnTickEvent":
       globalFunctions.set(
         "OnTickEvent",
-        "(fn, target) => { console.log(`OnTickEvent('${target ?? ''}', () => ${fn.name}())`); intervals.push(setInterval(fn, 200)) };",
+        "(fn, target) => { console.log(`OnTickEvent('${target ?? ''}', () => ${fn.name}())`); intervals.push(setInterval(() => fn(OnTickEvent), 200)) };",
       );
       return "";
 
     case "Random":
-      return `const result = (() => { 
+      return `result = (() => { 
       const rand = Math.random();
+      console.log('Math.random() called with ${struct.PinWeights.entries().length} vars');
       ${struct.PinWeights.entries()
         .map(([_k, weight], i) => `if (rand >= ${weight}) return '${struct.OutputPinNames?.[i] ?? "impossible"}'`)
         .join("\nelse ")}
@@ -267,13 +266,13 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
 
     case "SetAIBehavior":
       globalFunctions.set("setAIBehavior", "");
-      return `setAIBehavior('${struct.TargetQuestGuid}', '${struct.BehaviorType.split("::").pop()}');`;
+      return `result = setAIBehavior('${struct.TargetQuestGuid}', '${struct.BehaviorType.split("::").pop()}');`;
 
     case "SetDialog":
       globalFunctions.set("setDialog", "");
       globalVars.add(struct.DialogChainPrototypeSID);
 
-      return `const result = setDialog(${struct.DialogChainPrototypeSID}, [ ${struct.LastPhrases.entries().map(([_k, lp]) => {
+      return `result = setDialog(${struct.DialogChainPrototypeSID}, [ ${struct.LastPhrases.entries().map(([_k, lp]) => {
         globalVars.add(lp.LastPhraseSID);
         globalVars.add("finish");
         globalVars.add(lp.NextLaunchedPhraseSID);
@@ -313,7 +312,7 @@ function questNodeToJavascript(structr: Struct, globalVars: Set<string>, globalF
     case "Spawn":
       globalFunctions.set("spawn", "(actor) => { spawnedActors[actor] = true; console.log(`spawn(\${questActors[actor]});`); return actor; }; //");
       questActors.add(struct.TargetQuestGuid);
-      return `spawn('${struct.TargetQuestGuid}', { ignoreDamageType: '${struct.IgnoreDamageType}', spawnHidden: ${struct.SpawnHidden}, spawnNodeExcludeType: '${struct.SpawnNodeExcludeType}' });`;
+      return `spawn(questActors['${struct.TargetQuestGuid}'], { ignoreDamageType: '${struct.IgnoreDamageType}', spawnHidden: ${struct.SpawnHidden}, spawnNodeExcludeType: '${struct.SpawnNodeExcludeType}' });`;
     case "Technical":
       return "";
   }
@@ -338,31 +337,40 @@ function getConditionComparance(ConditionComparance: string) {
   }
 }
 
-function waitForCallers(
-  timeout: number,
-  struct: {
-    State: any;
-    Conditions: { [x: string]: any };
-    name: any;
-  },
-  caller: string | number,
-) {
+type QuestFunction = {
+  (caller: QuestFunction, pinName: string): void;
+  State: Record<QuestFunction["name"], { SID: string; Name: string }[]>;
+  Conditions: Record<QuestFunction["name"], { SID: string; Name: string }[]>;
+};
+
+function waitForCallers(timeout: number, questFn: QuestFunction, caller: QuestFunction) {
   return new Promise((resolve: (_: void) => void, reject: (r: string) => void) => {
-    const state = struct.State;
-    const conditions = Object.values(struct.Conditions[caller] ?? {});
+    const state = questFn.State;
+    const conditions = questFn.Conditions;
+
     const to = setTimeout(() => {
       clearInterval(interval);
       reject(
         "Timeout waiting for condition(s):\n\t" +
-          conditions
-            .map(({ SID, Name }) => (state[SID] === (Name || true) ? "" : `${struct.name} to be called by ${SID} ${Name ? "with " + Name : ""}`))
+          conditions[caller.name]
+            .map(({ SID: fnName, Name: outputPin }) =>
+              state[caller.name]?.find(
+                ({ SID: callerName, Name: callerOutputPin }) => callerName === fnName && callerOutputPin === (outputPin || true),
+              )
+                ? ""
+                : `${questFn.name} to be called by ${fnName} ${outputPin ? "with " + outputPin : ""}`,
+            )
             .filter((r) => !!r)
             .join("\n\t"),
       );
     }, timeout);
 
     const interval = setInterval(() => {
-      if (conditions.every(({ SID, Name }) => state[SID] === (Name || true))) {
+      if (
+        conditions[caller.name].every(({ SID: fnName, Name: outputPin }) =>
+          state[caller.name]?.find(({ SID: callerName, Name: callerOutputPin }) => callerName === fnName && callerOutputPin === (outputPin || true)),
+        )
+      ) {
         clearTimeout(to);
         clearInterval(interval);
         resolve();
@@ -371,17 +379,19 @@ function waitForCallers(
   });
 }
 
-function hasQuestNodeExecuted(fn: { State: {}; name: string }) {
-  const cond = fn.State ? !!Object.keys(fn.State).length : false;
-  console.log(`hasQuestNodeExecuted(${fn.name}) is ${fn.State ? "" : "rolled to"} ${cond}`);
-  return cond;
+function hasQuestNodeExecuted(f: QuestFunction, completedOutputPins: string[] = []) {
+  const state = f.State || {};
+  let result: boolean;
+  result = completedOutputPins.every((pin) => state[f.name].find((e) => e.SID === f.name && e.Name === pin));
+  console.log(`hasQuestNodeExecuted(${f.name}) is ${f.State ? "" : "rolled to"} ${result}`);
+  return result;
 }
 
 function processConditionNode(structT: Struct, globalVars: Set<string>, globalFunctions: Map<string, string>, questActors: Set<string>) {
   const struct = structT as QuestNodePrototype;
   const andOr = struct.Conditions.ConditionCheckType === "EConditionCheckType::Or" ? " || " : " && ";
   const subType = struct.NodeType.split("::").pop();
-  return `const result = ${struct.Conditions.entries()
+  return `result = ${struct.Conditions.entries()
     .filter(([k]) => k !== "ConditionCheckType")
     .map(([_k, cond]) => {
       if (typeof cond === "string") {
@@ -399,10 +409,26 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
               throw new Error("not implemented");
             }
             case "Trigger": {
-              throw new Error("not implemented");
+              const f = `wasTriggered`;
+              const param1 = c.ReactType.split("::").pop();
+              const param2 = c.RequiredSquadMembers.split("::").pop();
+              const target = c.TargetCharacter;
+              const trigger = c.Trigger;
+              const comp = getConditionComparance(c.ConditionComparance);
+              globalFunctions.set(f, "(s) => true");
+              questActors.add(target);
+              questActors.add(trigger);
+              return `${f}(questActors['${trigger}'], questActors['${target}'], '${param1}', '${param2}') ${comp} true`;
             }
             case "Emission": {
-              throw new Error("not implemented");
+              const f = `isEmissionHappening`;
+              const target = c.EmissionPrototypeSID;
+              const comp = getConditionComparance(c.ConditionComparance);
+              globalFunctions.set(f, "(s) => false");
+              if (target) {
+                questActors.add(target);
+              }
+              return `${f}(${target ? `questActors['${target}']` : ""}) ${comp} true`;
             }
             case "Money": {
               throw new Error("not implemented");
@@ -462,6 +488,7 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
             case "Bridge": {
               globalFunctions.set(c.LinkedNodePrototypeSID, "");
               c.CompletedNodeLauncherNames.entries().forEach(([_k, v]) => globalVars.add(v));
+
               return `hasQuestNodeExecuted(${c.LinkedNodePrototypeSID}, [${c.CompletedNodeLauncherNames.entries()
                 .map(([_k, v]) => v)
                 .join(", ")}]) ${getConditionComparance(c.ConditionComparance)} true`;
@@ -478,9 +505,10 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
               const sid1 = c.TargetCharacter;
               const sid2 = c.TargetNPC;
               const comp = getConditionComparance(c.ConditionComparance);
-
-              globalFunctions.set(f, "(s1, s2) => true;");
-              return `${f}('${sid1}', '${sid2}') ${comp} '${val}'`;
+              questActors.add(sid1);
+              questActors.add(sid2);
+              globalFunctions.set(f, "() => 0;");
+              return `${f}(questActors['${sid1}'], questActors['${sid2}']) ${comp} '${val}'`;
             }
             case "DistanceToPoint": {
               const f = `get${subType}`;
@@ -488,8 +516,8 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
               const sid = getCoordsStr(c.TargetPoint.X, c.TargetPoint.Y, c.TargetPoint.Z);
               const comp = getConditionComparance(c.ConditionComparance);
 
-              globalFunctions.set(f, "(s) => true;");
-              return `${f}('${sid}') ${comp} '${st}'`;
+              globalFunctions.set(f, "() => 0;");
+              return `${f}('${sid}') ${comp} ${st}`;
             }
             case "Effect": {
               throw new Error("not implemented");
@@ -540,12 +568,29 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
               throw new Error("not implemented");
             }
             case "ItemInContainer": {
-              throw new Error("not implemented");
+              const f = `is${subType}`;
+              const TargetItemContainer = c.TargetItemContainer;
+              const ItemPrototypeSID = c.ItemPrototypeSID.VariableValue;
+              const ItemsCount = c.ItemsCount.VariableValue;
+              const comp = getConditionComparance(c.ConditionComparance);
+
+              globalFunctions.set(f, "() => true;");
+              globalVars.add(ItemPrototypeSID);
+              questActors.add(TargetItemContainer);
+
+              return `${f}(questActors['${TargetItemContainer}'], ${ItemPrototypeSID}, ${ItemsCount}) ${comp} true`;
             }
-            case "ItemInInventory":
-              globalFunctions.set("isItemInInventory", "(s) => true;");
-              globalVars.add(c.ItemPrototypeSID.VariableValue);
-              return `isItemInInventory(${c.ItemPrototypeSID.VariableValue}) ${getConditionComparance(c.ConditionComparance)} ${c.ItemsCount.VariableValue}`;
+            case "ItemInInventory": {
+              const f = `is${subType}`;
+              const ItemPrototypeSID = c.ItemPrototypeSID.VariableValue;
+              const ItemsCount = c.ItemsCount.VariableValue;
+              const comp = getConditionComparance(c.ConditionComparance);
+
+              globalFunctions.set(f, "() => true;");
+              globalVars.add(ItemPrototypeSID);
+
+              return `${f}(${ItemPrototypeSID}, ${ItemsCount}) ${comp} true`;
+            }
             case "LookAtAngle": {
               throw new Error("not implemented");
             }
@@ -553,7 +598,15 @@ function processConditionNode(structT: Struct, globalVars: Set<string>, globalFu
               throw new Error("not implemented");
             }
             case "PersonalRelationship": {
-              throw new Error("not implemented");
+              const f = `is${subType}`;
+              const comp = getConditionComparance(c.ConditionComparance);
+              const TargetCharacter = c.TargetCharacter;
+              const Relationships = c.Relationships.split("::").pop();
+              globalFunctions.set(f, "() => 'Friend';");
+              questActors.add(TargetCharacter);
+              globalVars.add(Relationships);
+
+              return `${f}(questActors['${TargetCharacter}']) ${comp} ${Relationships}`;
             }
             case "PlayerOverload": {
               throw new Error("not implemented");
@@ -650,6 +703,7 @@ RSQ10_C06_B_A.cfg
 RSQ10_C07_B_A.cfg
 RSQ10_C08_B_A.cfg
 RSQ10_C09_S_P.cfg
+SQ01.cfg
   `
     .trim()
     .split("\n")
@@ -658,12 +712,12 @@ RSQ10_C09_S_P.cfg
       const context = {
         fileIndex: 0,
         index: 0,
-        array: [],
+        array: [] as QuestNodeWithExtras[],
         filePath: "/QuestNodePrototypes/" + filePath,
         structsById: {},
       };
 
-      context.array = await readFileAndGetStructs<QuestNodePrototype>("/QuestNodePrototypes/" + filePath);
+      context.array = (await readFileAndGetStructs<QuestNodeWithExtras>("/QuestNodePrototypes/" + filePath)).map((s) => s.clone());
       context.structsById = Object.fromEntries(context.array.map((s) => [s.__internal__.rawName, s as QuestNodePrototype]));
 
       console.log(`\n\nProcessing quest node script for ${filePath}`);
@@ -678,7 +732,7 @@ function getEventHandler(eventName: string) {
   return (target: string, content?: string) => `${eventName}(${target}${content ? `, ${content}` : ""});`;
 }
 
-function getStructBody(struct: any, globalVars: Set<string>, globalFunctions: Map<string, string>, questActors: Set<string>) {
+function getStructBody(struct: QuestNodeWithExtras, globalVars: Set<string>, globalFunctions: Map<string, string>, questActors: Set<string>) {
   let launches = "";
   if (struct.Launches) {
     const useSwitch = struct.Launches.some(({ Name }) => Name);
@@ -693,62 +747,88 @@ function getStructBody(struct: any, globalVars: Set<string>, globalFunctions: Ma
     delete struct.Launches;
   }
   const isCoDep =
-    struct.LaunchersBySID && struct.LaunchersBySID.entries().length && struct.LaunchersBySID.entries().some(([_k, v]) => v.entries().length > 1);
-  const consoleLog = `console.log('// ' + f.name + '(${isCoDep ? "', caller, ',', name, '" : ""});');`;
+    struct.LaunchersBySID && Object.entries(struct.LaunchersBySID).length && Object.entries(struct.LaunchersBySID).some(([_k, v]) => v.length > 1);
+  const consoleLog = `console.log('// ' + f.name + '(${isCoDep ? "', caller.name, ',', name, '" : ""});');`;
   return `
      function ${struct.SID}(caller, name) {         
          const f = ${struct.SID};
-         ${isCoDep ? `f.Conditions ??= ${JSON.stringify(struct.LaunchersBySID, (key, value) => (key === "__internal__" ? undefined : value)) || "{}"}` : ""}
-         f.State ??= {};
-         f.State[caller] = name || true;
+         ${isCoDep ? `f.Conditions ??= ${JSON.stringify(struct.LaunchersBySID || {})}` : ""}
+         let result = None;
+         f.State ??= {}; 
+         f.State[caller.name] ||= [];
+         f.State[caller.name].push({ SID: caller.name, Name: name || true });
          ${isCoDep ? "" : consoleLog}
          ${isCoDep ? `waitForCallers(1000, f, caller).then(() => {` : ""}
            ${questNodeToJavascript(struct, globalVars, globalFunctions, questActors)}
            ${launches}
            ${isCoDep ? consoleLog : ""}
+           f.State[f.name] ||= [];
+           f.State[f.name].push({ SID: f.name, Name: result });
          ${isCoDep ? "}).catch(e => console.log(e))" : ""} 
      }
     `.trim();
 }
 
 async function getQuestActorsInfo(questActors: Set<string>) {
-  const relevantStructs = await Promise.all(
-    [...questActors]
-      .filter((e) => e !== "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-      .map(async (SID) => {
-        let res: SpawnActorPrototype;
-        try {
-          const structs = await readFileAndGetStructs<SpawnActorPrototype>(`${SID}.cfg`);
-          return structs[0] || ({ SID } as SpawnActorPrototype);
-        } catch (e) {
-          res =
-            allDefaultQuestItemPrototypes.find((s) => s.SID === SID) ||
-            allDefaultArtifactPrototypes.find((s) => s.SID === SID) ||
-            ({ SID } as SpawnActorPrototype);
-          if (res) {
-            return res;
-          }
-          console.warn(`Quest actor prototype not found: ${SID}.cfg`);
-          return { SID };
+  const questActorsArrWithoutSkif = [...questActors].filter((e) => e !== "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+  async function tryFindStructWithName(name: string) {
+    try {
+      return (await readFileAndGetStructs<SpawnActorPrototype>(name))[0];
+    } catch (e) {
+      logger.warn(`No struct found for ${name}`);
+    }
+  }
+
+  const relevantStructs: [string, SpawnActorPrototype | QuestNodePrototype | QuestItemPrototype | ArtifactPrototype | undefined][] =
+    await Promise.all(
+      questActorsArrWithoutSkif.map(async (SID) => {
+        const maybeKnownActor = allDefaultQuestItemPrototypes.find((s) => s.SID === SID) || allDefaultArtifactPrototypes.find((s) => s.SID === SID);
+        if (maybeKnownActor) {
+          return [SID, maybeKnownActor];
         }
+        const maybeActor = await tryFindStructWithName(`${SID}.cfg`);
+        if (maybeActor) {
+          return [SID, maybeActor];
+        }
+        return [SID, undefined];
       }),
-  );
+    );
   return Object.fromEntries(
     [["AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Skif"]].concat(
-      relevantStructs.map((sap: SpawnActorPrototype) => {
-        sap ||= {} as SpawnActorPrototype;
-        const pos = sap.PositionX ? ` @ ${getCoordsStr(sap.PositionX, sap.PositionY, sap.PositionZ)}` : "";
-        const squadInfo = sap.SpawnedGenericMembers?.entries()
-          .map(([_k, v]) => `${v.SpawnedSquadMembersCount} ${v.SpawnedPrototypeSID}`)
-          .join(" + ");
-        if (squadInfo) {
-          return [sap.SID, `${squadInfo}${pos}`];
+      relevantStructs.map(([SID, sap]) => {
+        if (!sap) {
+          return [SID, SID];
         }
-        const maybeContainer = sap.SpawnedPrototypeSID && `${sap.SpawnedPrototypeSID}`;
-        if (maybeContainer) {
-          return [sap.SID, `${maybeContainer}${pos}`];
+
+        if ("PositionX" in sap) {
+          const pos = ` @ ${getCoordsStr(sap.PositionX, sap.PositionY, sap.PositionZ)}`;
+
+          const squadInfo = sap.SpawnedGenericMembers?.entries?.()
+            .map(([_k, v]) => `${v.SpawnedSquadMembersCount} ${v.SpawnedPrototypeSID}`)
+            .join(" + ");
+          if (squadInfo) {
+            return [sap.SID, `${squadInfo}${pos}`];
+          }
+          const maybeContainer = sap.SpawnedPrototypeSID && `${sap.SpawnedPrototypeSID}`;
+          if (maybeContainer) {
+            return [sap.SID, `${maybeContainer}${pos}`];
+          }
+          return [sap.SID, sap.__internal__?.refkey?.toString() || sap.SID];
         }
-        return [sap.SID, sap.__internal__?.refkey?.toString() || sap.SID];
+
+        if ("ArtifactType" in sap) {
+          return [SID, SID];
+        }
+
+        if ("QuestSID" in sap) {
+          return [SID, sap.QuestSID];
+        }
+
+        if ("IsQuestItem" in sap) {
+          return [SID, SID];
+        }
+        return [SID, SID];
       }),
     ),
   );
@@ -758,21 +838,21 @@ function getCoordsStr(x: number, y: number, z: number) {
   return `${x.toFixed(1)} ${y.toFixed(1)} ${z.toFixed(1)}`;
 }
 
+type QuestNodeWithExtras = QuestNodePrototype & {
+  LaunchersBySID: Record<string, { SID: string; Name: string }[]>;
+  Launches: { SID: string; Name: string }[];
+};
+
 function getContent(
-  context: MetaContext<Struct>,
+  contextT: MetaContext<QuestNodePrototype>,
   globalVars: Set<string>,
   globalFunctions: Map<string, string>,
   questActors: Set<string>,
   launchOnQuestStart: any[],
 ) {
-  const contextT = context as MetaContext<
-    QuestNodePrototype & {
-      LaunchersBySID: GetStructType<Record<string, { SID: string; Name: string }[]>>;
-      Launches: { SID: string; Name: string }[];
-    }
-  >;
+  const context = contextT as MetaContext<QuestNodeWithExtras>;
   const subscriptions = Object.fromEntries(EVENTS.map((e) => [e, getEventHandler(e)]));
-  return contextT.array
+  return context.array
     .map((struct) => {
       struct.SID = struct.SID.replace(/[!.]/g, "_");
       if (!struct.Launchers) {
@@ -780,13 +860,16 @@ function getContent(
       }
       struct.Launchers.forEach(([_k, launcher]) => {
         launcher.Connections.forEach(([_k, item]) => {
-          contextT.structsById[item.SID].Launches ||= [];
-          contextT.structsById[item.SID].Launches.push({
+          context.structsById[item.SID].Launches ||= [];
+          context.structsById[item.SID].Launches.push({
             SID: struct.SID,
             Name: item.Name,
           });
-          struct.LaunchersBySID ||= new Struct() as any;
-          struct.LaunchersBySID[item.SID] ||= launcher.Connections;
+          struct.LaunchersBySID ||= {};
+          struct.LaunchersBySID[item.SID] ||= [];
+          launcher.Connections.forEach(([_k, e]) => {
+            struct.LaunchersBySID[item.SID].push({ SID: e.SID, Name: e.Name });
+          });
         });
       });
       return struct;
@@ -810,7 +893,7 @@ function getContent(
           .entries()
           .filter(([k]) => EVENTS_INTERESTING_PROPS.has(k) || EVENTS_INTERESTING_SIDS.has(k))
           .map(([_k, v]) => {
-            if (EVENTS_INTERESTING_SIDS.has(_k)) {
+            if (EVENTS_INTERESTING_SIDS.has(_k) && v) {
               questActors.add(v);
               return `questActors['${v}']`;
             }

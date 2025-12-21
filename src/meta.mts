@@ -110,10 +110,7 @@ export const meta: MetaType<Parameters<(typeof structTransformers)[number]>[0]> 
  [*] [Balance] Unique and fair rewards for each possible variant of repeating quests.
 [/list]
 This mods works well with UBER TOZ mod. It does include Better Ballistics mod changes.
-[hr][/hr]
-[h3]Source code:[/h3]
-This mod is open source and hosted on [url=https://github.com/sdwvit/MasterMod]github[/url].[h3][/h3]
-[h3][/h3]
+[hr][/hr]  
 All changes have been tested against fresh save file. Some of these changes won't work with older saves.`,
   changenote: `Now can hold breath and offset aim with any weapon any scope at any time.`,
   structTransformers: structTransformers as any,

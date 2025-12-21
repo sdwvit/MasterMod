@@ -35,14 +35,22 @@ export const allDefaultNightVisionGogglesPrototypes = await readFileAndGetStruct
 export const allDefaultAmmoPrototypes = await readFileAndGetStructs<AmmoPrototype>("ItemPrototypes/AmmoPrototypes.cfg");
 export const allDefaultConsumablePrototypes = await readFileAndGetStructs<ConsumablePrototype>("ItemPrototypes/ConsumablePrototypes.cfg");
 export const allDefaultGrenadePrototypes = await readFileAndGetStructs<GrenadePrototype>("ItemPrototypes/GrenadePrototypes.cfg");
-
 export const allDefaultQuestItemPrototypes = await readFileAndGetStructs<SpawnActorPrototype>(`/QuestItemPrototypes.cfg`);
-
 export const allDefaultWeaponPrototypes = await readFileAndGetStructs<WeaponPrototype>("ItemPrototypes/WeaponPrototypes.cfg");
 export const allDefaultAttachPrototypes = await readFileAndGetStructs<AttachPrototype>("ItemPrototypes/AttachPrototypes.cfg");
 
-export const allDefaultArmorDefs = Object.fromEntries(allDefaultArmorPrototypes.map((e) => [e.SID, e] as const));
-export const allDefaultNightVisionGogglesDefs = Object.fromEntries(allDefaultNightVisionGogglesPrototypes.map((e) => [e.SID, e] as const));
+// Records:
+const getRecord = <T extends { SID: string }>(arr: T[]) => Object.fromEntries(arr.map((e) => [e.SID, e]));
+export const allDefaultArmorPrototypesRecord = getRecord(allDefaultArmorPrototypes);
+export const allDefaultArtifactPrototypesRecord = getRecord(allDefaultArtifactPrototypes);
+export const allDefaultNightVisionGogglesPrototypesRecord = getRecord(allDefaultNightVisionGogglesPrototypes);
+export const allDefaultAmmoPrototypesRecord = getRecord(allDefaultAmmoPrototypes);
+export const allDefaultConsumablePrototypesRecord = getRecord(allDefaultConsumablePrototypes);
+export const allDefaultGrenadePrototypesRecord = getRecord(allDefaultGrenadePrototypes);
+export const allDefaultQuestItemPrototypesRecord = getRecord(allDefaultQuestItemPrototypes);
+export const allDefaultWeaponPrototypesRecord = getRecord(allDefaultWeaponPrototypes);
+export const allDefaultAttachPrototypesRecord = getRecord(allDefaultAttachPrototypes);
+
 export type ArmorDescriptor = {
   __internal__: {
     refkey?: string | number;
@@ -56,6 +64,7 @@ export type ArmorDescriptor = {
 
 const getDefaultDroppableArmorDescriptor = (struct: ArmorPrototype, PlayerRank: ERank) => {
   const clone = struct.clone();
+  clone.__internal__.isRoot = true;
   return Object.assign(clone, {
     __internal__: Object.assign(clone.__internal__, {
       _extras: {
@@ -82,76 +91,76 @@ export const allDefaultDroppableArmorsByFaction: {
   varta: ArmorDescriptor[];
 } = {
   bandit: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Light_Bandit_Helmet, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.SkinJacket_Bandit_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Jacket_Bandit_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Middle_Bandit_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Light_Bandit_Helmet, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.SkinJacket_Bandit_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Jacket_Bandit_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Middle_Bandit_Armor, EXPERIENCED_MASTER_RANK),
   ],
   corpus: [],
   duty: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Light_Duty_Helmet, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy_Duty_Helmet, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Light_Duty_Helmet, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy_Duty_Helmet, EXPERIENCED_MASTER_RANK),
 
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Rook_Dolg_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Battle_Dolg_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.SEVA_Dolg_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy_Dolg_Armor, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.HeavyExoskeleton_Dolg_Armor, MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Exoskeleton_Dolg_Armor, MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Battle_Dolg_End_Armor, MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Rook_Dolg_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Battle_Dolg_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.SEVA_Dolg_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy_Dolg_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.HeavyExoskeleton_Dolg_Armor, MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Exoskeleton_Dolg_Armor, MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Battle_Dolg_End_Armor, MASTER_RANK),
   ],
   freedom: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy_Svoboda_Helmet, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Rook_Svoboda_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Battle_Svoboda_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.SEVA_Svoboda_Armor, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy_Svoboda_Armor, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.HeavyExoskeleton_Svoboda_Armor, MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Exoskeleton_Svoboda_Armor, MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy_Svoboda_Helmet, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Rook_Svoboda_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Battle_Svoboda_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.SEVA_Svoboda_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy_Svoboda_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.HeavyExoskeleton_Svoboda_Armor, MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Exoskeleton_Svoboda_Armor, MASTER_RANK),
   ],
   mercenary: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Light_Mercenaries_Helmet, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Light_Mercenaries_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy_Mercenaries_Armor, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Exoskeleton_Mercenaries_Armor, MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Light_Mercenaries_Helmet, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Light_Mercenaries_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy_Mercenaries_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Exoskeleton_Mercenaries_Armor, MASTER_RANK),
   ],
   military: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy_Military_Helmet, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Light_Military_Helmet, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Battle_Military_Helmet, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Default_Military_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy2_Military_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy_Military_Helmet, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Light_Military_Helmet, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Battle_Military_Helmet, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Default_Military_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy2_Military_Armor, VETERAN_MASTER_RANK),
   ],
   monolith: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Battle_Monolith_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.HeavyAnomaly_Monolith_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.HeavyExoskeleton_Monolith_Armor, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Exoskeleton_Monolith_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Battle_Monolith_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.HeavyAnomaly_Monolith_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.HeavyExoskeleton_Monolith_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Exoskeleton_Monolith_Armor, ALL_RANK),
   ],
   neutral: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Light_Neutral_Helmet, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Jemmy_Neutral_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Newbee_Neutral_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Nasos_Neutral_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Zorya_Neutral_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.SEVA_Neutral_Armor, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Exoskeleton_Neutral_Armor, MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Light_Neutral_Helmet, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Jemmy_Neutral_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Newbee_Neutral_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Nasos_Neutral_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Zorya_Neutral_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.SEVA_Neutral_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Exoskeleton_Neutral_Armor, MASTER_RANK),
   ],
   scientist: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Anomaly_Scientific_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.HeavyAnomaly_Scientific_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.SciSEVA_Scientific_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Anomaly_Scientific_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.HeavyAnomaly_Scientific_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.SciSEVA_Scientific_Armor, VETERAN_MASTER_RANK),
   ],
   spark: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Battle_Spark_Armor, VETERAN_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.SEVA_Spark_Armor, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.HeavyAnomaly_Spark_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.HeavyBattle_Spark_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Battle_Spark_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.SEVA_Spark_Armor, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.HeavyAnomaly_Spark_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.HeavyBattle_Spark_Armor, VETERAN_MASTER_RANK),
   ],
   varta: [
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Heavy_Varta_Helmet, EXPERIENCED_MASTER_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.Battle_Varta_Armor, ALL_RANK),
-    getDefaultDroppableArmorDescriptor(allDefaultArmorDefs.BattleExoskeleton_Varta_Armor, VETERAN_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Heavy_Varta_Helmet, EXPERIENCED_MASTER_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.Battle_Varta_Armor, ALL_RANK),
+    getDefaultDroppableArmorDescriptor(allDefaultArmorPrototypesRecord.BattleExoskeleton_Varta_Armor, VETERAN_MASTER_RANK),
   ],
 };
 
@@ -185,3 +194,168 @@ export const RSQRandomizerQuestNodesSIDs = [
   "RSQ09_C00_MALAHIT_Random",
   "RSQ10_C00_HARPY_Random",
 ];
+export const guideQuestObjectPrototypeSIDs = new Set([
+  "vozatyj_0",
+  "TerriconGuider",
+  "ZalesieGuider",
+  "ShevchenkoGuider",
+  "HimzavodGuider",
+  "MalachitGuider",
+  "RostokGuider",
+  "ConcretePlantGuider",
+  "MagnetMemoryPlantGuider",
+  "KorogodCampGuider",
+  "HoghouseGuider",
+  "RookieVillageGuider",
+  "LesnikBaseGuider",
+  "NoonBaseGuider",
+  "SkadovskGuider",
+  "ShipyardGuider",
+  "NeutralVolk",
+  "NeutralGarik",
+  "NeutralDadaLena",
+  "ScientistViktorKoska",
+  "NeutralMuhomor",
+  "DutyMarsal",
+  "FreedomLaguha",
+  "CorpusTelegraf",
+]);
+
+export const generalTradersTradeItemGenerators = new Set([
+  "AsylumTrader_TradeItemGenerator",
+  "IkarTrader_TradeItemGenerator",
+  "SultanskTrader_TradeItemGenerator",
+  "ShevchenkoTrader_TradeItemGenerator",
+  "NewbeeVillageTrader_TradeItemGenerator",
+  "MalakhitTrader_TradeItemGenerator",
+  "CementPlantTrader_TradeItemGenerator",
+  "YanovTrader_TradeItemGenerator",
+  "PripyatTrader_TradeItemGenerator",
+  "RedForestTrader_TradeItemGenerator",
+  "EgerTrader_TradeItemGenerator",
+  "VartaTrader_TradeItemGenerator",
+  "TraderZalesie_TradeItemGenerator",
+  "TraderChemicalPlant_TradeItemGenerator",
+  "TraderTerikon_TradeItemGenerator",
+  "TraderSuska_TradeItemGenerator",
+  "SelmaTrader_TradeItemGenerator",
+]);
+
+export const generalTradersTradePrototypes = new Set([
+  "Trader_Zalesie_TradePrototype",
+  "Trader_ChemicalPlant_TradePrototype",
+  "Trader_Terikon_TradePrototype",
+  "Asylum_Trader_TradePrototype",
+  "Trader_Ikar_TradePrototype",
+  "Trader_Sultansk_TradePrototype",
+  "Trader_Shevchenko_TradePrototype",
+  "Trader_NewbeeVillage_TradePrototype",
+  "Trader_Malakhit_TradePrototype",
+  "Trader_CementPlant_TradePrototype",
+  "Trader_Armor_Rostok_TradePrototype",
+  "Trader_NATO_Rostok_TradePrototype",
+  "Trader_Soviet_Rostok_TradePrototype",
+  "Trader_Yanov_TradePrototype",
+  "Trader_Pripyat_TradePrototype",
+  "Trader_RedForest_TradePrototype",
+  "EgerTrader_TradePrototype",
+  "TraderSuska_TradePrototype",
+  "VartaTrader_TradePrototype",
+  "SelmaTrader_TradePrototype",
+]);
+
+export const bartendersTradePrototypes = new Set([
+  "Bartender_Zalesie_TradePrototype",
+  "Bartender_ChemicalPlant_TradePrototype",
+  "Bartender_Terricon_TradePrototype",
+  "Bartender_Sultansk_TradePrototype",
+  "BartenderBanditSultansk_TradePrototype",
+  "Bartender_Shevchenko_TradePrototype",
+  "Bartender_Malakhit_TradePrototype",
+  "Bartender_CementPlant_TradePrototype",
+  "Bartender_Rostok_TradePrototype",
+  "Bartender_RostokArena_TradePrototype",
+  "Bartender_Yanov_TradePrototype",
+]);
+
+export const medicsTradePrototypes = new Set([
+  "Medic_Zalesie_TradePrototype",
+  "Medic_ChemicalPlant_TradePrototype",
+  "Medic_Terricon_TradePrototype",
+  "Asylum_Medic_TradePrototype",
+  "Ikar_Medic_TradePrototype",
+  "Sultansk_Medic_TradePrototype",
+  "NewbieVillage_Medic_TradePrototype",
+  "Malakhit_Medic_TradePrototype",
+  "CementPlant_Medic_TradePrototype",
+  "Rostok_Medic_TradePrototype",
+  "Yanov_Medic_TradePrototype",
+]);
+
+export const technicianQuestObjectPrototypeSIDs = new Set([
+  "RostokTechnician",
+  "DiggerKonder",
+  "ZalesieTechnician",
+  "SkadovskTechnician",
+  "ShipyardTechnician",
+  "HimzavodTechnician",
+  "MalachitTechnician",
+  "ConcretePlantTechnician",
+  "MagnetMemoryPlantTechnician",
+  "SparkWorkshopTechnician",
+  "Hors",
+  "Lesnik",
+  "Kardan",
+  "FlameStepsel",
+  "AzimutVartaAntonMarusin",
+  "VartaSerzEremeev",
+  "VartaSergeantVeremeev",
+  "NeutralDadkaAr",
+  "SIRCAATechnician",
+  "NeutralKovyraska",
+  "VartaSerzantIvajlov",
+  "CorpMedlak",
+  "FlameStepsel_Pripyat",
+  "VartaSerzantIvajlov_Pripyat",
+  "NeutralMultik",
+  "NeutralSemenyc",
+  "DutySerzantHmaruk",
+  "CorpusGarpia",
+  "CorpusMedlak",
+  "banzai",
+]);
+
+/**
+ * Technician_ChemicalPlant_TradePrototype // sells T2-T3 attachments
+ * PowerPlugTechnician_TradeItemGenerator// T2-T4 attachments
+ * Asylum_Technician_TradePrototype // T2
+ */
+export const technicianTradePrototypes = new Set([
+  "Asylum_Technician_TradePrototype",
+  "Ikar_Technician_TradePrototype",
+  "Backwater_Technician_TradePrototype",
+  "ZalesieTechnician_TradePrototype",
+  "TerriconTechnician_TradePrototype",
+  "PowerPlugTechnician_TradePrototype",
+  "VartaTechnician_TradePrototype",
+  "Technician_NewbieVillage_TradePrototype",
+  "Technician_Malakhit_TradePrototype",
+  "Technician_ChemicalPlant_TradePrototype",
+  "TechnicianChemicalPlant_TradeItemGenerator",
+  "AsylumTechnician_TradeItemGenerator",
+  "BackwaterTechnician_TradeItemGenerator",
+  "Technician_Sultansk_TradePrototype",
+  "SultanskTechnician_TradeItemGenerator",
+  "NewbeeVillageTechnician_TradeItemGenerator",
+  "Technician_CementPlant_TradePrototype",
+  "Technician_Rostok_TradePrototype",
+  "RostokTechnician_TradeItemGenerator",
+  "Technician_Yanov_TradePrototype",
+  "YanovTechnician_TradeItemGenerator",
+  "Technician_Pripyat_TradePrototype",
+  "PripyatTechnician_TradeItemGenerator",
+  "ZalesieTechnician_TradeItemGenerator",
+  "TerriconTechnician_TradeItemGenerator",
+  "PowerPlugTechnician_TradeItemGenerator",
+  "VartaTechnician_TradeItemGenerator",
+]);

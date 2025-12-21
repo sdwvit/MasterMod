@@ -4,7 +4,8 @@ import * as fs from "node:fs";
 import { logger } from "./logger.mjs";
 import { modName, sdkModsFolder, modFolderRaw } from "./base-paths.mjs";
 import { mkdirSync } from "fs";
-import { cpSync } from "node:fs";
+import { cpSync, existsSync } from "node:fs";
+import { createMod } from "./cook.ts";
 
 const cmd = () => {
   const destinationPath = path.join(sdkModsFolder, modName, "Content", "GameLite", "GameData");
@@ -13,6 +14,10 @@ const cmd = () => {
   if (fs.readdirSync(sourcePath).length === 0) {
     console.error(`No files found in source path: ${sourcePath}`);
     process.exit(1);
+  }
+  if (!existsSync(path.join(process.env.SDK_PATH, "Stalker2", "Mods", modName))) {
+    logger.log("Mod doesn't exist, creating...");
+    createMod(modName);
   }
   if (fs.existsSync(destinationPath)) fs.rmSync(destinationPath, { recursive: true, force: true });
   mkdirSync(destinationPath, { recursive: true });

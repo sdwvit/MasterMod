@@ -1,10 +1,10 @@
-import { allDefaultArmorDefs, allDefaultNightVisionGogglesDefs, allDefaultNightVisionGogglesPrototypes } from "./consts.mjs";
+import { allDefaultArmorPrototypesRecord, allDefaultNightVisionGogglesPrototypesRecord } from "./consts.mjs";
 import { allExtraArmors, newArmors } from "./armors.util.mjs";
 import { ArmorPrototype, Struct } from "s2cfgtojson";
-import { backfillArmorDef } from "./backfillArmorDef.mjs";
+import { backfillDef } from "./backfillDef.mts";
 
-const maxDurability = Math.max(...Object.values(allDefaultArmorDefs).map((a) => a.BaseDurability ?? 0));
-const minDurability = Math.min(...Object.values(allDefaultArmorDefs).map((a) => a.BaseDurability ?? 10000));
+const maxDurability = Math.max(...Object.values(allDefaultArmorPrototypesRecord).map((a) => a.BaseDurability ?? 0));
+const minDurability = Math.min(...Object.values(allDefaultArmorPrototypesRecord).map((a) => a.BaseDurability ?? 10000));
 
 function calculateArmorScore(armor: ArmorPrototype): number {
   const e = armor;
@@ -50,8 +50,8 @@ function calculateArmorScore(armor: ArmorPrototype): number {
 
 export const allItemRank = Object.fromEntries(
   Object.values({
-    ...allDefaultNightVisionGogglesDefs,
-    ...allDefaultArmorDefs,
+    ...allDefaultNightVisionGogglesPrototypesRecord,
+    ...allDefaultArmorPrototypesRecord,
     ...Object.fromEntries(
       allExtraArmors.map((e) => {
         const SID = e.SID;
@@ -67,10 +67,11 @@ export const allItemRank = Object.fromEntries(
   })
     .filter((armor) => !armor.SID.includes("Template"))
     .map((armor) => {
-      const backfilled = backfillArmorDef(
-        armor,
-        armor.SID.toLowerCase().includes("helmet") ? allDefaultArmorDefs.Heavy_Svoboda_Helmet : undefined,
-      ) as ArmorPrototype;
+      const backfilled = backfillDef(
+        armor as any,
+        allDefaultArmorPrototypesRecord,
+        armor.SID.toLowerCase().includes("helmet") ? "Heavy_Svoboda_Helmet" : undefined,
+      );
       return [armor.SID, calculateArmorScore(backfilled)] as [string, number];
     })
     .sort((a, b) => a[0].localeCompare(b[0])),
