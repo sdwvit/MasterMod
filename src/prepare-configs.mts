@@ -21,7 +21,7 @@ console.timeEnd();
 logger.log(`Total: ${total.length} transformers processed.`);
 const writtenFiles = total.flat().filter((s) => s?.length > 0);
 logger.log(`Total: ${writtenFiles.flat().length} structs in ${writtenFiles.length} files written.`);
-//await import("./packmod.mjs");
+
 await import("./push-to-sdk.mts");
 await import("./update-readme.mjs");
 await onL1Finish();

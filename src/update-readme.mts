@@ -37,6 +37,8 @@ const modifiedFilesByFolder = [...modifiedFiles].reduce(
 );
 
 const readmeContent = `
+# Mod moved to S2Mods repo https://github.com/sdwvit/S2Mods/tree/master/Mods/MasterMod
+
 # Code generator for my Stalker 2 mod config files
 
 ## Requirements:

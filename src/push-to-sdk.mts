@@ -19,9 +19,13 @@ const cmd = () => {
     logger.log("Mod doesn't exist, creating...");
     createMod(modName);
   }
-  if (fs.existsSync(destinationPath)) fs.rmSync(destinationPath, { recursive: true, force: true });
+  if (fs.existsSync(destinationPath)) {
+    logger.log(`Destination path ${destinationPath} exists... cleaning up`);
+    fs.rmSync(destinationPath, { recursive: true, force: true });
+  }
   mkdirSync(destinationPath, { recursive: true });
   cpSync(path.join(sourcePath), path.join(destinationPath), { recursive: true });
+  logger.log(`Done copying files to ${destinationPath}`);
 };
 
 cmd();

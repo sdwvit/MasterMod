@@ -1,5 +1,4 @@
 import fs from "node:fs";
-import path from "node:path";
 import { logger } from "./logger.mjs";
 import { readWithUnzip, writeWithZip } from "./zip.mjs";
 
