@@ -32,39 +32,6 @@ export const transformQuestNodePrototypes: EntriesTransformer<QuestNodePrototype
     promises.push(injectMassiveRNGQuestNodes());
   }
 
-  /*if (struct.SID === "RookieVillage_Hub_OnNPCCreateEvent_BP_NPC_RookieVillageGuider") {
-    promises.push(
-      Promise.resolve(
-        new Struct({
-          __internal__: {
-            isRoot: true,
-            rawName: "RookieVillage_Hub_Exchange_Armor_SetDialog",
-          },
-          SID: "RookieVillage_Hub_Exchange_Armor_SetDialog",
-          Repeatable: true,
-          QuestSID: "RookieVillage_Hub",
-          NodeType: "EQuestNodeType::SetDialog",
-          Launchers: getLaunchers([{ SID: "RookieVillage_Hub_OnNPCCreateEvent_BP_NPC_RookieVillageGuider", Name: "" }]),
-          LastPhrases: new Struct({ 0: new Struct({ FinishNode: false, LastPhraseSID: "RookieVillage_Hub_Exchange_Armor_SetDialog_1" }) }),
-          DialogChainPrototypeSID: "RookieVillage_Hub_Exchange_Armor_SetDialog",
-          DialogMembers: new Struct({ 0: "927B9C2A43F721EC11E6C486D0DDFA0F" }),
-          TalkThroughRadio: new Struct({ 0: false }),
-          DialogObjectLocation: new Struct({ 0: new Struct({ X: 0.0, Y: 0.0, Z: 0.0 }) }),
-          NPCToStartDialog: -1,
-          StartForcedDialog: false,
-          WaitAllDialogEndingsToFinish: false,
-          IsComment: false,
-          OverrideDialogTopic: "EOverrideDialogTopic::None" as EOverrideDialogTopic,
-          CanExitAnytime: false,
-          ContinueThroughRadio: false,
-          CallPlayer: false,
-          SeekPlayer: false,
-          CallPlayerRadius: 1000.0,
-        }) as QuestNodePrototype,
-      ),
-    );
-  }*/
-
   // applies only to recurring quests
   if (recurringQuestsFilenames.some((p) => context.filePath.includes(p))) {
     if (struct.NodeType === "EQuestNodeType::SetItemGenerator") {
